@@ -1,0 +1,17 @@
+﻿{
+  "sProcessing": "Đang xử lý...",
+  "sLengthMenu": "Số bản ghi _MENU_",
+  "sZeroRecords": "Không tìm thấy bản ghi nào phù hợp",
+  "sInfo": "Bản ghi _START_ đến bản ghi _END_ trong tổng số _TOTAL_ bản ghi",
+  "sInfoEmpty": "Không có bản ghi nào",
+  "sInfoFiltered": "(được lọc từ _MAX_ bản ghi)",
+  "sInfoPostFix": "",
+  "sSearch": "Tìm kiếm: ",
+  "sUrl": "",
+  "oPaginate": {
+    "sFirst": "Đầu",
+    "sPrevious": "Trước",
+    "sNext": "Sau",
+    "sLast": "Cuối"
+  }
+}

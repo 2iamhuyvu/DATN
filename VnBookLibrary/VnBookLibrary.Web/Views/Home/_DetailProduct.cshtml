@@ -1,0 +1,78 @@
+﻿@using VnBookLibrary.Model.Entities;
+@using System.Globalization;
+@{
+    Product product = ViewBag.Product;
+}
+@if (product == null)
+{
+    <h4 style="color:red">Có lỗi!</h4>
+}
+<div>
+    <div class="row">
+        <div class="col-md-3">
+            <div style="height:300px;">
+                <img height="100%" width="100%" src="@product.AvatarLink" />
+            </div>
+        </div>
+        <div class="col-md-9">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Tên sách</th>
+                    <th style="color:red" colspan="3">@product.ProductName</th>
+
+                </tr>
+                <tr>
+                    <th>Giá bán</th>
+                    <td>@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                    <th>Giá bìa</th>
+                    <td>@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                </tr>
+                <tr>
+                    <th>Tác giả</th>
+                    @if (product.CategoryByAuthor != null)
+                    {
+                        <td>@product.CategoryByAuthor.CategoryAuthorName</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <th>NXB - NPH</th>
+                    @if (product.CategoryByPublisher != null)
+                    {
+                        <td>@product.CategoryByPublisher.CategoryByPublisherName</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
+                <tr>
+                    <th>Danh mục sách cha</th>
+                    @if (product.CategoryLv1 != null)
+                    {
+                        <td>@product.CategoryLv1.CategoryLv1Name</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <th>Danh mục sách con</th>
+                    @if (product.CategoryLv2 != null)
+                    {
+                        <td>@product.CategoryLv2.CategoryLv2Name</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
+            </table>
+            <button onclick="AddToCart(@product.ProductId)" class="btn btn-default btn-lg" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:green"></i></button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div style="margin-top:20px;max-height:400px;overflow:auto; border:1px solid #ccc;border-radius:5px;padding:10px">
+        @Html.Raw(product.Description)
+    </div>
+</div>

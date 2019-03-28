@@ -1,0 +1,498 @@
+﻿@using VnBookLibrary.Web.Models;
+@using VnBookLibrary.Repository.Commons;
+<!DOCTYPE html>
+@using VnBookLibrary.Model.Entities;
+@using VnBookLibrary.Repository.Commons;
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @{
+        List<CartVM> listCart = new List<CartVM>();
+        if (Session[Constants.CART_SESSION] != null)
+        {
+            listCart = (List<CartVM>)Session[Constants.CART_SESSION];
+        }
+        int numberOfBook = 0;
+        if (listCart.Count > 0)
+        {
+            foreach (var item in listCart)
+            {
+                numberOfBook += item.Quantity;
+            }
+        }
+        Customer customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+    }
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="icon" type="image/png" href="~/Assets/Template/images/icons/favicon.png" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/fonts/themify/themify-icons.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/fonts/elegant-font/html-css/style.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/vendor/animsition/css/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/css/util.css">
+    <link rel="stylesheet" type="text/css" href="~/Assets/Template/css/main.css">
+    <link rel="stylesheet" href="~/PluginFrontend/lobibox-master/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/PluginFrontend/lobibox-master/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/PluginFrontend/lobibox-master/dist/css/lobibox.min.css" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <style>
+        .main_menu > li a {
+            font-weight: bold;
+        }
+
+        .p-b-65 {
+            padding-bottom: 0px;
+        }
+
+        .p-t-55 {
+            padding-top: 0px;
+        }
+
+        .fixed-header {
+            height: 125px !important;
+        }
+
+            .fixed-header .wrap_header {
+                height: 80px !important;
+            }
+
+        input {
+            max-width: 100%;
+            border: 1px solid #ccc !important;
+        }
+    </style>
+</head>
+<body class="animsition">
+
+    <!-- Header -->
+    <header class="header1">
+        <!-- Header desktop -->
+        <div class="container-menu-header">
+            <div class="topbar" style="background:#000000;">
+                <div class="topbar-social">
+                    <span style="font-size:13px;color: white"><i class="fa fa-phone fa-lg"></i> Hotline:1900 1234 | <i class="fa fa-at fa-lg"></i> Email:book@gmail.com</span>
+                </div>
+
+                <span class="topbar-child1" style="font-size:13px;color: white">
+                    Miễn phí vận chuyển với hóa đơn trên 500.000 vnđ
+                </span>
+
+                <div class="topbar-child2">
+                    <span class="topbar-email" style="font-size:13px;color: white">
+                        @if (customer != null)
+                        {
+                            <a style="color:#fff;" href="javascript:void(0)">@customer.LoginName &nbsp;|&nbsp;</a>
+                            using (Html.BeginForm("LogOut", "Home", FormMethod.Post, new { style = "display:inline-block", id = "FLogOut" }))
+                            {
+                                <span onclick="LogOut()" style="cursor:pointer"><i class="fa fa-sign-out fa-lg"></i>Đăng xuất</span>
+                            }
+                        }
+                        else
+                        {
+                            <a style="color:#fff;" href="@Url.Action("SignUp","Home")">Đăng ký</a><span>&nbsp;|&nbsp;</span>
+                            <a style="color:#fff;" href="javascript:void(0)" onclick="OpenLogin()">Đăng nhập</a>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <div class="wrap_header">
+                <!-- Logo -->
+                <a href='@Url.Action("Index","Home")' class="logo" style="height:100%;display:block;text-decoration:none;" title="Trang chủ VnBook">
+                    <h2 style="height:100%;line-height:80px">VnBook</h2>
+                </a>
+
+                @{Html.RenderAction("_PartialMenu", "Home");}
+                <!-- Header Icon -->
+                <div class="header-icons">
+                    <nav class="menu" style="margin-right:30px">
+                        <ul class="main_menu" style="text-align:right">
+                            @if (Request.Url.AbsolutePath == @Url.Action("News", "Home"))
+                            {
+                                <li class="sale-noti">
+                                    <a href='@Url.Action("News", "Home")'>Bài viết</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href='@Url.Action("News", "Home")'>Bài viết</a>
+                                </li>
+                            }
+                            @if (Request.Url.AbsolutePath == @Url.Action("AboutUs", "Home"))
+                            {
+                                <li class="sale-noti">
+                                    <a href='@Url.Action("AboutUs", "Home")'>Giới thiệu</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href='@Url.Action("AboutUs", "Home")'>Giới thiệu</a>
+                                </li>
+                            }
+                            @if (Request.Url.AbsolutePath == @Url.Action("AboutUs", "Home"))
+                            {
+                                <li class="sale-noti">
+                                    <a href='@Url.Action("Contact", "Home")'>Liên hệ</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href='@Url.Action("Contact", "Home")'>Liên hệ</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                    @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @id = "FormSearch", style = "display:inline-block" }))
+                    {
+                        <div class="" style="border:1px solid #808080;margin-right:30px;padding:3px 3px 3px 10px;border-radius:15px;">
+                            <i class="fa fa-search fa-lg" style="margin-right:5px;"></i>
+                            <input class="" value="@ViewBag.Search" name="Search" style="font-size:14px;height:30px;width:250px;border:none!important" />
+                            <button style="display:inline-block ;border-radius:10px;" title="Tìm sách" class="btn btn-success btn-sm" type="submit">Tìm sách</button>
+                        </div>
+                    }
+
+                    <div class="header-wrapicon2">
+                        <img src="~/Assets/Template/images/shopping_cart.png" onclick="ViewBoxCart()" class="header-icon1 js-show-header-dropdown" alt="ICON">
+                        <span id="listCartCount" class="header-icons-noti">@numberOfBook</span>
+
+                        <!-- Header cart noti -->
+                        <div id="dropdownCart" class="header-cart header-dropdown">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    <!-- Content page -->
+    <section class="bgwhite p-t-55 p-b-65">
+        <div class="container">
+            <div class="row">
+                @RenderBody()
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="bg6 p-t-45 p-b-43 p-l-45 p-r-45">
+        <div class="flex-w p-b-90">
+            <div class="w-size6 p-t-30 p-l-15 p-r-15 respon3">
+                <h4 class="s-text12 p-b-30">
+                    Thông tin liên hệ
+                </h4>
+
+                <div>
+                    <p class="s-text7 w-size27">
+                        Bất cứ thắc mắc nào? Hãy cho chúng tôi biết tại cửa hàng số ..., đường ..., quận ..., Hà nội - Việt Nam hoặc liên hệ chúng tôi theo số điện thoại (+84) 987654321 hoặc email email@gmail.com
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-size7 p-t-30 p-l-15 p-r-15 respon4">
+                <h4 class="s-text12 p-b-30">
+                    Danh mục
+                </h4>
+
+                <ul>
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            1
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            2
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            3
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            4
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="w-size7 p-t-30 p-l-15 p-r-15 respon4">
+                <h4 class="s-text12 p-b-30">
+                    Liên kết
+                </h4>
+
+                <ul>
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            Tin tức
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            Giới thiệu
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            Liên hệ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="w-size7 p-t-30 p-l-15 p-r-15 respon4">
+                <h4 class="s-text12 p-b-30">
+                    Trợ giúp
+                </h4>
+
+                <ul>
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            1
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            2
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            3
+                        </a>
+                    </li>
+
+                    <li class="p-b-9">
+                        <a href="#" class="s-text7">
+                            4
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="w-size8 p-t-30 p-l-15 p-r-15 respon3">
+                <h4 class="s-text12 p-b-30">
+                    Others
+                </h4>
+
+                <div>
+                  
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="t-center p-l-15 p-r-15">
+            <a href="#">
+                <img class="h-size2" src="~/Assets/Template/images/icons/paypal.png" alt="IMG-PAYPAL">
+            </a>
+
+            <a href="#">
+                <img class="h-size2" src="~/Assets/Template/images/icons/visa.png" alt="IMG-VISA">
+            </a>
+
+            <a href="#">
+                <img class="h-size2" src="~/Assets/Template/images/icons/mastercard.png" alt="IMG-MASTERCARD">
+            </a>
+
+            <a href="#">
+                <img class="h-size2" src="~/Assets/Template/images/icons/express.png" alt="IMG-EXPRESS">
+            </a>
+
+            <a href="#">
+                <img class="h-size2" src="~/Assets/Template/images/icons/discover.png" alt="IMG-DISCOVER">
+            </a>
+
+            <div class="t-center s-text8 p-t-20">
+                Copyright © 2019 All rights reserved. | This is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="#" target="_blank">Vu Dinh Huy</a>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top bg0-hov" id="myBtn">
+        <span class="symbol-btn-back-to-top" title="Đầu trang">
+            <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+        </span>
+    </div>
+
+    <div class="modal fade" id="ModalLogin" role="dialog">
+        <div class="modal-dialog" style="width:500px;">
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+            {
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#337ab7;border-radius:5px 5px 0px 0px">
+                        <button type="button" class="close" onclick="CancelLogin()">&times;</button>
+                        <h4 class="modal-title" style="font-weight:bold">Đăng nhập khách hàng</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="loginName" class="">Tên đăng nhập</label>
+                            <input class="form-control" id="loginName" name="loginName" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="">Mật khẩu</label>
+                            <input class="form-control" id="pasword" type="password" name="password" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger"> <i class="fa fa-sign-in fa-lg"></i> Đăng nhâp</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalDetail" role="dialog">
+        <div class="modal-dialog" style="width:1200px;">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background:#e0ff94">
+                    <button type="button" class="close" onclick="CloseModalDetailProduct()">&times;</button>
+                    <h3 class="modal-title">Thông tin sách</h3>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="CloseModalDetailProduct()">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--===============================================================================================-->
+    <script type="text/javascript" src="~/Assets/Template/vendor/animsition/js/animsition.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/Template/js/main.js"></script>
+    <script src="~/PluginFrontend/lobibox-master/js/lobibox.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    @if (TempData["Notify"] != null)
+    {
+        <script>
+                var jsonNotify = @Html.Raw(Json.Encode(TempData["Notify"]));
+                $(document).ready(function () {
+                    if (jsonNotify.Status == true) {
+                        Lobibox.notify('success', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: jsonNotify.Message,
+                            sound: false,
+                        });
+                    }
+                    else {
+                        Lobibox.notify('warning', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: jsonNotify.Message,
+                            sound: false,
+                        });
+                    }
+                });
+        </script>
+    }
+    <script>
+        function CloseModalDetailProduct() {
+            $("#ModalDetail").modal("hide");
+        }
+        function DetailProduct(id) {
+            $.ajax({
+                url: '@Url.Action("_DetailProduct", "Home")',
+                type: 'POST',
+                dataType: 'html',
+                data: JSON.stringify({"productId":id}),
+                contentType: 'application/json;charset=utf-8',
+                success: function (html) {
+                    $("#ModalDetail .modal-body").html(html);
+                    $("#ModalDetail").modal("show");
+                },
+            });
+        }
+
+        function LogOut() {
+            $("#FLogOut").submit();
+        }
+        function CancelLogin() {
+            $("#ModalLogin").modal("hide");
+        }
+        function OpenLogin() {
+            $("#ModalLogin").modal("show");
+        }
+        $(document).ready(function () {
+            Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
+                soundPath: '../../PluginFrontend/lobibox-master/sounds/',
+            });
+        });
+        function ViewBoxCart() {
+            $.ajax({
+                url: '@Url.Action("_PartialViewCart", "Home")',
+                type: 'POST',
+                dataType: 'html',
+                success: function (html) {
+                    $("#dropdownCart").html(html);
+                }
+            });
+        }
+        function UpdateContentViewCart() {
+             $.ajax({
+                url: '@Url.Action("_ViewCart", "Home")',
+                type: 'POST',
+                dataType: 'html',
+                success: function (html) {
+                    $("#ContentViewCart").html(html);
+                }
+            });
+        }
+        function DeleteFromCart(productId,quantity) {
+             $.ajax({
+                url: '@Url.Action("DeleteFromCart", "Home")',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ "productId": productId}),
+                contentType: 'application/json;charset=utf-8',
+                success: function (rs) {
+                    console.log(rs);
+                    ViewBoxCart()
+                    $("#listCartCount").text(parseInt($("#listCartCount").text()) - quantity);
+                    let count = parseInt($("#listCartCount").text());
+                    if (count == 0) {
+                        $("#dropdownCart").removeClass("show-header-dropdown");
+                    }
+                    UpdateContentViewCart();
+                }
+            });
+        }
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

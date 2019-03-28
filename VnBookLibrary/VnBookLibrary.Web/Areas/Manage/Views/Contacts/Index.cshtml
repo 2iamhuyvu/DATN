@@ -1,0 +1,76 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.Contact>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.CustomerName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employee.EmployeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CustomerEmail)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CustomerPhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ContactContent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ContactSendTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsReply)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReplyContent)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.CustomerName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Employee.EmployeeName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CustomerEmail)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CustomerPhone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ContactContent)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ContactSendTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsReply)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReplyContent)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ContactId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ContactId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ContactId })
+        </td>
+    </tr>
+}
+
+</table>

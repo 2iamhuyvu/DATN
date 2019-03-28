@@ -1,0 +1,67 @@
+﻿@model VnBookLibrary.Model.Entities.News
+
+@{
+    ViewBag.Title = "Thêm bài viết | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h3>Thêm bài viết</h3>
+<hr />
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "FormCreateNews" }))
+{
+    <div class="">
+        <div class="form-group">
+            @Html.LabelFor(model => model.NewsTitle, "Tiêu đề bài viết", htmlAttributes: new { @class = "control-label" })<span style="color:red"> * </span>
+            <div class="">
+                @Html.EditorFor(model => model.NewsTitle, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:80px;">
+            @Html.LabelFor(model => model.NewsContent, "Nội dung vài viết", htmlAttributes: new { @class = "control-label" })<span style="color:red"> * </span>
+            <div class="" id="divNewsContent">
+                @Html.EditorFor(model => model.NewsContent, new { htmlAttributes = new { @class = "form-control" } })
+                <script>
+                    let newsContent = CKEDITOR.replace("NewsContent", { height: '500px' });
+                    CKFinder.setupCKEditor(newsContent, '/ckfinder');
+                </script>
+            </div>
+        </div>
+        <div class="form-group" style="width:100%;position:fixed;left:0px;bottom:0px;text-align:center">
+            <input type="button" onclick="SubmitFormCreateNews()" style="width:30%;margin-left:216px" value="Thêm bài viết" class="btn btn-dropbox btn-lg" />
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+        function SubmitFormCreateNews() {
+            let kt = true;
+            if ($("#NewsTitle").val().trim() == "") {
+                kt = false;
+                $("#NewsTitle").after(`<span class="spanError" style="color:red">Không được để trống tiêu đề</span>`)
+            }
+            if (CKEDITOR.instances['NewsContent'].getData().trim() == "") {
+                $("#divNewsContent").before(`<span class="spanError" style="color:red">Không được để trống nội dung</span>`)
+                kt = false;
+            }
+            if (kt) {
+                $(".spanError").remove();
+                var data = {};
+                CKEDITOR.instances["NewsContent"].updateElement();
+                $("#FormCreateNews").serializeArray().map(function (x) { data[x.name] = x.value; });
+                data.NewsContent = CKEDITOR.instances['NewsContent'].getData();
+                    $.ajax({
+                        url: '@Url.Action("Create","News",new { Area="Manage"})',
+                        type: 'POST',
+                        dataType: "json",
+                        contentType:'application/json;charset=utf-8',
+                        data: JSON.stringify(data),
+                        success: function (rs) {
+                            location.href='@Url.Action("Index", "News", new { Area = "Manage" })';
+                        },
+                    });
+            }
+        }
+    </script>
+}

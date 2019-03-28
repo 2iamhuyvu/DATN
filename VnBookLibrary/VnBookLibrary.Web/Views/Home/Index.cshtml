@@ -1,0 +1,55 @@
+﻿@using PagedList.Mvc
+@using PagedList
+@using VnBookLibrary.Model.Entities;
+@{
+    IPagedList<Product> pagelListProduct = (IPagedList<Product>)ViewBag.PageListProduct;
+}
+
+<div id="ContentIndex">
+    @{
+        Html.RenderAction("_GetProductByPage", "Home", new
+        {
+            Href = ViewBag.Href,
+            Search = ViewBag.Search,
+            CategoryLv1Id = ViewBag.CategoryLv1Id,
+            CategoryLv2Id = ViewBag.CategoryLv2Id,
+            CategoryAuthorId = ViewBag.CategoryAuthorId,
+            CategoryPublisherId = ViewBag.CategoryPublisherId
+        });
+    }
+</div>
+@section scripts{
+    <script>
+
+        function AddToCart(productid) {
+            $.ajax({
+                url: '@Url.Action("AddToCart","Home")',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ "productId": productid }),
+                contentType: 'application/json;charset=utf-8',
+                success: function (rs) {
+                    if (rs.Status == true) {
+                        Lobibox.notify('success', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: rs.Message,
+                            sound: true,
+                        });
+                        $("span#listCartCount").text(rs.Param);
+                    }
+                    else {
+                        Lobibox.notify('warning', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: rs.Message,
+                            sound: true,
+                        });
+                    }
+                },
+            });
+        }
+    </script>
+}

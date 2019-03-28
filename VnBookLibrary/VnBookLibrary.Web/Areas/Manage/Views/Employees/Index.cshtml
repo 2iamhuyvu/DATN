@@ -1,0 +1,62 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.Employee>
+
+@{
+    ViewBag.Title = "Danh sách nhân viên | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h3>Danh sách nhân viên <a style="float:right" href="@Url.Action("Create","Employees",new {area="Manage"})" class="btn btn-success btn-sm">Thêm nhân viên</a></h3>
+<hr />
+<table class="table table-bordered UseDataTables">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EmployeeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LoginName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateBirth)
+            </th>
+            <th data-orderable="false">
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th data-orderable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoginName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td style="text-align:center">
+                    <a href="/Manage/Employees/Details/@item.EmployeeId"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                    @* <a href="/Manage/Employees/Edit/@item.EmployeeId"><i class="glyphicon glyphicon-edit fa-lg"></i></a> |*@
+                    @*@using (Html.BeginForm("Delete", "Employees", new { Area = "Manage", id = item.EmployeeId }, FormMethod.Post, new { style = "display:inline-block", onsubmit = "return confirm('Bạn có thực sự xóa không')" }))
+                    {
+                        <button style="border:none;background:transparent" type="submit"><i style="color:red" class="glyphicon glyphicon-trash fa-lg"></i></button>
+                    }*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

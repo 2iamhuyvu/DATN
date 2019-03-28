@@ -1,0 +1,243 @@
+﻿@model VnBookLibrary.Model.Entities.Product
+
+@{
+    ViewBag.Title = "Sửa thông tin sách | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+<style>
+    label.error {
+        color: red;
+        font-weight: normal;
+        font-size: 12px;
+    }
+</style>
+<h3>Sửa thông tin sách</h3>
+<hr />
+@using (Html.BeginForm("Edit", "Products", FormMethod.Post, new { @id = "formEditProduct" }))
+{
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            @Html.HiddenFor(model => model.ProductId)
+            @Html.LabelFor(model => model.AvatarLink, htmlAttributes: new { @class = "control-label" })<span style="color:red"> *</span>
+            <input type="button" style=" float:right" value="Chọn ảnh" onclick="BrowseServer('AvatarLink')" class="controls btn btn-sm btn-warning" />
+            <div style="height:325px; clear:both;border:1px solid #ccc;border-radius:5px;cursor:pointer" onclick="BrowseServer('AvatarLink')">
+                <img id="imgAvatar" src="@Model.AvatarLink" style="height:100%;width:100%;" alt="Ảnh" />
+            </div>
+            <div class="form-group">
+                <div class="" style="position:relative">
+                    @Html.TextBoxFor(model => model.AvatarLink, new { @class = "form-control", @readonly = "true", placeholder = "Chưa chọn ảnh", style = "cursor:pointer;border:none;background-color:#fff;", onclick = "BrowseServer('AvatarLink')" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label" })<span style="color:red"> *</span>
+                        <div class="">
+                            @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label" }) <text> (vnđ)</text><span style="color:red"> *</span>
+                        <div class="">
+                            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", type = "Number" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CoverPrice, htmlAttributes: new { @class = "control-label" }) <text> (vnđ)</text>
+                        <div class="">
+                            @Html.EditorFor(model => model.CoverPrice, new { htmlAttributes = new { @class = "form-control", type = "Number" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            <select class="form-control" name="Status" id="Status">
+                                @if (Model.Status == 1)
+                                {
+                                    <option value="1" selected>Sách mới</option>
+                                    <option value="2">Còn hàng</option>
+                                    <option value="3">Hết hàng</option>
+                                    <option value="4">Sắp hết hàng</option>
+                                }
+                                @if (Model.Status == 2)
+                                {
+                                    <option value="1">Sách mới</option>
+                                    <option value="2" selected>Còn hàng</option>
+                                    <option value="3">Hết hàng</option>
+                                    <option value="4">Sắp hết hàng</option>
+                                }
+                                @if (Model.Status == 3)
+                                {
+                                    <option value="1">Sách mới</option>
+                                    <option value="2">Còn hàng</option>
+                                    <option value="3" selected>Hết hàng</option>
+                                    <option value="4">Sắp hết hàng</option>
+                                }
+                                @if (Model.Status == 4)
+                                {
+                                    <option value="1">Sách mới</option>
+                                    <option value="2">Còn hàng</option>
+                                    <option value="3">Hết hàng</option>
+                                    <option value="4" selected>Sắp hết hàng</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.Language, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PageNumber, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.PageNumber, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+
+                    <div id="DropdownCategory">
+                        @{
+                            Html.RenderAction("_DropdownCategory", "BookCategories", new { Area = "Manage", categoryLv1 = Model.CategoryLv1Id, categoryLv2 = Model.CategoryLv2Id, required=true });
+                        }
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PublishDate, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.PublishDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CategoryByAuthorId, htmlAttributes: new { @class = "control-label" })
+                        <a style="float:right" class="btn btn-success btn-sm" href="@Url.Action("Create","CategoryByAuthors",new { Area="Manage"})">Thêm tác giả</a>
+                        <div class="clearfix"></div>
+                        <div class="">
+                            @Html.DropDownList("CategoryByAuthorId", null, "---Chọn tác giả---", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CategoryByPublisherId, htmlAttributes: new { @class = "control-label" })
+                        <a style="float:right" class="btn btn-success btn-sm" href="@Url.Action("Create","CategoryByPublishers",new { Area="Manage"})">Thêm NXB - NPH</a>
+                        <div class="clearfix"></div>
+                        <div class="">
+                            @Html.DropDownList("CategoryByPublisherId", null, "---Chọn nhà xuất bản - nhà phát hành---", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group" style="padding-bottom:80px;">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+        <div class="">
+            @Html.TextBoxFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+            <script>
+                let des = CKEDITOR.replace("Description", { height: '500px' });
+                CKFinder.setupCKEditor(des, '/ckfinder');
+                CKEDITOR.instances["Description"].setData(`@Html.Raw(Model.Description)`);
+            </script>
+        </div>
+    </div>
+
+    <div class="form-group" style="width:100%;position:fixed;left:0px;bottom:0px;text-align:center">
+        <input type="button" onclick="SubmitFormEditProduct()" style="width:30%;margin-left:216px" value="Sửa thông tin" class="btn btn-dropbox btn-lg" />
+    </div>
+}
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $("#formEditProduct").validate({
+                rules: {
+                    ProductName: {
+                        required: true,
+                        minlength: 5,
+                        maxlength: 200,
+                    },
+                    AvatarLink: {
+                        required: true,
+                    },
+                    Price: {
+                        required: true,
+                        number: true,
+                        min: 1000,
+                    },
+                    CoverPrice: {
+                        number: true,
+                        min: 1000,
+                    },
+                    PageNumber: {
+                        number: true,
+                        min: 1,
+                    },
+                    CategoryLv1Id: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    ProductName: {
+                        required: "Không được để trống tên sách!",
+                        minlength: "Tên sách phải nhiều hơn 5 ký tự!",
+                        maxlength: "Tên sách tối đa 200 ký tự!",
+                    },
+                    AvatarLink: {
+                        required: "Vui lòng chọn 1 ảnh!",
+                    },
+                    Price: {
+                        required: "Không được để trống giá bán",
+                        number: "Giá sách là số!",
+                        min: "Giá bán phải lớn hơn 1000"
+                    },
+                    CoverPrice: {
+                        number: "Giá bìa là số!",
+                        min: "Giá bìa phải lớn hơn 1000"
+                    },
+                    PageNumber: {
+                        number: "Số trang là số!",
+                        min: "Số trang phải không âm"
+                    },
+                    CategoryLv1Id: {
+                        required: "Chưa chọn danh mục cấp 1",
+                    }
+                }
+            });
+        })
+        function BrowseServer(idInput) {
+            let finder = new CKFinder();
+            finder.basePath = "~/ckfinder";
+            finder.selectActionFunction = function (fileURL) {
+                $("#" + idInput).val(fileURL);
+                $("#imgAvatar").attr("src", fileURL);
+            };
+            finder.popup();
+        }
+        function SubmitFormEditProduct() {
+            if ($("#formEditProduct").valid()) {
+                var data = {};
+                $("#formEditProduct").serializeArray().map(function (x) { data[x.name] = x.value; });
+                console.log(data);
+                data.Description = CKEDITOR.instances['Description'].getData();
+                $.ajax({
+                    url: '@Url.Action("Edit","Products",new { Area="Manage"})',
+                    type: 'POST',
+                    dataType: "json",
+                    contentType:'application/json;charset=utf-8',
+                    data: JSON.stringify(data),
+                    success: function (rs) {
+                        location.href='@Url.Action("Index", "Products", new { Area = "Manage" })';
+                    },
+                });
+            }
+        }
+    </script>
+}

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.SaleEvent>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SaleEventName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Descripton)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateStart)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateEnd)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Percent)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.SaleEventName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descripton)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateStart)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateEnd)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Percent)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.SaleEventId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.SaleEventId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.SaleEventId })
+        </td>
+    </tr>
+}
+
+</table>

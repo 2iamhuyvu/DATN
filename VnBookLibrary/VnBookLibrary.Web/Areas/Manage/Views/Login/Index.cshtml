@@ -1,0 +1,155 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Đăng nhập quản trị | VnBook</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="~/Assets/Manage/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- MetisMenu CSS -->
+    <link href="~/Assets/Manage/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="~/Assets/Manage/dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="~/Assets/Manage/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!--Lobibox -->
+
+    <link rel="stylesheet" href="~/PluginFrontend/lobibox-master/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/PluginFrontend/lobibox-master/dist/css/lobibox.min.css" />
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Thông tin đăng nhập</h3>
+                    </div>
+                    <div class="panel-body">
+                        @using (Html.BeginForm("Login", "Login", new { area = "Manage" }, FormMethod.Post, new { name = "FLoginManage", id = "FLoginManage" }))
+                        {
+                            @Html.Hidden("returnURL", (string)ViewBag.ReturnURL, new { @id = "returnURL" })
+                            <fieldset>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Tên đăng nhập" name="TenDangNhap" id="TenDangNhap" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Mật khẩu" name="MatKhau" id="MatKhau" type="password">
+                                </div>
+                                @*<div class="checkbox">
+                                        <label>
+                                            <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                        </label>
+                                    </div>*@
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="button" onclick="SubmitFLoginManage()" class="btn btn-lg btn-success btn-block">Đăng nhập</button>
+                            </fieldset>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="~/Assets/Manage/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/Assets/Manage/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="~/Assets/Manage/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="~/Assets/Manage/dist/js/sb-admin-2.js"></script>
+
+    <!--Lobibox js-->
+    <script src="~/PluginFrontend/lobibox-master/js/lobibox.js"></script>
+    <script>
+        $(document).ready(function () {
+            Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
+                soundPath: '../../../../PluginFrontend/lobibox-master/sounds/',
+            });
+            $(document).keypress(function (event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    SubmitFLoginManage();
+                }
+            });
+        });
+        function SubmitFLoginManage() {
+            if ($("#MatKhau").val().trim() == "" || $("#TenDangNhap").val().trim() == "") {
+                Lobibox.notify('warning', {
+                    size: 'mini',
+                    rounded: true,
+                    delayIndicator: false,
+                    msg: 'Tên đăng nhập và mật khẩu là bắt buộc!',
+                    sound: true,
+                });
+            }
+            else {
+                $("#FLoginManage").submit();
+            }
+        }
+    </script>
+    @{
+        if (TempData["NotifyLogin"] != null)
+        {
+            <script>
+                var jsonNotify = @Html.Raw(Json.Encode(TempData["NotifyLogin"]));
+                $(document).ready(function () {
+                    Lobibox.notify('info', {
+                        size: 'mini',
+                        rounded: true,
+                        delayIndicator: false,
+                        msg: jsonNotify.Message,
+                        sound: true,
+                    });
+                });
+            </script>
+        }
+        if (TempData["Notify"] != null)
+        {
+            <script>
+                var jsonNotify = @Html.Raw(Json.Encode(TempData["Notify"]));
+                $(document).ready(function () {
+                    if (jsonNotify.Status == true) {
+                        Lobibox.notify('success', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: jsonNotify.Message,
+                            sound: false,
+                        });
+                    }
+                    else {
+                        Lobibox.notify('warning', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: jsonNotify.Message,
+                            sound: false,
+                        });
+                    }
+                });
+            </script>
+        }
+    }
+</body>
+
+</html>

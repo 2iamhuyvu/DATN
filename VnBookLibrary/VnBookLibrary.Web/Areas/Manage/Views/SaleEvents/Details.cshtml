@@ -1,0 +1,59 @@
+﻿@model VnBookLibrary.Model.Entities.SaleEvent
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SaleEvent</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SaleEventName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SaleEventName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descripton)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descripton)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateStart)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateStart)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateEnd)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateEnd)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Percent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Percent)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SaleEventId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

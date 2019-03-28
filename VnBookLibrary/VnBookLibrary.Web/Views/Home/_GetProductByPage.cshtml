@@ -1,0 +1,183 @@
+﻿@using VnBookLibrary.Model.Entities;
+@using PagedList.Mvc;
+@using System.Globalization;
+@model PagedList.IPagedList<Product>
+
+<style>
+    .col20 {
+        width: 20%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .block2-labelnew::before {
+        display: none;
+        background-color: #66a8a6;
+        content: 'New';
+    }
+
+    .header1 {
+        height: 110px !important;
+    }
+
+    ul.pagination {
+        margin: 5px 0px;
+    }
+</style>
+@if (ViewBag.Href != null && ViewBag.Href != "")
+{
+    if (Model.Count > 0)
+    {
+        <h4 style="margin-bottom:10px;">@ViewBag.Href / Trang @Model.PageNumber</h4>
+        <div style="float:right;">
+            @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
+                new {
+                    Href=ViewBag.Href,
+                    Search = ViewBag.Search,
+                    page = page,
+                    pageSize = 10 ,
+                    CategoryLv1Id = ViewBag.CategoryLv1Id,
+                    CategoryLv2Id = ViewBag.CategoryLv2Id,
+                    CategoryAuthorId=ViewBag.CategoryAuthorId,
+                    CategoryPublisherId=ViewBag.CategoryPublisherId,
+                }),
+               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+               new PagedListRenderOptions()
+               {
+                   MaximumPageNumbersToDisplay = 15,
+               },
+               new AjaxOptions()
+               { HttpMethod = "POST",
+                   UpdateTargetId = "ContentIndex"
+               }))
+        </div>
+        <div class="clearfix"></div>
+    }
+    else
+    {
+        <h4 style="margin-bottom:10px;">
+            @ViewBag.Href
+        </h4>
+        <div style="float:right;">
+            @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
+                new {
+                    Href=ViewBag.Href,
+                    Search = ViewBag.Search,
+                    page = page,
+                    pageSize = 10 ,
+                    CategoryLv1Id = ViewBag.CategoryLv1Id,
+                    CategoryLv2Id = ViewBag.CategoryLv2Id,
+                    CategoryAuthorId=ViewBag.CategoryAuthorId,
+                    CategoryPublisherId=ViewBag.CategoryPublisherId,
+                }),
+               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+               new PagedListRenderOptions()
+               {
+                   MaximumPageNumbersToDisplay = 15,
+               },
+               new AjaxOptions()
+               { HttpMethod = "POST",
+                   UpdateTargetId = "ContentIndex"
+               }))
+        </div>
+        <div class="clearfix"></div>
+    }
+}
+@if (ViewBag.Search != null && ViewBag.Search != "")
+{
+    if (Model.Count > 0)
+    {
+        <p style="color:green;margin-bottom:30px;">Có @Model.TotalItemCount sách cho từ khóa "@ViewBag.Search" !</p>
+    }
+}
+<div class="row">
+    @if (Model.Count > 0)
+    {
+
+        foreach (var product in Model)
+        {
+            <div class="col20" style="margin-bottom:25px;">
+                <!-- Product -->
+                <!-- Block2 -->
+                <div class="block2" style="box-shadow:#ccc 0px 0px 15px 5px;border-radius:5px;">
+                    <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                        <div style="height:300px;border-radius:5px 5px 0px 0px">
+                            <img height="100%" style="border-radius:5px 5px 0px 0px" src="@product.AvatarLink" alt="@product.ProductName">
+                        </div>
+                        <div class="block2-overlay trans-0-4">
+                            <a href="#" class="block2-btn-addwishlist hov-pointer trans-0-4">
+                                <i class="icon-wishlist icon_heart_alt" aria-hidden="true"></i>
+                                <i class="icon-wishlist icon_heart dis-none" aria-hidden="true"></i>
+                            </a>
+
+                            <div class="block2-btn-addcart w-size1 trans-0-4">
+                                <!-- Button -->
+                                <button type="button" onclick="AddToCart(@product.ProductId)" class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4">
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                        <div style="height:30px;overflow:hidden">
+                            <a href='javascript:void(0)' onclick="DetailProduct(@product.ProductId)" style="font-size:16px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
+                                @product.ProductName
+                            </a>
+                        </div>
+                        <div style="height:40px;">
+                            <span style="display:block;color:green;font-weight:normal">@product.Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                            @if (product.CoverPrice > 0)
+                            {
+                                <span style="display:block;color:red;font-weight:normal;text-decoration:line-through">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                            }
+                        </div>
+                        <div style="margin-top:10px;">
+                            <a style="color:black" title="Xem chi tiết" onclick="DetailProduct(@product.ProductId)" class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                            <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-default" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:green"></i></button>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="clearfix"></div>
+        <div style="float:right;margin-right:15px;">
+            @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
+                new {
+                    Href=ViewBag.Href,
+                    Search = ViewBag.Search,
+                    page = page,
+                    pageSize = 10 ,
+                    CategoryLv1Id = ViewBag.CategoryLv1Id,
+                    CategoryLv2Id = ViewBag.CategoryLv2Id,
+                    CategoryAuthorId=ViewBag.CategoryAuthorId,
+                    CategoryPublisherId=ViewBag.CategoryPublisherId,
+                }),
+               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+               new PagedListRenderOptions()
+               {
+                   MaximumPageNumbersToDisplay = 15,
+               },
+               new AjaxOptions()
+               { HttpMethod = "POST",
+                   UpdateTargetId = "ContentIndex"
+               }))
+        </div>
+        <div class="clearfix"></div>
+    }
+    else
+    {
+        if (ViewBag.Search != null && ViewBag.Search != "")
+        {
+            <p style="margin-left:15px;color:red;margin-bottom:30px;"> Không có sách nào cho từ khóa "@ViewBag.Search"!</p>
+        }
+        else
+        {
+            <p style="margin-left:15px;color:red;margin-bottom:30px;"> Không có sách nào!</p>
+        }
+    }
+</div>

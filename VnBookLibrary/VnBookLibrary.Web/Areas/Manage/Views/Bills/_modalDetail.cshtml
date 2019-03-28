@@ -1,0 +1,135 @@
+﻿@using VnBookLibrary.Model.Entities;
+@using System.Globalization;
+@using VnBookLibrary.Repository.Commons;
+@{
+    Bill bill = ViewBag.Bill;
+    var a = ViewBag.ListBillDetail;
+    List<BillDetail> billDetails = ViewBag.ListBillDetail;
+}
+<style>
+    fieldset {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    legend {
+        border: none;
+        margin-left: 10px;
+        width: inherit;
+    }
+
+    table {
+        margin-bottom: -1px !important;
+    }
+</style>
+<div>
+    <fieldset>
+        <legend>Thông tin chung</legend>
+        <div style="padding:10px;">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>Tên khách hàng</th>
+                    <td>@bill.CustomerName</td>
+                </tr>
+                <tr>
+                    <th>Điện thoại </th>
+                    <td>@bill.CustomerPhone</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>@bill.CustomerEmail</td>
+                </tr>
+                <tr>
+                    <th>Ngày mua</th>
+                    <td>@bill.BuyDate</td>
+                </tr>
+                <tr>
+                    <th>Địa chỉ giao hàng</th>
+                    <td>@bill.Address</td>
+                </tr>
+                <tr>
+                    <th>Tổng tiền</th>
+                    <td>@((bill.IntoMoney ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                </tr>
+                <tr>
+                    <th>Tình trạng</th>
+                    @if (bill.Status == Constants.STATTUS_BILL_NEW)
+                    {
+                        <td>Hoa đơn mới, chưa giao hàng</td>
+                    }
+                    else if (bill.Status == Constants.STATTUS_BILL_DELIVERING)
+                    {
+                        <td>Hóa đơn đang giao - Chưa thanh toán</td>
+                    }
+                    else if (bill.Status == Constants.STATTUS_BILL_PAID)
+                    {
+                        <td>Hóa đơn đã thanh toán</td>
+                    }
+                    else
+                    {
+                        <td>Hóa đơn bị trả lại</td>
+                    }
+                </tr>
+            </table>
+        </div>
+    </fieldset>
+    <br />
+    <fieldset>
+        <legend>Thông tin chi tiết</legend>
+        <div style="padding:10px;">
+            <table class="table table-bordered table-striped UseDataTables1">
+                <thead>
+                    <tr>
+                        <th data-orderable="false">
+                            Ảnh
+                        </th>
+                        <th>Tên sách</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in billDetails)
+                    {
+                        var s = item.Quantity * item.Product.Price ?? 0;
+                        <tr>
+                            <td style="height:100px;">
+                                <img height="100%" src="@item.Product.AvatarLink" />
+                            </td>
+                            <td>@item.Product.ProductName</td>
+                            <td>@item.Quantity</td>
+                            <td data-order="@(@item.Product.Price)">@item.Product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                            <td data-order="@s">@(s.ToString("c", new CultureInfo("vi-VN")))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.UseDataTables1').DataTable({
+            "language": {
+                "sProcessing": "Đang xử lý...",
+                "sLengthMenu": "Số bản ghi _MENU_",
+                "sZeroRecords": "Không có bản ghi nào",
+                "sInfo": "Từ bản ghi _START_ đến bản gi _END_ trong tổng số _TOTAL_ bản ghi",
+                "sInfoEmpty": "Không có bản ghi nào",
+                "sInfoFiltered": "(được lọc từ _MAX_ bản ghi)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm kiếm: ",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "<i class='fa fa-angle-double-left fa-lg'></i>",
+                    "sPrevious": "<i class='fa fa-angle-left fa-lg'></i>",
+                    "sNext": "<i class='fa fa-angle-right fa-lg'></i>",
+                    "sLast": "<i class='fa fa-angle-double-right fa-lg'></i>"
+                }
+            },
+            "pagingType": "full_numbers",
+            "stateSave": true
+        });
+    })
+</script>

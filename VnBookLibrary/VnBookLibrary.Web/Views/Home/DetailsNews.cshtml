@@ -1,0 +1,21 @@
+﻿@model VnBookLibrary.Model.Entities.News
+@{
+    ViewBag.Title = "Tin Tức - "+ Model.NewsTitle+" | VnBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    a {
+        color: #0066c0;
+    }
+    a:hover{
+        text-decoration:underline;
+    }
+    p{
+        color:black!important;
+    }
+</style>
+<h2 style="margin-bottom:20px;">@Model.NewsTitle</h2>
+<div style="margin-bottom:30px;">
+    @Html.Raw(Model.NewsContent)
+</div>
+

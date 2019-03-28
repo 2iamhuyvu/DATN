@@ -1,0 +1,66 @@
+﻿@model VnBookLibrary.Model.Entities.EmployeeType
+
+@{
+    /**/
+
+    ViewBag.Title = "Chỉnh sửa loại nhân viên";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h3>Chỉnh sửa loại nhân viên</h3>
+
+@using (Html.BeginForm(Html.BeginForm("Edit", "EmployeeTypes", new { Area = "Manage" }, FormMethod.Post, new { @id = "FormEditEmployeeType" })))
+{
+    @Html.HiddenFor(model => model.EmployeeTypeId);
+    @Html.HiddenFor(model => model.IsAdministrator);
+    <hr style="margin-top:5px;" />
+    <div class="col-lg-6 col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeeTypeName, "Tên loại nhân viên", htmlAttributes: new { @class = "" })<span style="color:red"> *</span>
+            <div class="">
+                @Html.EditorFor(model => model.EmployeeTypeName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, "Mô tả", htmlAttributes: new { @class = "" })
+            <div class="">
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", style = "resize:none;height:100px" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="">
+                <input type="button" value="Sửa" onclick="SubmitFormCreateEmployeeType()" class="btn btn-success" />
+            </div>
+        </div>
+        <div>
+            @Html.ActionLink("Quay lại danh sách loại nhân viên", "Index")
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $(document).keypress(function (event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    SubmitFormCreateEmployeeType();
+                }
+            });
+        });
+
+        function SubmitFormCreateEmployeeType() {
+            if ($("#EmployeeTypeName").val().trim() == "") {
+                Lobibox.notify('warning', {
+                    size: 'mini',
+                    rounded: true,
+                    delayIndicator: false,
+                    msg: "Không được để trống tên loại nhân viên!",
+                    sound: false,
+                });
+            } else {
+                $("#FormEditEmployeeType").submit();
+            }
+        }
+    </script>
+}

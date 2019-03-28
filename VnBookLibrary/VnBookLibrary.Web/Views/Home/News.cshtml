@@ -1,0 +1,31 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.News>
+
+@{
+    ViewBag.Title = "Tin tức | VnBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    a {
+        color: #0066c0;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    p {
+        color: black !important;
+    }
+</style>
+<h3 style="margin-bottom:20px;border-bottom:2px dashed #ccc">Tin tức</h3>
+@foreach (var news in Model.OrderByDescending(x=>x.PostDate).ToList())
+{
+    <div style="box-shadow:0px 0px 10px 2px;padding:10px;border-radius:5px;margin-bottom:25px;">
+        <a href="@Url.Action("DetailsNews","Home",new { id=news.NewsId})"><h4>@news.NewsTitle</h4></a>
+        <span style="color:#ccc">@news.PostDate</span>
+        <div style="height:80px;overflow:hidden">
+            @Html.Raw(news.NewsContent)
+        </div>
+        <a style="margin-top:10px" class="btn btn-success btn-sm" href="@Url.Action("DetailsNews","Home",new { id=news.NewsId})">Đọc thêm</a>
+    </div>
+}

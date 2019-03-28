@@ -1,0 +1,47 @@
+﻿<div class="form-group">
+    <label for="CategoryLv1Id" class="control-label">Danh mục cấp 1</label>@if (ViewBag.required)
+    {
+        <span style="color:red"> *</span>
+    }
+    <div class="">
+        @if (ViewBag.CategoryLv1Id != null)
+        {
+            @Html.DropDownList("CategoryLv1Id", null, "---Chọn mục cấp 1---", htmlAttributes: new { @class = "form-control" })
+        }
+        else
+        {
+            <select id="CategoryLv1Id" name="CategoryLv1Id" class="form-control">
+                <option>---Chọn mục cấp 1---</option>
+            </select>
+        }
+    </div>
+</div>
+<div class="form-group">
+    <label for="CategoryLv2Id" class="control-label">Danh mục cấp 2</label>
+    <div class="">
+        @if (ViewBag.CategoryLv2Id != null)
+        {
+            @Html.DropDownList("CategoryLv2Id", null, "---Chon danh mục cấp 2---", htmlAttributes: new { @class = "form-control" })
+        }
+        else
+        {
+            <select id="CategoryLv2Id" name="CategoryLv2Id" class="form-control">
+                <option>---Chọn mục cấp 2---</option>
+            </select>
+        }
+    </div>
+</div>
+<script>
+    $("#CategoryLv1Id").change(function () {
+        $.ajax({
+            url: '@Url.Action("_DropdownCategory", "BookCategories",new { Area="Manage"})',
+            type: 'POST',
+            dataType: 'html',
+            data: { categoryLv1: $("#CategoryLv1Id").val() },
+            success: function (html) {
+                $("#DropdownCategory").html(html);
+            },
+        });
+
+    })
+</script>

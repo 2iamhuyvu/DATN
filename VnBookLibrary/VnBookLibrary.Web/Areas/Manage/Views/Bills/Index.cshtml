@@ -1,0 +1,33 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.Bill>
+
+@{
+    ViewBag.Title = "Quản lý hóa đơn | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+@{ Html.RenderAction("_GetBillByStatus", "Bills");}
+<div class="modal fade" id="modalDetail" role="dialog">
+    <div class="modal-dialog" style="width:1200px;">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background:#ff6a00;border-radius:5px 5px 0px 0px">
+                <button type="button" class="close" onclick="closemodal()">&times;</button>
+                <h3 style="text-align:center" class="modal-title">Chi tiết hóa đơn</h3>
+            </div>
+            <div class="modal-body" style="max-height:700px;overflow:auto;">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closemodal()" type="button" class="btn btn-primary">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        function openmodal() {
+            $("#modalDetail").modal("show");
+        }
+        function closemodal() {
+            $("#modalDetail").modal("hide");
+        }
+    </script>
+}

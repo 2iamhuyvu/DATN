@@ -1,0 +1,387 @@
+﻿@using VnBookLibrary.Model.Entities;
+@using PagedList.Mvc
+@using System.Globalization;
+@model PagedList.IPagedList<Product>
+@{
+    int c1 = ViewBag.CategoryLv1Id ?? -1;
+    int c2 = ViewBag.CategoryLv2Id ?? -1;
+    int ca = ViewBag.CategoryAuthorId == null ? -1 : Convert.ToInt32((((SelectList)ViewBag.CategoryAuthorId).SelectedValue) ?? -1);
+    int cp = ViewBag.CategoryPublisherId == null ? -1 : Convert.ToInt32((((SelectList)ViewBag.CategoryPublisherId).SelectedValue) ?? -1);
+    string s = ViewBag.Search;
+    int typeDisplay = ViewBag.TypeDisplay;
+}
+<style>
+    ul.pagination {
+        margin: 0px !important;
+    }
+
+    .col20 {
+        width: 20%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .row20 {
+        margin-right: -5px;
+        margin-left: -5px;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+</style>
+<script>
+    function SubmitFormDeleteProduct(id) {
+        var x = Lobibox.confirm({
+            msg: "Bạn có chắc chắn xóa không",
+            buttons: {
+                no: {
+                    text: "Không", closeOnClick: true
+                },
+                yes: {
+                    text: "Có", closeOnClick: true
+                }
+            },
+            callback: function ($this, type) {
+                if (type === 'yes') {
+                    $("#FormDeleteProduct_" + id).submit();
+                }
+            }
+        });
+    }
+    function OnSuccess(html) {
+        $("#divProducts").html(html);
+    }
+</script>
+
+<div id="divProducts">
+    @{
+        int? categoryAuthorId = Convert.ToInt32(((SelectList)ViewBag.CategoryAuthorId).SelectedValue ?? -1);
+        int? categoryPublisherId = Convert.ToInt32(((SelectList)ViewBag.CategoryPublisherId).SelectedValue ?? -1);
+        string search = ViewBag.Search;
+    }
+
+    <h3>Danh sách sách <a href="@Url.Action("Create","Products",new { Area="Manage"})" style="float:right" class="btn btn-success">Thêm sách mới</a></h3>
+    <hr />
+    @using (Ajax.BeginForm("_GetProductByPage", "Products", FormMethod.Post,
+                   new AjaxOptions()
+                   {
+                       OnSuccess = "OnSuccess",
+                   },
+   new { style = "background:#ddd;padding:5px   ;border-radius:5px;" }
+   ))
+    {
+        @Html.Hidden("TypeDisplay", typeDisplay)
+        <div class="row">
+            <div class="col-md-4">
+                <div id="DropdownCategory">
+                    @{
+                        Html.RenderAction("_DropdownCategory", "BookCategories", new { Area = "Manage", categoryLv1 = ViewBag.CategoryLv1Id, categoryLv2 = ViewBag.CategoryLv2Id });
+                    }
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="CategoryAuthorId">Tác giả</label>
+                    <div class="">
+                        @Html.DropDownList("CategoryAuthorId", null, "---Chọn tác giả---", htmlAttributes: new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="CategoryAuthorId">Nhà xuất bản - Nhà phát hành</label>
+                    <div class="">
+                        @Html.DropDownList("CategoryPublisherId", null, "---Chọn nhà xuất bản - nhà phát hành---", htmlAttributes: new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Search">Từ khóa</label>
+                    <div class="">
+                        <input type="text" name="Search" class="form-control" id="Search" value="@search" />
+                    </div>
+                </div>
+            </div>
+            @Html.Hidden("pageSize", Model.PageSize)
+        </div>
+
+        <div style="text-align:center">
+            <button type="submit" class="btn btn-danger btn-sm"><i class=" glyphicon glyphicon-search"></i> Lọc</button>
+            &nbsp;<i style="color:green">Không chọn gì để hiện tất cả!</i>
+        </div>
+    }    
+    <div class="clearfix"></div>
+    @if (Model.Count > 0)
+    {
+        <div class="row20" style="margin-top:15px">
+            <div style="margin-bottom:10px; text-align:right">
+                @using (Ajax.BeginForm("_GetProductByPage", "Products", FormMethod.Post,
+                   new AjaxOptions()
+                   {
+                       OnSuccess = "OnSuccess",
+                   },
+                new { @id = "FormTypeDisplay", style = "display:inline-block" }
+                ))
+                {
+                    if (ca > 0)
+                    {
+                        @Html.Hidden("CategoryAuthorId", ca)
+                    }
+                    if (cp > 0)
+                    {
+                        @Html.Hidden("CategoryPublisherId", cp)
+                    }
+                    if (c1 > 0)
+                    {
+                        @Html.Hidden("CategoryLv1Id", c1)
+                    }
+                    if (c2 > 0)
+                    {
+                        @Html.Hidden("CategoryLv2Id", c2)
+                    }
+                    @Html.Hidden("pageSize", Model.PageSize)
+                    @Html.Hidden("Search", s)
+                    <select onchange="document.getElementById('btnSubmitFormTypeDisplay').click()" name="TypeDisplay" class="form-control" style="display:inline-block;width:initial">
+                        @if (ViewBag.TypeDisplay == 1)
+                        {
+                            <option value="1" selected>Xem dạng bảng</option>
+                        }
+                        else
+                        {
+                            <option value="1">Xem dạng bảng</option>
+                        }
+                        @if (ViewBag.TypeDisplay == 2)
+                        {
+                            <option value="2" selected>Xem dạng ảnh</option>
+                        }
+                        else
+                        {
+                            <option value="2">Xem dạng ảnh</option>
+                        }
+                    </select>
+                    <button style="width:0px;height:0px;padding:0px;border:none" id="btnSubmitFormTypeDisplay" type="submit"></button>
+                }
+
+                @using (Ajax.BeginForm("_GetProductByPage", "Products", FormMethod.Post,
+                   new AjaxOptions()
+                   {
+                       OnSuccess = "OnSuccess",
+                   },
+                new { @id = "FormPageSize", style = "display:inline-block" }
+                ))
+                {
+                    if (ca > 0)
+                    {
+                        @Html.Hidden("CategoryAuthorId", ca)
+                    }
+                    if (cp > 0)
+                    {
+                        @Html.Hidden("CategoryPublisherId", cp)
+                    }
+                    if (c1 > 0)
+                    {
+                        @Html.Hidden("CategoryLv1Id", c1)
+                    }
+                    if (c2 > 0)
+                    {
+                        @Html.Hidden("CategoryLv2Id", c2)
+                    }
+                    @Html.Hidden("TypeDisplay", typeDisplay)
+                    @Html.Hidden("Search", s)
+                    <span style="margin-left:50px;">
+                        <span>Số sách / Trang </span><select style="display:inline-block;width:initial" onchange="document.getElementById('btnSubmitFormPageSize').click()" class="form-control" name="pageSize">
+                            @if (Model.PageSize == 10)
+                            {
+                                <option selected value="10">10</option>
+                            }
+                            else
+                            {
+                                <option value="10">10</option>
+                            }
+                            @if (Model.PageSize == 25)
+                            {
+                                <option selected value="25">25</option>
+                            }
+                            else
+                            {
+                                <option value="25">25</option>
+                            }
+                            @if (Model.PageSize == 50)
+                            {
+                                <option selected value="50">50</option>
+                            }
+                            else
+                            {
+                                <option value="50">50</option>
+                            }
+                            @if (Model.PageSize == 100)
+                            {
+                                <option selected value="100">100</option>
+                            }
+                            else
+                            {
+                                <option value="100">100</option>
+                            }
+                        </select>
+                    </span>
+                    <button style="width:0px;height:0px;padding:0px;border:none" id="btnSubmitFormPageSize" type="submit"></button>
+                }
+
+            </div>
+            <hr />
+            <div class="clearfix"></div>
+            @if (ViewBag.isSearch)
+            {
+                <span style="margin:0px 10px;color:red;font-size:16px;">Có @Model.TotalItemCount sách cho phép lọc trên</span>
+            }
+            else
+            {
+                <span style="margin:0px 10px;color:red;font-size:16px;">@(Model.LastItemOnPage - Model.FirstItemOnPage + 1) sách trong tổng số @Model.TotalItemCount sách</span>
+            }
+            <span style="float:right;margin-right:10px;">
+                @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Products",
+     new
+     {
+         Area = "Manage",
+         Search = search,
+         pageNumber = page,
+         pageSize = Model.PageSize,
+         CategoryLv1Id = ViewBag.CategoryLv1Id,
+         CategoryLv2Id = ViewBag.CategoryLv2Id,
+         CategoryAuthorId = categoryAuthorId,
+         CategoryPublisherId = categoryPublisherId,
+         TypeDisplay= ViewBag.TypeDisplay
+     }),
+    PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+        new PagedListRenderOptions()
+        {
+            MaximumPageNumbersToDisplay = 15,
+        },
+        new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "ContentIndex"
+        }))
+            </span>
+            <div class="clearfix"></div>
+            <div id="BOOKS">
+                @if (ViewBag.TypeDisplay == 2)
+                {
+                    foreach (var product in Model)
+                    {
+                        <div class="col20">
+                            <div class="thumbnail" style="">
+                                <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })" title="Xem chi tiết"><img src="@product.AvatarLink" alt="Ảnh @product.ProductName" style="width: 100%;height: 200px;"></a>
+                                <div class="caption">
+                                    <div style="height:120px;overflow:auto">
+                                        <h4>
+                                            <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })">@product.ProductName</a>
+                                        </h4>
+                                        <p>
+                                            <span>Giá bán: @product.Price.ToString("c", new CultureInfo("vi-VN"))</span><br />
+                                            <span>Giá bìa: @((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })" class="btn btn-success btn-sm">Xem | Chỉnh sửa</a>
+                                        @using (Html.BeginForm("Delete", "Products", new { id = product.ProductId }, FormMethod.Post, new { style = "display:inline", @id = "FormDeleteProduct_" + product.ProductId }))
+                                        {
+                                            <button type="button" onclick="SubmitFormDeleteProduct(@product.ProductId)" title="Xóa" class="btn btn-danger btn-sm">Xóa</button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <table id="TableBook" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th data-orderable="false">
+                                </th>
+                                <th>
+                                    Tên sách
+                                </th>
+                                <th>Giá bán</th>
+                                <th>Giá bìa</th>
+                                <th>Danh mục cấp 1</th>
+                                <th>Danh mục cấp 2</th>
+                                <th>Tác giả</th>
+                                <th>NXB-NPH</th>
+                                <th data-orderable="false"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model)
+                            {
+                                <tr>
+                                    <td style="width:100px">
+                                        <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })" title="Xem chi tiết"><img src="@product.AvatarLink" alt="Ảnh @product.ProductName" style="width: 100%;height:120px;"></a>
+                                    </td>
+                                    <td style="width:120px"><a href="@Url.Action("Edit", "Products", new { id = product.ProductId })">@product.ProductName</a></td>
+                                    <td style="width:100px" data-order="@product.Price">@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                                    <td style="width:100px" data-order="@product.CoverPrice">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                                    <td style="width:100px">@product.CategoryLv1.CategoryLv1Name</td>
+                                    <td style="width:100px">@(product.CategoryLv2 != null ? product.CategoryLv2.CategoryLv2Name : "")</td>
+                                    <td style="width:100px">@(product.CategoryByAuthor != null ? product.CategoryByAuthor.CategoryAuthorName : "")</td>
+                                    <td style="width:100px">@(product.CategoryByPublisher != null ? product.CategoryByPublisher.CategoryByPublisherName : "")</td>
+                                    <td>
+                                        <a style="width:110px" href="@Url.Action("Edit", "Products", new { id = product.ProductId })" class="btn btn-success btn-sm">Xem | Chỉnh sửa</a>
+                                        <hr style="margin:10px 0px" />
+                                        @using (Html.BeginForm("Delete", "Products", new { id = product.ProductId }, FormMethod.Post, new { style = "display:inline", @id = "FormDeleteProduct_" + product.ProductId }))
+                                        {
+                                            <button style="width:110px" type="button" onclick="SubmitFormDeleteProduct(@product.ProductId)" title="Xóa" class="btn btn-danger btn-sm">Xóa</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div style="float:right">
+            @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Products",
+                new {
+                    Area = "Manage",
+                    Search =search ,
+                    pageNumber = page,                    
+                    categoryLv1Id = ViewBag.CategoryLv1Id,
+                    CategoryLv2Id = ViewBag.CategoryLv2Id,
+                    CategoryAuthorId = categoryAuthorId,
+                    CategoryPublisherId = categoryPublisherId,
+                    TypeDisplay = ViewBag.TypeDisplay,
+                    pageSize=Model.PageSize
+                }),
+               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+               new PagedListRenderOptions()
+               {
+                   MaximumPageNumbersToDisplay = 15,
+               },
+               new AjaxOptions()
+               { HttpMethod = "POST",
+                   UpdateTargetId = "ContentIndex"
+               }))
+        </div>
+        <div class="clearfix"></div>
+    }
+    else
+    {
+        <p style="color:red;margin-top:15px;">Không có sách nào!</p>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('#TableBook').DataTable({
+            "dom": '<"top">t<"bottom"><"clear">',
+            "paging": false
+        });
+    })
+</script>

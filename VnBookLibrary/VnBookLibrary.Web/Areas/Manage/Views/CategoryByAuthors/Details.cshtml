@@ -1,0 +1,35 @@
+﻿@model VnBookLibrary.Model.Entities.CategoryByAuthor
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CategoryByAuthor</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CategoryAuthorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CategoryAuthorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DescriptionAuthor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DescriptionAuthor)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CategoryAuthorId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

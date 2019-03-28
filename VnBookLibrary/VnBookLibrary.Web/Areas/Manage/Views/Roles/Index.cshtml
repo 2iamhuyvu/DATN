@@ -1,0 +1,114 @@
+﻿@using VnBookLibrary.Model.Entities;
+@using System.Collections.Generic;
+@using VnBookLibrary.Web.Areas.Manage.Customizes
+@{
+    ViewBag.Title = "Danh sách các quyền";
+    List<GroupRole> groupRoles = (List<GroupRole>)ViewData["ListGroupRole"];
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+    var alowDeteteRole = ManageSession.HasRole("DELETE_ROLE");
+    var alowEditRole = ManageSession.HasRole("EDIT_ROLE");
+    var alowCreateRole = ManageSession.HasRole("CREATE_ROLE");
+    var alowCreateGroup = ManageSession.HasRole("CREATE_GROUPROLE");
+    var alowGroup = ManageSession.HasRole("CREATE_GROUPROLE");
+}
+
+<h3>
+    Danh sách quyền theo nhóm
+    @{
+        if (alowCreateGroup)
+        {
+            <a style="float:right" class="btn btn-sm btn-success" href="@Url.Action("CreateGroup","Role",new { Area="Manage"})">Thêm nhóm quyền</a>
+        }
+        else
+        {
+            <a style="float:right" class="btn btn-sm btn-success" title="Bạn không có quyền này" href="javascript:void(0)">Thêm nhóm quyền</a>
+        }
+    }
+</h3>
+<div class="clearfix"></div>
+<div>
+    @foreach (var groupRole in groupRoles)
+    {
+        <div class="panel panel-primary" idGroupRole="@groupRole.GroupRoleId">
+            <div class="panel-heading">
+                <h4 style="cursor:pointer" title="Xem" idGroupRole="@groupRole.GroupRoleId" class="panel-title">Nhóm quyền @groupRole.GroupRoleName <i style="float:right" class="glyphicon glyphicon-menu-left"></i></h4>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body" style="padding-top:0px;display:none">
+                <table class="table" style="margin:0px;">
+                    <tr>
+                        <th>Mã quyền</th>
+                        <th>Tên quyền</th>                        
+                        <th>Mô tả</th>
+                        <th></th>
+                    </tr>
+                    @if (groupRole.Roles.Count > 0)
+                    {
+                        foreach (var role in groupRole.Roles)
+                        {
+                            <tr>
+                                <td>@role.RoleCode</td>
+                                <td>@role.RoleName</td>                                
+                                <td>@role.Description</td>
+                                <td>
+                                    @{
+                                        if (alowEditRole)
+                                        {
+                                            <a title="Sửa" href="@Url.Action("Edit", "Roles", new { Area = "Manage", id = role.RoleCode })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a title="Bạn không có quyền sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                                        }
+
+                                        if (alowDeteteRole)
+                                        {
+                                            <text>
+                                                @using (Html.BeginForm("Delete", "Roles", new { id = role.RoleCode, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType", style = "display:inline-block" }))
+                                                {
+                                                    <a href="javascript:void(0)" onclick="SubmitFormDeleteEmployeeType()" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                }
+                                            </text>
+                                        }
+                                        else
+                                        {
+                                            <text>
+                                                <a href="javascript:void(0)" title="Bạn không có quyền xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                            </text>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Chưa có quyền nào!</td>
+                        </tr>
+                    }
+
+                </table>
+                <br />
+                @if (alowCreateRole)
+                {
+                    <a class="btn btn-sm btn-danger" href="@Url.Action("Create", "Roles", new { Area = "Manage", idGroup = groupRole.GroupRoleId })">Thêm quyền cho nhóm này</a>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-danger" style="cursor:not-allowed" title="Bạn không có quyền này" href="javascript:void(0)">Thêm quyền cho nhóm này</a>
+                }
+            </div>
+        </div>
+    }
+</div>
+@section scripts{
+    <script>
+        $(".panel-title").click(function (e) {
+            let idGroupRole = $(this).attr("idGroupRole");
+            $(".panel[idGroupRole='" + idGroupRole + "'] .panel-body").slideToggle();
+            $(".panel[idGroupRole='" + idGroupRole + "'] .panel-title i").toggleClass("glyphicon-menu-left");
+            $(".panel[idGroupRole='" + idGroupRole + "'] .panel-title i").toggleClass("glyphicon-menu-down");
+        })
+    </script>
+}

@@ -1,0 +1,43 @@
+﻿@using VnBookLibrary.Web.Models;
+@using System.Globalization;
+@{
+    List<CartVM> listCart = ViewBag.ListCart;
+}
+@if (listCart.Count > 0)
+{
+    decimal total = 0;
+    <ul class="header-cart-wrapitem">
+        @foreach (var cartVM in listCart)
+        {
+            total += Convert.ToDecimal(cartVM.Quantity * cartVM.Product.Price);
+            <li class="header-cart-item" productId="@cartVM.Product.ProductId" style="border-bottom:1px solid #ccc">
+                <div style="height:90px" class="header-cart-item-img" title="Xóa" onclick="DeleteFromCart(@cartVM.Product.ProductId,@cartVM.Quantity)">
+                    <img src="@cartVM.Product.AvatarLink" alt="@cartVM.Product.ProductName">
+                </div>
+
+                <div class="header-cart-item-txt">
+                    <a style="height:15px;line-height:15px;overflow:hidden" title="@cartVM.Product.ProductName" href="@Url.Action("Detail","Home",new {productId=cartVM.Product.ProductId })" class="header-cart-item-name">
+                        @cartVM.Product.ProductName
+                    </a>
+
+                    <span class="header-cart-item-info">
+                        @cartVM.Quantity x @cartVM.Product.Price.ToString("c", new CultureInfo("vi-VN"))
+                    </span>
+                </div>
+            </li>
+        }
+    </ul>
+    <div class="header-cart-total">
+        Tổng tiền: <span id="totalPrice">@total.ToString("c", new CultureInfo("vi-VN"))</span>
+    </div>
+
+    <div class="header-cart-buttons">
+        <a href="@Url.Action("ViewCart","Home")" class="btn btn-danger btn-lg" style="color:black;width:100%">
+            Xem giỏ hàng
+        </a>
+    </div>   
+}
+else
+{
+    <p style="color:red">Chưa có sách nào trong giỏ hàng!</p>
+}

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.Product>
+
+@{
+    ViewBag.Title = "Quản lý sách | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+<div id="ContentIndex">
+    @{Html.RenderAction("_GetProductByPage", "Products", new
+        {
+            Area = "Manage",
+            search = "",
+            CategoryLv1Id = ViewBag.CategoryLv1Id,
+            CategoryLv2Id = ViewBag.CategoryLv2Id,
+            CategoryAuthorId = ViewBag.CategoryAuthorId,
+            CategoryPublisherId = ViewBag.CategoryPublisherId,
+            pageNumber = 1,
+            pageSize = 25
+        });}
+</div>

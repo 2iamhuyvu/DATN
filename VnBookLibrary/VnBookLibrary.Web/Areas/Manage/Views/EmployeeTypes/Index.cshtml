@@ -1,0 +1,116 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.EmployeeType>
+@using VnBookLibrary.Web.Areas.Manage.Customizes;
+@{
+    ViewBag.Title = "Danh sách loại nhân viên";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+    var alowDeleteType = ManageSession.HasRole("DELETE_EMPLOYEETYPE");
+    var alowEditType = ManageSession.HasRole("EDIT_EMPLOYEETYPE");
+    var alowCreateType = ManageSession.HasRole("CREATE_EMPLOYEETYPE");
+    var alowRole_Division = ManageSession.HasRole("ROLE_DIVISION");
+}
+<style>
+    th {
+        text-align: center;
+    }
+
+    td:last-child {
+        text-align: center;
+    }
+</style>
+<h3>Danh sách loại nhân viên  @Html.ActionLink("Thêm mới", "Create", new { Area = "Manage" }, new { @class = "btn btn-danger", style = "float:right" })</h3>
+<div class="clearfix"></div>
+<hr style="margin-top:5px;" />
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>
+            Tên loại nhân viên
+        </th>
+        <th>
+            Mô tả
+        </th>
+        <th>Sửa | Xóa | Phân quyền</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            @if (item.IsAdministrator ?? false == true)
+            {
+                <td></td>
+            }
+            else
+            {
+                <td>
+                    @{
+                        if (alowEditType)
+                        {
+                            <a title="Sửa" href="@Url.Action("Edit","EmployeeTypes",new { Area="Manage",id = item.EmployeeTypeId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                        }
+                        else
+                        {
+                            <a title="Bạn không có quyền sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                        }
+
+                        if (alowDeleteType)
+                        {
+                            <text>
+                                @using (Html.BeginForm("Delete", "EmployeeTypes", new { id = item.EmployeeTypeId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType_"+ item.EmployeeTypeId, style = "display:inline-block" }))
+                                {
+                                    <a href="javascript:void(0)" onclick="SubmitFormDeleteEmployeeType(@item.EmployeeTypeId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                }
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                <a href="javascript:void(0)" title="Bạn không có quyền xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                            </text>
+                        }
+                        if (alowRole_Division)
+                        {
+                            <text>
+                                <a href="@Url.Action("RoleDivision","Roles",new { Area="Manage",idType=item.EmployeeTypeId})" title="Phân quyền"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                <a href="javascript:void(0)" title="Bạn không có quyền phân quyền" style="cursor:not-allowed"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
+                            </text>
+                        }
+                    }
+
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+@section scripts{
+    <script>
+        function SubmitFormDeleteEmployeeType(id) {
+            var x = Lobibox.confirm({
+                msg: "Bạn có chắc chắn xóa không",
+                buttons: {
+                    no: {
+                        text: "Không", closeOnClick: true
+                    },
+                    yes: {
+                        text: "Có", closeOnClick: true
+                    }
+                },
+                callback: function ($this, type) {
+                    if (type === 'yes') {
+                        $("#FormDeleteEmployeeType_"+id).submit();
+                    }
+                }
+            });            
+        }
+    </script>
+}

@@ -1,0 +1,385 @@
+﻿@using VnBookLibrary.Web.Models;
+@using VnBookLibrary.Model.Entities;
+@using System.Globalization;
+@using VnBookLibrary.Repository.Commons;
+@{
+    List<CartVM> listCart = new List<CartVM>();
+    if (Session[Constants.CART_SESSION] != null)
+    {
+        listCart = (List<CartVM>)Session[Constants.CART_SESSION];
+    }
+    Customer customer = new Customer();
+    if (Session[Constants.CUSTOMER_SESSION] != null)
+    {
+        customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+    }
+    var total = 0;
+}
+<style>
+
+    td {
+        padding-right: 20px;
+    }
+
+        td:first-child {
+            width: 100px !important;
+            padding: 10px !important;
+        }
+</style>
+@if (listCart.Count > 0)
+{
+    <section class="cart bgwhite p-b-50">
+        <div class="container">
+            <!-- Cart item -->
+            <div class="container-table-cart pos-relative">
+                <div class="wrap-table-shopping-cart bgwhite">
+                    <table class="table-shopping-cart">
+                        <thead>
+                            <tr class="table-head">
+                                <th class=""></th>
+                                <th class="">Tên sách</th>
+                                <th class="">Đơn giá</th>
+                                <th class="">Số lượng</th>
+                                <th class="">Thành tiền</th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in listCart)
+                            {
+                                total += Convert.ToInt32(item.Quantity * item.Product.Price);
+                                <tr class="table-row" productid="@item.Product.ProductId">
+                                    <td class="">
+                                        <img src="@item.Product.AvatarLink" alt="@item.Product.ProductName">
+                                    </td>
+                                    <td style="width:500px;" class="">@item.Product.ProductName</td>
+                                    <td class="">@item.Product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                                    <td class="">
+
+                                        <div class="flex-w bo5 of-hidden w-size17">
+
+                                            <button type="button" onclick="DownQuantity(@item.Product.ProductId)" class="btn-num-product-down color1 flex-c-m size7 bg8 eff2">
+                                                <i class="fs-12 fa fa-minus" aria-hidden="true"></i>
+                                            </button>
+
+                                            <input onchange="ChangeQuantity(@item.Product.ProductId)" class="size8 m-text18 t-center num-product quantity-product" type="number" name="num-product1" value="@item.Quantity">
+
+                                            <button type="button" class="btn-num-product-up color1 flex-c-m size7 bg8 eff2" onclick="UpQuantity(@item.Product.ProductId)">
+                                                <i class="fs-12 fa fa-plus" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td class="">@(Convert.ToInt32(item.Product.Price * item.Quantity).ToString("c", new CultureInfo("vi-VN")))</td>
+                                    <td>
+                                        <button type="button" title="Xóa khỏi giỏ hàng" class="btn btn-danger" onclick="DeleteFromCart(@item.Product.ProductId,@item.Quantity)"><i class="fa fa-trash fa-lg"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <form id="ConfirmBuyProduct">
+                <!-- Total -->
+                <div class="" style="border:1px solid #ccc; border-radius:5px;padding:10px;margin-top:50px;">
+                    <h5 class="m-text20 p-b-24">
+                        Thông tin khách hàng
+                    </h5>
+                    <div class="row">
+                        @if (customer != null)
+                        {
+                            Html.Hidden("CustommerId", customer.CustomerId);
+                        }
+                        else
+                        {
+                            Html.Hidden("CustommerId");
+                        }
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Họ và tên <span style="color:red">*</span></label>
+                                @if (customer != null)
+                                {
+                                    <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" value="@customer.CustomerName" name="CustomerName" id="CustomerName" />
+                                }
+                                else
+                                {
+                                    <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" name="CustomerName" id="CustomerName" />
+                                }
+                            </div>
+                            <div class="form-group">
+                                <label>Điện thoại <span style="color:red">*</span></label>
+                                @if (customer != null)
+                                {
+                                    <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" value="@customer.Phone" name="CustomerPhone" id="CustomerPhone" />
+                                }
+                                else
+                                {
+                                    <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" name="CustomerPhone" id="CustomerPhone" />
+                                }
+                            </div>
+                            <div class="form-group">
+                                <label>Email </label>
+                                @if (customer != null)
+                                {
+                                    <input style="max-width:100%!important;border:1px solid #ccc!important" type="text" class="form-control" value="@customer.Email" name="CustomerEmail" id="CustomerEmail" />
+                                }
+                                else
+                                {
+                                    <input style="max-width:100%!important;border:1px solid #ccc!important" type="text" class="form-control" name="CustomerEmail" id="CustomerEmail" />
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tỉnh thành <span style="color:red">*</span></label>
+                                <select name="Province" id="Province" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quận/Huyện <span style="color:red">*</span></label>
+                                <select name="District" id="District" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control">
+                                    <option value="">---Chọn Quận/Huyện---</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Phường/Xã <span style="color:red">*</span></label>
+                                <select name="Ward" id="Ward" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control">
+                                    <option value="">---Chọn Xã/Phường---</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Số nhà/đường <span style="color:red">*</span></label>
+                                <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" name="DetailAddress" id="DetailAddress" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <!--  -->
+                    <div class="flex-w flex-sb-m p-t-26 p-b-30 col-md-6">
+                        <span class="m-text22 w-size19 w-full-sm" style="width:100px!important">
+                            Tổng tiền:
+                        </span>
+                        <span class="m-text21 w-size20 " style="color:red">
+                            @total.ToString("c", new CultureInfo("vi-VN"))
+                        </span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="size15 trans-0-4">
+                        <!-- Button -->
+                        <button type="button" onclick="SubmitConfirmBuyProduct()" style="background:#e65540;" class="flex-c-m sizefull bg1 bo-rad-23 hov1 s-text1 trans-0-4">
+                            Xác nhận mua hàng
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script>
+        LoadProvince();
+        function ValidateBuyProduct() {
+            $("#ConfirmBuyProduct").validate({
+                rules: {
+                    CustomerName: {
+                        notNull: true,
+                    },
+                    CustomerPhone: {
+                        required: true,
+                        regex: "^0{1}[1-9]{1}[0-9]{8}$",
+                    },
+                    CustomerEmail: {
+                        email: true,
+                    },
+                    Province: {
+                        notNull: true,
+                    },
+                    District: {
+                        notNull: true,
+                    },
+                    Ward: {
+                        notNull: true,
+                    }
+                    ,
+                    DetailAddress: {
+                        notNull: true,
+                    }
+                },
+                messages: {
+                    CustomerName: {
+                        notNull: "Không được để trống",
+                    },
+                    CustomerPhone: {
+                        required: "Không được để trống",
+                        regex: "Định dạng số điện thoại không đúng",
+                    },
+                    CustomerEmail: {
+                        email: "Không đúng định dạng email!",
+                    },
+                    Province: {
+                        notNull: "Chọn Tỉnh/TP",
+                    },
+                    District: {
+                        notNull: "Chọn Quận/Huyện",
+                    },
+                    Ward: {
+                        notNull: "Chọn Xã/Phường",
+                    }
+                    ,
+                    DetailAddress: {
+                        notNull: "Không được để trống",
+                    }
+                }
+            });
+        }
+        function LoadProvince() {
+            $.ajax({
+                url: '@Url.Action("GetProvince","Home")',
+                type: 'POST',
+                dataType:'json',
+                success: function (provinces) {                                        
+                    let html = `<option value="" selected>---Chọn Tỉnh/TP---</option>`;
+                    $.each(provinces, function (index, province) {                        
+                        html += `<option value="${province.ProvinceId}">${province.ProvinceName}</option>`
+                    })
+                    $("#Province").html(html)
+                },
+            });
+        }
+        $("#Province").change(function () {
+            LoadDistrict();
+            $("#Ward").html('<option value="" selected>---Chọn Xã/Phường---</option>')
+        })
+        $("#District").change(function () {
+            LoadWard();
+        })
+         function ViewBoxCart() {
+            $.ajax({
+                url: '@Url.Action("_PartialViewCart", "Home")',
+                type: 'POST',
+                dataType: 'html',
+                success: function (html) {
+                    $("#dropdownCart").html(html);
+                }
+            });
+        }
+        function LoadDistrict() {
+            let provinceId = $("#Province").val();
+            if (provinceId != "" && provinceId!=null) {
+                $.ajax({
+                    url: '@Url.Action("GetDistrictByProvince", "Home")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify({ "provinceId": provinceId }),
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (districts) {
+                        let html = `<option value="" selected>---Chọn Quận/Huyện---</option>`;
+                        $.each(districts, function (index, district) {
+                            html += `<option value="${district.DistrictId}">${district.DistrictName}</option>`
+                        })
+                        $("#District").html(html)
+                    },
+                });
+            }
+        }
+        function LoadWard() {
+            let districtId = $("#District").val();
+            if (districtId != "" && districtId!=null) {
+                $.ajax({
+                    url: '@Url.Action("GetWardByDistrict", "Home")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify({ "districtId": districtId }),
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (wards) {                        
+                        let html = `<option value="" selected>---Chọn Xã/Phường---</option>`;
+                        $.each(wards, function (index, ward) {                            
+                            html += `<option value="${ward.WardId}">${ward.WardName}</option>`
+                        })
+                        $("#Ward").html(html)
+                    },
+                });
+            }
+        }
+        function SubmitConfirmBuyProduct() {
+            ValidateBuyProduct();
+            if ($("#ConfirmBuyProduct").valid()) {
+                let data = {
+                    "CustommerId": $("#CustommerId").val(),
+                    "CustomerName": $("#CustomerName").val(),
+                    "CustomerPhone": $("#CustomerPhone").val(),
+                    "CustomerEmail": $("#CustomerEmail").val(),
+                    "Address": $("#DetailAddress").val() + " - " + $("#Ward option:selected").text() + " - " + $("#District option:selected").text() + " - Tỉnh/Tp " + $("#Province option:selected").text(),
+                };
+                $.ajax({
+                    url: '@Url.Action("ConfirmBuyProduct","Home")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (rs) {
+                        if (rs.Status == true) {
+                            Lobibox.notify('success', {
+                                size: 'mini',
+                                rounded: true,
+                                delayIndicator: false,
+                                msg: rs.Message,
+                                sound: false,
+                            });
+                            $("#listCartCount").text("0");
+                        }
+                        else {
+                            Lobibox.notify('warning', {
+                                size: 'mini',
+                                rounded: true,
+                                delayIndicator: false,
+                                msg: rs.Message,
+                                sound: false,
+                            });
+                        }
+                    },
+                });
+                ViewBoxCart();
+                UpdateContentViewCart();
+            }
+        }
+        function DownQuantity(productId) {
+            let qty = $(".table-shopping-cart tr[productid=" + productId + "] td input.quantity-product").val();
+            if (qty > 1) {
+                $(".table-shopping-cart tr[productid=" + productId + "] td input.quantity-product").val(parseInt(qty)-1);
+            }
+            ChangeQuantity(productId);
+        }
+        function UpQuantity(productId) {
+            let qty = $(".table-shopping-cart tr[productid=" + productId + "] td input.quantity-product").val();
+            $(".table-shopping-cart tr[productid=" + productId + "] td input.quantity-product").val(parseInt(qty)+1);
+            ChangeQuantity(productId)
+        }
+        function ChangeQuantity(productId) {
+            let qty = $(".table-shopping-cart tr[productid=" + productId + "] td input.quantity-product").val();
+            if (!isNaN(qty) && parseInt(qty) > 0) {
+                $.ajax({
+                    url: '@Url.Action("ChangeQuantity", "Home")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify({ "productId": productId, "quantity": qty }),
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (rs) {
+                        $("#listCartCount").text(rs.Param);
+                        let count = parseInt($("#listCartCount").text());
+                        if (count == 0) {
+                            $("#dropdownCart").removeClass("show-header-dropdown");
+                        }
+                    }
+                });
+            }
+            ViewBoxCart();
+            UpdateContentViewCart();
+        }
+    </script>
+}
+else
+{
+    <h4 class="p-b-50" style="color:red">Chưa có sách nào trong giỏ hàng!</h4>
+}
+

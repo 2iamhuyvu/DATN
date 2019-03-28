@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "Giỏ hàng | VnBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    label.error {
+        color: red;
+        font-size: 13px;
+        font-weight: normal
+    }
+</style>
+<div id="ContentViewCart">
+    @{Html.RenderAction("_ViewCart", "Home");}
+</div>
+@section scripts{
+    <script>               
+        $(document).ready(function () {
+            $.validator.addMethod(
+                "regex",
+                function (value, element, regexp) {
+                    var re = new RegExp(regexp);
+                    return this.optional(element) || re.test(value);
+                },
+                "Please check your input."
+            );
+            $.validator.addMethod(
+                "notNull",
+                function (value, element, kt) {
+                    if (!kt)
+                        return false;
+                    else {
+                        return (value !== null && value.trim() !== "");
+                    }
+                },
+                "Please check your input."
+            );                                        
+        })
+    </script>
+}

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.News>
+
+@{
+    ViewBag.Title = "Danh sách bài viết | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h3>Danh sách bài viết <a style="float:right" href="@Url.Action("Create","News",new {Area="Manage"})" class="btn btn-success">Thêm bài viết</a></h3>
+<div class="clearfix"></div>
+<hr />
+<table class="table table-bordered table-striped" id="TableNews">
+    <thead>
+        <tr>
+            <th>
+                Bài viết
+            </th>
+            <th>
+                Ngày đăng bài
+            </th>
+            <th data-orderable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NewsTitle)
+                </td>
+                <td data-order="@(Html.Raw(Json.Encode(item.PostDate)).ToString())">
+                    @Html.DisplayFor(modelItem => item.PostDate)
+                </td>
+                <td style="text-align:center">
+                    <a class="btn btn-info btn-sm" href="@Url.Action("Edit", "News", new {Area="Manage",id=item.NewsId})">Xem | Sửa</a>&nbsp;
+                    @using (Html.BeginForm("Delete", "News", new { Area = "Manage", id = item.NewsId }, FormMethod.Post, new { style = "display:inline-block", onsubmit = "return confirm('Bạn có thực sự muốn xóa không?')" }))
+                    {
+                        <button class="btn btn-default btn-sm" style="cursor:pointer" type="submit"><i style="color:red" class="glyphicon glyphicon-trash"></i></button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('#TableNews').DataTable({
+            "order": [[1, "desc"]],
+            "language": {
+                "sProcessing": "Đang xử lý...",
+                "sLengthMenu": "Số bài viết _MENU_",
+                "sZeroRecords": "Không có bài viết nào",
+                "sInfo": "Từ bài viết _START_ đến bài viết _END_ trong tổng số _TOTAL_ bài viết",
+                "sInfoEmpty": "Không có bài viết nào",
+                "sInfoFiltered": "(được lọc từ _MAX_ bài viết)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm kiếm: ",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "<i class='fa fa-angle-double-left fa-lg'></i>",
+                    "sPrevious": "<i class='fa fa-angle-left fa-lg'></i>",
+                    "sNext": "<i class='fa fa-angle-right fa-lg'></i>",
+                    "sLast": "<i class='fa fa-angle-double-right fa-lg'></i>"
+                }
+            },
+            "pagingType": "full_numbers",
+            "stateSave": true
+        });
+    })
+</script>

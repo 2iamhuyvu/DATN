@@ -1,0 +1,84 @@
+﻿@using VnBookLibrary.Model.Entities;
+@{
+    List<CategoryLv1> categoryLv1s = ViewBag.ListCategoryLv1;
+    List<CategoryByAuthor> categoryByAuthors = ViewBag.ListCategoryAuthor;
+    List<CategoryByPublisher> categoryByPublishers = ViewBag.ListCategoryPublisher;
+}
+<style>
+    .partialMenu a:hover {
+        border-bottom: 1px solid #e65540;
+    }
+
+    .partialMenu a {
+        font-size: 13px;
+        border-bottom: 1px solid transparent;
+    }
+    /*#MENU:hover .partialMenu{
+        display:block!important;
+    }*/
+</style>
+<div class="" id="MENU" onclick="ToggleMenu()" style="height:100%;display: block;position:absolute;left:200px">
+    <p style="color:#333333; height:100%;line-height:80px;font-size:20px;cursor:pointer">Danh mục <i id="iconmenu" style="font-size:16px;" class="glyphicon glyphicon-menu-left"></i></p>
+    <div class="partialMenu" style="display:none;position:absolute;left:-150px;top:81px;border:1px solid #ccc;border-radius:5px;">
+        <div style="width:1250px;background:#e2ffc3;padding:10px;box-sizing:border-box;border-radius:5px;max-height:500px;overflow
+    :auto">
+            <div class="row">
+                @foreach (var lv1 in categoryLv1s)
+                {
+                    <div class="col-md-3 col-lg-3">
+                        <div style="margin-bottom:25px;">
+                            <div style="margin-bottom:5px;"><a style="display:inline-block" href="@Url.Action("Index","Home",new { CategoryLv1Id =lv1.CategoryLv1Id})"><h4 style="font-size:14px;font-weight:bold">@lv1.CategoryLv1Name</h4></a></div>
+                            @if (lv1.CategoryLv2s != null)
+                            {
+                                <div style="padding-left:10px;box-sizing:border-box;height:200px;overflow:auto">
+                                    @foreach (var lv2 in lv1.CategoryLv2s)
+                                    {
+                                        <div><a style=" display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryLv2Id =lv2.CategoryLv2Id})">@lv2.CategoryLv2Name</a></div>
+                                    }
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                }
+                <div class="col-md-3 col-lg-3">
+                    <div style="margin-bottom:20px;">
+                        <div style="margin-bottom:10px;"><a href="javascript:void(0)"><h4 style="font-size:14px;font-weight:bold">Sách theo tác giả</h4></a></div>
+                        @if (categoryByAuthors != null)
+                        {
+                            <div style="padding-left:15px;box-sizing:border-box;height:200px;overflow:auto">
+                                @foreach (var author in categoryByAuthors)
+                                {
+                                    <div><a style=" display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryAuthorId =author.CategoryAuthorId})">@author.CategoryAuthorName</a></div>
+                                }
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <div style="margin-bottom:20px;">
+                        <div style="margin-bottom:10px;"><a href="javascript:void(0)"><h4 style="font-weight:bold;font-size:14px">Sách theo NXB - NPH</h4></a></div>
+                        @if (categoryByAuthors != null)
+                        {
+                            <div style="padding-left:15px;box-sizing:border-box;height:200px;overflow:auto">
+                                @foreach (var publish in categoryByPublishers)
+                                {
+                                    <div><a style=" display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryPublisherId =publish.CategoryByPublisherId})">@publish.CategoryByPublisherName</a></div>
+                                }
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ToggleMenu() {
+        $(".partialMenu").slideToggle();        
+        $("#iconmenu").toggleClass("glyphicon-menu-left");
+        $("#iconmenu").toggleClass("glyphicon-menu-down");
+    }
+</script>

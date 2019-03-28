@@ -1,0 +1,210 @@
+﻿@using VnBookLibrary.Model.Entities;
+@using PagedList.Mvc
+@using System.Globalization;
+@using VnBookLibrary.Repository.Commons;
+@model PagedList.IPagedList<Bill>
+<style>
+    ul.pagination {
+        margin: 0px !important;
+    }
+</style>
+<div id="divBills">
+    <h3>Danh sách hóa đơn</h3>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <select class="form-control" id="StatusBill" style="">
+                @if (ViewBag.StatusBill == -1)
+                {
+                    <option selected value="-1">Tất cả hóa đơn</option>
+                }
+                else
+                {
+                    <option value="-1">Tất cả hóa đơn</option>
+                }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_NEW)
+                {
+                    <option selected value="@Constants.STATTUS_BILL_NEW">Hóa đơn mới(chưa giao hàng)</option>
+                }
+                else
+                {
+                    <option value="@Constants.STATTUS_BILL_NEW">Hóa đơn mới(chưa giao hàng)</option>
+                }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_DELIVERING)
+                {
+                    <option selected value="@Constants.STATTUS_BILL_DELIVERING">Hóa đơn đang giao(chưa thanh toán)</option>
+                }
+                else
+                {
+                    <option value="@Constants.STATTUS_BILL_DELIVERING">Hóa đơn đang giao(chưa thanh toán)</option>
+                }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_PAID)
+                {
+                    <option selected value="@Constants.STATTUS_BILL_PAID">Hóa đơn đã thanh toán</option>
+                }
+                else
+                {
+                    <option value="@Constants.STATTUS_BILL_PAID">Hóa đơn đã thanh toán</option>
+                }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_RETURNED)
+                {
+                    <option selected value="@Constants.STATTUS_BILL_RETURNED">Hóa đơn bị trả lại</option>
+                }
+                else
+                {
+                    <option value="@Constants.STATTUS_BILL_RETURNED">Hóa đơn bị trả lại</option>
+                }
+            </select>
+        </div>
+    </div>
+    @*@if (Model.Count > 0)
+        {*@
+    <h5 style="color:red">Có @Model.Count hóa đơn!</h5>
+    <table class="table table-bordered table-striped" id="TableBills">
+        <thead>
+            <tr>
+                <th>
+                    Tên khách hàng
+                </th>
+                <th>
+                    Điện thoại
+                </th>
+                <th>Tổng tiền</th>
+                <th>Ngày mua</th>
+                @if (ViewBag.StatusBill == -1)
+                {
+                    <th>Tình trạng</th>
+                }
+                <th data-orderable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bill in Model)
+            {
+                <tr>
+                    <td>@bill.CustomerName</td>
+                    <td>@bill.CustomerPhone</td>
+                    <td data-order="@(bill.IntoMoney ?? 0)">@((bill.IntoMoney ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                    <td data-order="@(Html.Raw(Json.Encode(bill.BuyDate)).ToString())">@bill.BuyDate</td>
+                    @if (ViewBag.StatusBill == -1)
+                    {
+                        <td>
+                            @if (bill.Status == Constants.STATTUS_BILL_NEW)
+                            {
+                                <text>Hóa đơn mới(chưa giao hàng)</text>
+                            }
+                            else if (bill.Status == Constants.STATTUS_BILL_DELIVERING)
+                            {
+                                <text>Hóa đơn đang giao(chưa thanh toán)</text>
+                            }
+                            else if (bill.Status == Constants.STATTUS_BILL_PAID)
+                            {
+                                <text>Hóa đơn đã thanh toán</text>
+                            }
+                            else if (bill.Status == Constants.STATTUS_BILL_RETURNED)
+                            {
+                                <text>Hóa đơn bị trả về</text>
+                            }
+                        </td>
+                    }
+                    <td style="">
+                        <a class="btn btn-default btn-sm" onclick="ViewDetail(@bill.BillId)" href="javascript:void(0)" title="Xem chi tiết hóa đơn"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                        @if (bill.Status == Constants.STATTUS_BILL_NEW)
+                        {
+                            using (Html.BeginForm("ConfirmDeliver", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                            {
+                                <button type="submit" class="btn btn-sm btn-danger">Giao hàng</button>
+                            }
+                        }
+                        else if (bill.Status == Constants.STATTUS_BILL_DELIVERING)
+                        {
+                            using (Html.BeginForm("ConfirmPaid", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                            {
+                                <button type="submit" class="btn btn-sm btn-success">Xác nhận đã thanh toán</button>
+                            }
+                            using (Html.BeginForm("ConfirmReturned", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                            {
+                                <text>&nbsp;</text><button type="submit" class="btn btn-sm btn-warning">Bị trả về</button>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="clearfix"></div>
+    @*<div style="float:right">
+            <span>Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount</span>
+            @Html.PagedListPager(Model, page => Url.Action("_GetBillByStatus", "Bills",
+                new {
+                    Area = "Manage",
+                    page=page,
+                    status=ViewBag.StatusBill
+                }),
+               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+               new PagedListRenderOptions()
+               {
+                   MaximumPageNumbersToDisplay = 15,
+               },
+               new AjaxOptions()
+               { HttpMethod = "POST",
+                   UpdateTargetId = "divBills"
+               }))
+        </div>
+        <div class="clearfix"></div>*@
+    @*}
+        else
+        {
+            <h4 style="color:red">Không có hóa đơn nào!</h4>
+        }*@
+    <script>
+        $(document).ready(function () {
+            $('#TableBills').DataTable({
+                "order": [[3, "desc"]],
+                "language": {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Số hóa đơn _MENU_",
+                    "sZeroRecords": "Không có hóa đơn nào",
+                    "sInfo": "Từ hóa đơn _START_ đến hóa đơn _END_ trong tổng số _TOTAL_ hóa đơn",
+                    "sInfoEmpty": "Không có hóa đơn nào",
+                    "sInfoFiltered": "(được lọc từ _MAX_ hóa đơn)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm kiếm: ",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "<i class='fa fa-angle-double-left fa-lg'></i>",
+                        "sPrevious": "<i class='fa fa-angle-left fa-lg'></i>",
+                        "sNext": "<i class='fa fa-angle-right fa-lg'></i>",
+                        "sLast": "<i class='fa fa-angle-double-right fa-lg'></i>"
+                    }
+                },
+                "pagingType": "full_numbers",
+                "stateSave": true
+            });
+        })
+        $("#StatusBill").change(function () {
+            $.ajax({
+                url: '@Url.Action("_GetBillByStatus","Bills",new { Area="Manage"})',
+                type: 'POST',
+                dataType: 'html',
+                data: { status: $("#StatusBill").val() },
+                success: function (html) {
+                    $("#divBills").html(html);
+                },
+            });
+        })
+        function ViewDetail(id) {
+            $.ajax({
+                url: '@Url.Action("_modalDetail","Bills",new { Area="Manage"})',
+                type: 'POST',
+                dataType: 'html',
+                data: JSON.stringify({"id":id}),
+                contentType: 'application/json;charset=utf-8',
+                success: function (html) {
+                    $("#modalDetail .modal-body").html(html);
+                    $("#modalDetail").modal("show");
+                },
+            });
+        }
+    </script>
+</div>

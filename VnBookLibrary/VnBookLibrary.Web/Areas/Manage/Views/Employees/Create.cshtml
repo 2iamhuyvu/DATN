@@ -1,0 +1,95 @@
+﻿@model VnBookLibrary.Model.Entities.Employee
+
+@{
+    ViewBag.Title = "Thêm tải khoản nhan viên";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h3>Thêm tài khoản nhân viên</h3>
+<hr />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+
+                @Html.LabelFor(model => model.EmployeeName, htmlAttributes: new { @class = "control-label " })<span style="color:red"> * </span>
+                <div class="">
+                    @Html.EditorFor(model => model.EmployeeName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EmployeeName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LoginName, htmlAttributes: new { @class = "control-label " })<span style="color:red"> * </span>
+                <div class="">
+                    @Html.EditorFor(model => model.LoginName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.LoginName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label " })<span style="color:red"> * </span>
+                <div class="">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", type = "password" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.RePassword, htmlAttributes: new { @class = "control-label " })<span style="color:red"> * </span>
+                <div class="">
+                    @Html.EditorFor(model => model.RePassword, new { htmlAttributes = new { @class = "form-control", type = "password" } })
+                    @Html.ValidationMessageFor(model => model.RePassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmployeeTypeId, htmlAttributes: new { @class = "control-label " })<span style="color:red"> * </span>
+                <div class="">
+                    @Html.DropDownList("EmployeeTypeId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EmployeeTypeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label " })
+                <div class="">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label " })
+                <div class="">
+                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateBirth, htmlAttributes: new { @class = "control-label " })
+                <div class="">
+                    @Html.EditorFor(model => model.DateBirth, new { htmlAttributes = new { @class = "form-control", type = "Date" } })
+                    @Html.ValidationMessageFor(model => model.DateBirth, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsBlock, htmlAttributes: new { @class = "control-label " })
+                <div class="">
+                    <div class="checkbox" style="margin:0px;">
+                        @Html.EditorFor(model => model.IsBlock, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.IsBlock, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="form-group" style="margin-left:15px;">
+            <div class="">
+                <input type="submit" value="Thêm" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}

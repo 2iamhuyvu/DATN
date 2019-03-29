@@ -13,20 +13,106 @@ namespace BOOKSHOP.Business.BaseRepository
 {
     public class UnitOfWork
     {
-        private VnBookLibraryDbContext _context;       
+        private VnBookLibraryDbContext _context;
+        private DbContextTransaction transaction;
         public UnitOfWork()
         {
             _context = new VnBookLibraryDbContext();
             EmployeeRepository = new EmployeeRepository(_context);
             EmployeeTypeRepository = new EmployeeTypeRepository(_context);
+            BillRepository = new BillRepository(_context);
+            BillDetailRepository = new BillDetailRepository(_context);
+            CategoryByAuthorRepository = new CategoryByAuthorRepository(_context);
+            CategoryByPublisherRepository = new CategoryByPublisherRepository(_context);
+            CategoryLv1Repository = new CategoryLv1Repository(_context);
+            CategoryLv2Repository = new CategoryLv2Repository(_context);
+            CommentProductRepository = new CommentProductRepository(_context);
+            ContactRepository = new ContactRepository(_context);
+            CustomerRepository = new CustomerRepository(_context);
+            DistrictRepository = new DistrictRepository(_context);
+            GroupRoleRepository = new GroupRoleRepository(_context);
+            LikeProductRepository = new LikeProductRepository(_context);
+            NewsRepository = new NewsRepository(_context);
+            ProductRepository = new ProductRepository(_context);
+            ProvinceRepository = new ProvinceRepository(_context);
+            RateProductRepository = new RateProductRepository(_context);
+            Role_EmployeeTypeRepository = new Role_EmployeeTypeRepository(_context);
+            RoleRepository = new RoleRepository(_context);
+            SaleEventRepository = new SaleEventRepository(_context);
+            SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
+            WardRepository = new WardRepository(_context);
         }
-        public EmployeeRepository EmployeeRepository { get;private set; }
-        public EmployeeTypeRepository EmployeeTypeRepository { get; private set; }
+        public UnitOfWork(VnBookLibraryDbContext context)
+        {
+            _context = context;
+            EmployeeRepository = new EmployeeRepository(_context);
+            EmployeeTypeRepository = new EmployeeTypeRepository(_context);
+            BillRepository = new BillRepository(_context);
+            BillDetailRepository = new BillDetailRepository(_context);
+            CategoryByAuthorRepository = new CategoryByAuthorRepository(_context);
+            CategoryByPublisherRepository = new CategoryByPublisherRepository(_context);
+            CategoryLv1Repository = new CategoryLv1Repository(_context);
+            CategoryLv2Repository = new CategoryLv2Repository(_context);
+            CommentProductRepository = new CommentProductRepository(_context);
+            ContactRepository = new ContactRepository(_context);
+            CustomerRepository = new CustomerRepository(_context);
+            DistrictRepository = new DistrictRepository(_context);
+            GroupRoleRepository = new GroupRoleRepository(_context);
+            LikeProductRepository = new LikeProductRepository(_context);
+            NewsRepository = new NewsRepository(_context);
+            ProductRepository = new ProductRepository(_context);
+            ProvinceRepository = new ProvinceRepository(_context);
+            RateProductRepository = new RateProductRepository(_context);
+            Role_EmployeeTypeRepository = new Role_EmployeeTypeRepository(_context);
+            RoleRepository = new RoleRepository(_context);
+            SaleEventRepository = new SaleEventRepository(_context);
+            SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
+            WardRepository = new WardRepository(_context);
+        }
+        public EmployeeRepository EmployeeRepository { get; set; }
+        public EmployeeTypeRepository EmployeeTypeRepository { get; set; }
+        public BillDetailRepository BillDetailRepository { get; set; }
+        public BillRepository BillRepository { get; set; }
+        public CategoryLv1Repository CategoryLv1Repository { get; set; }
+        public CategoryLv2Repository CategoryLv2Repository { get; set; }
+        public CategoryByPublisherRepository CategoryByPublisherRepository { get; set; }
+        public CategoryByAuthorRepository CategoryByAuthorRepository { get; set; }
+        public CommentProductRepository CommentProductRepository { get; set; }
+        public ContactRepository ContactRepository { get; set; }
+        public CustomerRepository CustomerRepository { get; set; }
+        public DistrictRepository DistrictRepository { get; set; }
+        public GroupRoleRepository GroupRoleRepository { get; set; }
+        public LikeProductRepository LikeProductRepository { get; set; }
+        public NewsRepository NewsRepository { get; set; }
+        public ProductRepository ProductRepository { get; set; }
+        public ProvinceRepository ProvinceRepository { get; set; }
+        public RateProductRepository RateProductRepository { get; set; }
+        public Role_EmployeeTypeRepository Role_EmployeeTypeRepository { get; set; }
+        public RoleRepository RoleRepository { get; set; }
+        public SaleEventRepository SaleEventRepository { get; set; }
+        public SaleEvent_ProductRepository SaleEvent_ProductRepository { get; set; }
+        public WardRepository WardRepository { get; set; }
         public int SaveChanges()
         {
             return _context.SaveChanges();
         }
- 
+        public void BeginTransaction()
+        {
+            if (transaction == null)
+                transaction = _context.Database.BeginTransaction();
+        }
+
+        public void CommitTransaction()
+        {
+            if (transaction != null)
+                transaction.Commit();
+        }
+
+        public void RollbackTransaction()
+        {
+            if (transaction != null)
+                transaction.Rollback();
+        }
         public void Dispose()
         {
             _context.Dispose();

@@ -23,11 +23,7 @@ namespace VnBookLibrary.Repository.Repositories
         public GenericRepository()
         {
             _context = new VnBookLibraryDbContext();
-        }
-        public int SaveChanges()
-        {
-            return _context.SaveChanges();
-        }
+        }        
         public virtual T Find(object id)
         {
             return _set.Find(id);
@@ -72,6 +68,10 @@ namespace VnBookLibrary.Repository.Repositories
         public virtual T GetByID(object id)
         {
             return _set.Find(id);
+        }
+        public int SaveChanges()
+        {
+            return _context.SaveChanges();
         }
         public void BeginTransaction()
         {

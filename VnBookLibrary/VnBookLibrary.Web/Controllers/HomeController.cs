@@ -14,16 +14,19 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Net;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
+using BOOKSHOP.Business.BaseRepository;
 
 namespace VnBookLibrary.Web.Controllers
 {
     public class HomeController : Controller
     {
         private VnBookLibraryDbContext db;
+        private UnitOfWork UoW;
         private ProductRepository productRepository;
         public HomeController()
         {
             db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
             productRepository = new ProductRepository(db);
         }
         public ActionResult Index(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)

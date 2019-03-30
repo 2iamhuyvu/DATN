@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using VnBookLibrary.Model.DAL;
 using VnBookLibrary.Model.Entities;
 using VnBookLibrary.Repository.Commons;
+using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
@@ -16,8 +17,13 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class CategoryByAuthorsController : Controller
     {
-        private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
-
+        private VnBookLibraryDbContext db;
+        private UnitOfWork UoW;
+        public CategoryByAuthorsController()
+        {
+            db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
+        }
         public ActionResult Create()
         {
             if (ManageSession.HasRole("CREATE_CATEGORY"))
@@ -43,8 +49,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    db.CategoryByAuthors.Add(categoryByAuthor);
-                    db.SaveChanges();
+                    UoW.CategoryByAuthorRepository.Insert(categoryByAuthor);                    
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -73,7 +78,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                CategoryByAuthor categoryByAuthor = db.CategoryByAuthors.Find(id);
+                CategoryByAuthor categoryByAuthor = UoW.CategoryByAuthorRepository.Find(id);
                 if (categoryByAuthor == null)
                 {
                     return HttpNotFound();
@@ -97,9 +102,8 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             if (ManageSession.HasRole("EDIT_CATEGORY"))
             {
                 if (ModelState.IsValid)
-                {
-                    db.Entry(categoryByAuthor).State = EntityState.Modified;
-                    db.SaveChanges();
+                {                   
+                    UoW.CategoryByAuthorRepository.Update(categoryByAuthor);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -123,10 +127,8 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         public ActionResult Delete(int id)
         {
             if (ManageSession.HasRole("DELETE_CATEGORY"))
-            {
-                CategoryByAuthor categoryByAuthor = db.CategoryByAuthors.Find(id);
-                db.CategoryByAuthors.Remove(categoryByAuthor);
-                db.SaveChanges();
+            {                
+                UoW.CategoryByAuthorRepository.Delete(id);
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
@@ -152,7 +154,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CategoryByAuthor categoryByAuthor = db.CategoryByAuthors.Find(id);
+            CategoryByAuthor categoryByAuthor = UoW.CategoryByAuthorRepository.Find(id);
             if (categoryByAuthor == null)
             {
                 return HttpNotFound();
@@ -163,7 +165,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

@@ -14,36 +14,32 @@ using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
 {
-    [AuthorizeManage]
-    [RouteArea("quan-tri")]
-    [RoutePrefix("loai-nhan-vien")]
-    [Route("{action}")]
+    [AuthorizeManage]    
     public class EmployeeTypesController : Controller
     {
         private VnBookLibraryDbContext db;
-        private EmployeeTypeRepository _employeeTypeRepository;
+        private UnitOfWork UoW;
         public EmployeeTypesController()
         {
             db = new VnBookLibraryDbContext();
-            _employeeTypeRepository = new EmployeeTypeRepository(db);
+            UoW = new UnitOfWork(db);
         }        
-        // GET: Manage/EmployeeTypes
-        [Route("danh-sach-loai-nhan-vien")]
+        // GET: Manage/EmployeeTypes        
         public ActionResult Index()
         {
-            if (ManageSession.HasRole("VIEW_EMPLOYEETYPE"))
-            {
-                return View(_employeeTypeRepository.GetAll());
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền xem loại nhân viên!",
-                };
-                return RedirectToAction("Index", "ManageHome", new { Area = "Manage" });
-            }
+            //if (ManageSession.HasRole("VIEW_EMPLOYEETYPE"))
+            //{
+                return View(UoW.EmployeeTypeRepository.GetAll());
+            //}
+            //else
+            //{
+            //    TempData["Notify"] = new JsonResultBO()
+            //    {
+            //        Status = false,
+            //        Message = "Bạn không có quyền xem loại nhân viên!",
+            //    };
+            //    return RedirectToAction("Index", "ManageHome", new { Area = "Manage" });
+            //}
         }
         
         // GET: Manage/EmployeeTypes/Create
@@ -78,7 +74,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 }
                 else
                 {
-                    var temp = db.EmployeeTypes.ToList().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName));
+                    var temp = UoW.EmployeeTypeRepository.GetAll().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName));
                     if (temp != null)
                     {
                         TempData["Notify"] = new JsonResultBO()
@@ -89,8 +85,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     }
                     else
                     {
-                        db.EmployeeTypes.Add(employeeType);
-                        db.SaveChanges();
+                        UoW.EmployeeTypeRepository.Insert(employeeType);
                         TempData["Notify"] = new JsonResultBO()
                         {
                             Status = true,
@@ -119,7 +114,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 {
                     return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
                 }
-                EmployeeType employeeType = db.EmployeeTypes.Find(id);
+                EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
                 if (employeeType == null)
                 {
                     return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
@@ -170,7 +165,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 }
                 else
                 {
-                    var temp = db.EmployeeTypes.ToList().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName) && x.EmployeeTypeId != employeeType.EmployeeTypeId);
+                    var temp = UoW.EmployeeTypeRepository.GetAll().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName) && x.EmployeeTypeId != employeeType.EmployeeTypeId);
                     if (temp != null)
                     {
                         TempData["Notify"] = new JsonResultBO()
@@ -181,7 +176,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     }
                     else
                     {
-                        _employeeTypeRepository.Update(employeeType);
+                        UoW.EmployeeTypeRepository.Update(employeeType);
                         TempData["Notify"] = new JsonResultBO()
                         {
                             Status = true,
@@ -208,7 +203,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (ManageSession.HasRole("DELETE_EMPLOYEETYPE"))
             {
-                EmployeeType employeeType = db.EmployeeTypes.Find(id);
+                EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
                 if (employeeType != null)
                 {
                     if (employeeType.IsAdministrator == true)
@@ -222,8 +217,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     }
                     else
                     {
-                        db.EmployeeTypes.Remove(employeeType);
-                        db.SaveChanges();
+                        UoW.EmployeeTypeRepository.Delete(id);
                         TempData["Notify"] = new JsonResultBO()
                         {
                             Status = true,
@@ -257,7 +251,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

@@ -20,11 +20,11 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     public class ProductsController : Controller
     {
         private VnBookLibraryDbContext db;
-        private ProductRepository productRepository;
+        private UnitOfWork UoW;
         public ProductsController()
         {
             db = new VnBookLibraryDbContext();
-            productRepository = new ProductRepository(db);
+            UoW = new UnitOfWork(db);
         }          
         public ActionResult Index(int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
@@ -44,16 +44,16 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             ViewBag.CategoryLv1Id = CategoryLv1Id;
             ViewBag.CategoryLv2Id = CategoryLv2Id;
             ViewBag.TypeDisplay = TypeDisplay;
-            ViewBag.CategoryAuthorId = new SelectList(db.CategoryByAuthors, "CategoryAuthorId", "CategoryAuthorName",CategoryAuthorId);
-            ViewBag.CategoryPublisherId = new SelectList(db.CategoryByPublishers, "CategoryByPublisherId", "CategoryByPublisherName",CategoryPublisherId);
-            return PartialView(productRepository.GetPageListProduct(Search,CategoryLv1Id,CategoryLv2Id,CategoryAuthorId,CategoryPublisherId, pageNumber, pageSize));
+            ViewBag.CategoryAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName",CategoryAuthorId);
+            ViewBag.CategoryPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName",CategoryPublisherId);
+            return PartialView(UoW.ProductRepository.GetPageListProduct(Search,CategoryLv1Id,CategoryLv2Id,CategoryAuthorId,CategoryPublisherId, pageNumber, pageSize));
         }           
         public ActionResult Create()
         {
             if (ManageSession.HasRole("CREATE_PRODUCT"))
             {
-                ViewBag.CategoryByAuthorId = new SelectList(db.CategoryByAuthors, "CategoryAuthorId", "CategoryAuthorName");
-                ViewBag.CategoryByPublisherId = new SelectList(db.CategoryByPublishers, "CategoryByPublisherId", "CategoryByPublisherName");                
+                ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
+                ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");                
                 return View();
             }
             else
@@ -71,25 +71,33 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (ManageSession.HasRole("CREATE_PRODUCT"))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    db.Products.Add(product);
-                    db.SaveChanges();
-                    TempData["Notify"] = new JsonResultBO()
+                    try
                     {
-                        Status = true,
-                        Message = "Thêm sách thành công!",
-                    };
-                    return Json(new JsonResultBO(true));
+                        UoW.ProductRepository.Insert(product);
+                        TempData["Notify"] = new JsonResultBO()
+                        {
+                            Status = true,
+                            Message = "Thêm sách thành công!",
+                        };
+                        return Json(new JsonResultBO(true));
+                    }
+                    catch
+                    {
+                        TempData["Notify"] = new JsonResultBO()
+                        {
+                            Status = true,
+                            Message = "Lỗi!",
+                        };
+                        return Json(new JsonResultBO(false));
+                    }
                 }
-                catch
+                else
                 {
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = "Lỗi!",
-                    };
-                    return Json(new JsonResultBO(false));
+                    ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
+                    ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");
+                    return View(product);
                 }
             }
             else
@@ -110,13 +118,13 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                Product product = db.Products.Find(id);
+                Product product = UoW.ProductRepository.Find(id);
                 if (product == null)
                 {
                     return HttpNotFound();
                 }
-                ViewBag.CategoryByAuthorId = new SelectList(db.CategoryByAuthors, "CategoryAuthorId", "CategoryAuthorName", product.CategoryByAuthorId);
-                ViewBag.CategoryByPublisherId = new SelectList(db.CategoryByPublishers, "CategoryByPublisherId", "CategoryByPublisherName", product.CategoryByPublisherId);
+                ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName", product.CategoryByAuthorId);
+                ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName", product.CategoryByPublisherId);
                 return View(product);
             }
             else
@@ -136,8 +144,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 try
                 {
-                    db.Entry(product).State = EntityState.Modified;
-                    db.SaveChanges();
+                    UoW.ProductRepository.Update(product);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -170,10 +177,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (ManageSession.HasRole("DELETE_PRODUCT"))
             {
-
-                Product product = db.Products.Find(id);
-                db.Products.Remove(product);
-                db.SaveChanges();
+                UoW.ProductRepository.Delete(id);
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
@@ -196,7 +200,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

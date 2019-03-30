@@ -182,8 +182,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Manage\Controllers\BookCategoriesController.cs" />
+    <Compile Include="Areas\Manage\Controllers\CommentProductsController.cs" />
     <Compile Include="Areas\Manage\Controllers\ContactsController.cs" />
+    <Compile Include="Areas\Manage\Controllers\GroupRolesController.cs" />
     <Compile Include="Areas\Manage\Controllers\NewsController.cs" />
+    <Compile Include="Areas\Manage\Controllers\RolesController.cs" />
+    <Compile Include="Areas\Manage\Controllers\SaleEventsController.cs" />
     <Compile Include="Areas\Manage\Customizes\BaseController.cs" />
     <Compile Include="Areas\Manage\Controllers\BillsController.cs" />
     <Compile Include="Areas\Manage\Controllers\CategoryByAuthorsController.cs" />
@@ -3838,6 +3842,7 @@
     <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\fontawesome.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\select2.min.css" />
     <Content Include="Data\data.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -4192,6 +4197,18 @@
     <Content Include="Areas\Manage\Views\Contacts\Edit.cshtml" />
     <Content Include="Areas\Manage\Views\Contacts\Index.cshtml" />
     <Content Include="Areas\Manage\Views\Employees\ChangePassword.cshtml" />
+    <Content Include="Areas\Manage\Views\CommentProducts\Index.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Create.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Delete.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Details.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Edit.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Index.cshtml" />
+    <Content Include="Areas\Manage\Views\Roles\Index.cshtml" />
+    <Content Include="Areas\Manage\Views\SaleEvents\Create.cshtml" />
+    <Content Include="Areas\Manage\Views\SaleEvents\Delete.cshtml" />
+    <Content Include="Areas\Manage\Views\SaleEvents\Details.cshtml" />
+    <Content Include="Areas\Manage\Views\SaleEvents\Edit.cshtml" />
+    <Content Include="Areas\Manage\Views\SaleEvents\Index.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\dataTables.bootstrap.min.js" />
     <Content Include="Scripts\datatables.min.js" />
@@ -4208,6 +4225,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\notify.js" />
+    <Content Include="Scripts\select2.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -4234,7 +4252,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Manage\Views\ExportFile\" />
     <Folder Include="Assets\files\" />
     <Folder Include="Assets\flash\" />
     <Folder Include="Assets\images\" />

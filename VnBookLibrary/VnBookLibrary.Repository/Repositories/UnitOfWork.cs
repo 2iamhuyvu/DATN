@@ -9,7 +9,7 @@ using VnBookLibrary.Model.Entities;
 using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Model.DAL;
 
-namespace BOOKSHOP.Business.BaseRepository
+namespace VnBookLibrary.Repository.Repositories
 {
     public class UnitOfWork
     {

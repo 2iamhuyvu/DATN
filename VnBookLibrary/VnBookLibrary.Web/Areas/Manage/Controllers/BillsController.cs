@@ -20,11 +20,11 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     public class BillsController : Controller
     {
         private VnBookLibraryDbContext db ;
-        BillRepository billRepository;
+        private UnitOfWork UoW;        
         public BillsController()
         {
             db = new VnBookLibraryDbContext();
-            billRepository = new BillRepository(db);
+            UoW = new UnitOfWork(db);            
         }
         public ActionResult Index()
         {            
@@ -32,7 +32,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         }
         public PartialViewResult _GetBillByStatus(int? status=-1,int page=1,int pageSize=15)
         {
-            List<Bill> bills = db.Bills.ToList();
+            List<Bill> bills = UoW.BillRepository.GetAll().ToList();
             if (status > 0)
             {
                 bills = bills.Where(x => x.Status == status).ToList();
@@ -42,8 +42,8 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         }
         public ActionResult _modalDetail(int id)
         {
-            ViewBag.Bill = db.Bills.FirstOrDefault(x => x.BillId == id);            
-            ViewBag.ListBillDetail = db.BillDetails.ToList().Where(x => x.BillId == id).ToList();
+            ViewBag.Bill = UoW.BillRepository.Find(id);            
+            ViewBag.ListBillDetail = UoW.BillRepository.GetAll().Where(x => x.BillId == id).ToList();
             return PartialView();
         }
         public ActionResult Details(int? id)
@@ -52,7 +52,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Bill bill = db.Bills.Find(id);
+            Bill bill = UoW.BillRepository.Find(id);
             if (bill == null)
             {
                 return HttpNotFound();
@@ -62,7 +62,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         public ActionResult ConfirmDeliver(int billId)
         {
             Bill bill = new Bill();
-            bill = db.Bills.Find(billId);
+            bill = UoW.BillRepository.Find(billId);
             if (bill == null)
             {
                 TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
@@ -70,7 +70,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             else
             {
                 bill.Status = Constants.STATTUS_BILL_DELIVERING;
-                billRepository.Update(bill);
+                UoW.BillRepository.Update(bill);
                 TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái thành đang giao hàng" };
             }
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
@@ -79,7 +79,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         public ActionResult ConfirmPaid(int billId)
         {
             Bill bill = new Bill();
-            bill = db.Bills.Find(billId);
+            bill = UoW.BillRepository.Find(billId);
             if (bill == null)
             {
                 TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
@@ -87,7 +87,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             else
             {
                 bill.Status = Constants.STATTUS_BILL_PAID;
-                billRepository.Update(bill);
+                UoW.BillRepository.Update(bill);
                 TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái đã thanh toán" };
             }
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
@@ -95,7 +95,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         public ActionResult ConfirmReturned(int billId)
         {
             Bill bill = new Bill();
-            bill = db.Bills.Find(billId);
+            bill = UoW.BillRepository.Find(billId);
             if (bill == null)
             {
                 TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
@@ -103,7 +103,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             else
             {
                 bill.Status = Constants.STATTUS_BILL_RETURNED;
-                billRepository.Update(bill);
+                UoW.BillRepository.Update(bill);
                 TempData["Notify"] = new JsonResultBO(false) { Message = "Đã chuyển đổi trạng thái bị trả về" };
             }
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
@@ -113,7 +113,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

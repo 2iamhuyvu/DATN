@@ -25,7 +25,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CategoryLv1Id, "Danh mục cấp 1 - Danh mục cha", htmlAttributes: new { @class = "control-label " })
             <div class="">                              
-                <select id="CategoryLv1Id" name="CategoryLv1Id" class="form-control">
+                <select id="CategoryLv1Id" name="CategoryLv1Id" class="form-control UseSelect2">
                     @{
                         var list = (SelectList)ViewBag.CategoryLv1Id;
                         foreach (var item in list)

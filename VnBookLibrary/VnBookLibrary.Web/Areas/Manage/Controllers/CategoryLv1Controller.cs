@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using VnBookLibrary.Model.DAL;
 using VnBookLibrary.Model.Entities;
 using VnBookLibrary.Repository.Commons;
+using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
@@ -16,7 +17,13 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class CategoryLv1Controller : Controller
     {
-        private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
+        private VnBookLibraryDbContext db;
+        private  UnitOfWork UoW;
+        public CategoryLv1Controller()
+        {
+            db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
+        }
         // GET: Manage/CategoryLv1/Create
         public ActionResult Create()
         {
@@ -44,8 +51,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 if (ModelState.IsValid)
                 {
                     categoryLv1.OrderDisplay = categoryLv1.OrderDisplay ?? 1;
-                    db.CategoryLv1s.Add(categoryLv1);
-                    db.SaveChanges();
+                    UoW.CategoryLv1Repository.Insert(categoryLv1);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -73,7 +79,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                CategoryLv1 categoryLv1 = db.CategoryLv1s.Find(id);
+                CategoryLv1 categoryLv1 = UoW.CategoryLv1Repository.Find(id);
                 if (categoryLv1 == null)
                 {
                     return HttpNotFound();
@@ -99,8 +105,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 if (ModelState.IsValid)
                 {
                     categoryLv1.OrderDisplay = categoryLv1.OrderDisplay ?? 1;
-                    db.Entry(categoryLv1).State = EntityState.Modified;
-                    db.SaveChanges();
+                    UoW.CategoryLv1Repository.Insert(categoryLv1);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -124,9 +129,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (ManageSession.HasRole("DELETE_CATEGORY"))
             {
-                CategoryLv1 categoryLv1 = db.CategoryLv1s.Find(id);
-                db.CategoryLv1s.Remove(categoryLv1);
-                db.SaveChanges();
+                UoW.CategoryLv1Repository.Delete(id);
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
@@ -149,7 +152,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

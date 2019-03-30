@@ -12,7 +12,6 @@
     }
 </style>
 <h3>Sửa thông tin sách</h3>
-<hr />
 @using (Html.BeginForm("Edit", "Products", FormMethod.Post, new { @id = "formEditProduct" }))
 {
     <hr />
@@ -55,7 +54,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label" })
                         <div class="">
-                            <select class="form-control" name="Status" id="Status">
+                            <select class="form-control UseSelect2" name="Status" id="Status">
                                 @if (Model.Status == 1)
                                 {
                                     <option value="1" selected>Sách mới</option>
@@ -120,7 +119,7 @@
                         <a style="float:right" class="btn btn-success btn-sm" href="@Url.Action("Create","CategoryByAuthors",new { Area="Manage"})">Thêm tác giả</a>
                         <div class="clearfix"></div>
                         <div class="">
-                            @Html.DropDownList("CategoryByAuthorId", null, "---Chọn tác giả---", htmlAttributes: new { @class = "form-control" })
+                            @Html.DropDownList("CategoryByAuthorId", null, "---Chọn tác giả---", htmlAttributes: new { @class = "form-control UseSelect2" })
                         </div>
                     </div>
 
@@ -129,7 +128,7 @@
                         <a style="float:right" class="btn btn-success btn-sm" href="@Url.Action("Create","CategoryByPublishers",new { Area="Manage"})">Thêm NXB - NPH</a>
                         <div class="clearfix"></div>
                         <div class="">
-                            @Html.DropDownList("CategoryByPublisherId", null, "---Chọn nhà xuất bản - nhà phát hành---", htmlAttributes: new { @class = "form-control" })
+                            @Html.DropDownList("CategoryByPublisherId", null, "---Chọn nhà xuất bản - nhà phát hành---", htmlAttributes: new { @class = "form-control UseSelect2" })
                         </div>
                     </div>
                 </div>
@@ -160,7 +159,7 @@
             $("#formEditProduct").validate({
                 rules: {
                     ProductName: {
-                        required: true,
+                        notNull: true,
                         minlength: 5,
                         maxlength: 200,
                     },
@@ -168,7 +167,7 @@
                         required: true,
                     },
                     Price: {
-                        required: true,
+                        notNull: true,
                         number: true,
                         min: 1000,
                     },
@@ -181,20 +180,20 @@
                         min: 1,
                     },
                     CategoryLv1Id: {
-                        required: true,
+                        notNull: true,
                     }
                 },
                 messages: {
                     ProductName: {
-                        required: "Không được để trống tên sách!",
+                        notNull: "Không được để trống tên sách(Phải có ký tự khác ký tự trống)!",
                         minlength: "Tên sách phải nhiều hơn 5 ký tự!",
                         maxlength: "Tên sách tối đa 200 ký tự!",
                     },
                     AvatarLink: {
-                        required: "Vui lòng chọn 1 ảnh!",
+                        notNull: "Vui lòng chọn 1 ảnh!",
                     },
                     Price: {
-                        required: "Không được để trống giá bán",
+                        notNull: "Không được để trống giá bán",
                         number: "Giá sách là số!",
                         min: "Giá bán phải lớn hơn 1000"
                     },
@@ -207,7 +206,7 @@
                         min: "Số trang phải không âm"
                     },
                     CategoryLv1Id: {
-                        required: "Chưa chọn danh mục cấp 1",
+                        notNull: "Chưa chọn danh mục cấp 1",
                     }
                 }
             });

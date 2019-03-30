@@ -8,9 +8,11 @@ using System.Web;
 using System.Web.Mvc;
 using VnBookLibrary.Model.DAL;
 using VnBookLibrary.Model.Entities;
+using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
 {
+    [AuthorizeManage]
     public class CustomersController : Controller
     {
         private VnBookLibraryDbContext db = new VnBookLibraryDbContext();

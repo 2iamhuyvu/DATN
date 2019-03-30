@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using VnBookLibrary.Model.DAL;
 using VnBookLibrary.Model.Entities;
 using VnBookLibrary.Repository.Commons;
+using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
@@ -16,12 +17,18 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class CategoryLv2Controller : Controller
     {
-        private VnBookLibraryDbContext db = new VnBookLibraryDbContext();                      
+        private VnBookLibraryDbContext db;
+        private UnitOfWork UoW;
+        public CategoryLv2Controller()
+        {
+            db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
+        }
         public ActionResult Create()
         {                        
             if (ManageSession.HasRole("CREATE_CATEGORY"))
             {
-                ViewBag.CategoryLv1Id = new SelectList(db.CategoryLv1s, "CategoryLv1Id", "CategoryLv1Name");
+                ViewBag.CategoryLv1Id = new SelectList(UoW.CategoryLv1Repository.GetAll(), "CategoryLv1Id", "CategoryLv1Name");
                 return View();
             }
             else
@@ -43,8 +50,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    db.CategoryLv2s.Add(categoryLv2);
-                    db.SaveChanges();
+                    UoW.CategoryLv2Repository.Insert(categoryLv2);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -52,7 +58,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     };
                     return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 1 });
                 }
-                ViewBag.CategoryLv1Id = new SelectList(db.CategoryLv1s, "CategoryLv1Id", "CategoryLv1Name");
+                ViewBag.CategoryLv1Id = new SelectList(UoW.CategoryLv1Repository.GetAll(), "CategoryLv1Id", "CategoryLv1Name");
                 return View(categoryLv2);
             }
             else
@@ -75,12 +81,12 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                CategoryLv2 categoryLv2 = db.CategoryLv2s.Find(id);
+                CategoryLv2 categoryLv2 = UoW.CategoryLv2Repository.Find(id);
                 if (categoryLv2 == null)
                 {
                     return HttpNotFound();
                 }
-                ViewBag.CategoryLv1Id = new SelectList(db.CategoryLv1s.ToList(), "CategoryLv1Id", "CategoryLv1Name", categoryLv2.CategoryLv1Id);
+                ViewBag.CategoryLv1Id = new SelectList(UoW.CategoryLv1Repository.GetAll(), "CategoryLv1Id", "CategoryLv1Name", categoryLv2.CategoryLv1Id);
                 return View(categoryLv2);
             }
             else
@@ -101,8 +107,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    db.Entry(categoryLv2).State = EntityState.Modified;                    
-                    db.SaveChanges();
+                    UoW.CategoryLv2Repository.Update(categoryLv2);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -125,9 +130,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (ManageSession.HasRole("DELETE_CATEGORY"))
             {
-                CategoryLv2 categoryLv2 = db.CategoryLv2s.Find(id);
-                db.CategoryLv2s.Remove(categoryLv2);
-                db.SaveChanges();                
+                UoW.CategoryLv2Repository.Delete(id);
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
@@ -149,7 +152,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

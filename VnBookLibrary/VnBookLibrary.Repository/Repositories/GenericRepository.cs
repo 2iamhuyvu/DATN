@@ -33,6 +33,11 @@ namespace VnBookLibrary.Repository.Repositories
             _set.Add(item);
             return _context.SaveChanges();
         }
+        public virtual int InsertRange(ICollection<T> listItem)
+        {
+            _set.AddRange(listItem);
+            return _context.SaveChanges();
+        }
         public virtual int Delete(object id)
         {
             var item = Find(id);

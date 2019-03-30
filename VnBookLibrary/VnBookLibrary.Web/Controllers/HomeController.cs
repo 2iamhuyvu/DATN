@@ -14,28 +14,25 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Net;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
-using BOOKSHOP.Business.BaseRepository;
 
 namespace VnBookLibrary.Web.Controllers
 {
     public class HomeController : Controller
     {
         private VnBookLibraryDbContext db;
-        private UnitOfWork UoW;
-        private ProductRepository productRepository;
+        private UnitOfWork UoW;        
         public HomeController()
         {
             db = new VnBookLibraryDbContext();
-            UoW = new UnitOfWork(db);
-            productRepository = new ProductRepository(db);
+            UoW = new UnitOfWork(db);            
         }
         public ActionResult Index(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
             string href = "";
-            var cate1 = db.CategoryLv1s.Find(CategoryLv1Id ?? 0);
-            var cate2 = db.CategoryLv2s.Find(CategoryLv2Id ?? 0);
-            var cateAuthor = db.CategoryByAuthors.Find(CategoryAuthorId ?? 0);
-            var catePublisher = db.CategoryByPublishers.Find(CategoryPublisherId ?? 0);
+            var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
+            var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
+            var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
+            var catePublisher = UoW.CategoryByPublisherRepository.Find(CategoryPublisherId ?? 0);
             if (cate1 != null)
             {
                 ViewBag.Title = "Sách " + cate1.CategoryLv1Name + " | VnBook";
@@ -80,7 +77,7 @@ namespace VnBookLibrary.Web.Controllers
         [Route("tin-tuc")]
         public ActionResult News()
         {
-            return View(db.News.ToList());
+            return View(UoW.NewsRepository.GetAll());
         }
         [Route("tin-tuc/{id:min(1)}")]
         public ActionResult DetailsNews(int? id)
@@ -89,7 +86,7 @@ namespace VnBookLibrary.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            News news = db.News.Find(id);
+            News news = UoW.NewsRepository.Find(id);
             if (news == null)
             {
                 return HttpNotFound();
@@ -104,13 +101,13 @@ namespace VnBookLibrary.Web.Controllers
             ViewBag.CategoryLv2Id = CategoryLv2Id;
             ViewBag.CategoryAuthorId = CategoryAuthorId;
             ViewBag.CategoryPublisherId = CategoryPublisherId;
-            var model = productRepository.GetPageListProduct(Search, CategoryLv1Id, CategoryLv2Id, CategoryAuthorId, CategoryPublisherId, page, pageSize);
+            var model = UoW.ProductRepository.GetPageListProduct(Search, CategoryLv1Id, CategoryLv2Id, CategoryAuthorId, CategoryPublisherId, page, pageSize);
             return PartialView(model);
         }
         public ActionResult _DetailProduct(int productId)
         {
             Product product = new Product();
-            product = db.Products.FirstOrDefault(x => x.ProductId == productId);
+            product = UoW.ProductRepository.Find(productId);
             ViewBag.Product = product;
             return PartialView();
         }
@@ -119,7 +116,7 @@ namespace VnBookLibrary.Web.Controllers
         {
             int numberOfBook = 0;
             Product product = new Product();
-            product = productRepository.Find(productId);
+            product = UoW.ProductRepository.Find(productId);
             if (product != null)
             {
                 List<CartVM> listCart = new List<CartVM>();
@@ -173,8 +170,7 @@ namespace VnBookLibrary.Web.Controllers
                 }
                 bill.IntoMoney = intoMoney;
                 bill.TotalNotSale = intoMoney;
-                db.Bills.Add(bill);
-                db.SaveChanges();
+                UoW.BillRepository.Insert(bill);                
                 List<BillDetail> billDetails = new List<BillDetail>();
                 foreach (var cartVM in listCart)
                 {
@@ -186,8 +182,7 @@ namespace VnBookLibrary.Web.Controllers
                     };
                     billDetails.Add(billDetail);
                 }
-                db.BillDetails.AddRange(billDetails);
-                db.SaveChanges();
+                UoW.BillDetailRepository.InsertRange(billDetails);                
                 Session[Constants.CART_SESSION] = null;
                 return Json(new JsonResultBO(true) { Message = "Cám ơn bạn đã mua sách, Sách sẽ sớm được gửi cho bạn!" });
             }
@@ -239,17 +234,17 @@ namespace VnBookLibrary.Web.Controllers
         [HttpPost]
         public ActionResult GetProvince()
         {            
-            return Json(db.Provinces.Select(x=>new { x.ProvinceName,x.ProvinceId}).OrderBy(x=>x.ProvinceName).ToList());
+            return Json(UoW.ProvinceRepository.GetAll().Select(x=>new { x.ProvinceName,x.ProvinceId}).OrderBy(x=>x.ProvinceName).ToList());
         }
         [HttpPost]
         public ActionResult GetDistrictByProvince(int provinceId)
         {            
-            return Json(db.Districts.Where(x => x.ProvinceId == provinceId).Select(x => new { x.DistrictName,x.DistrictId }).ToList());
+            return Json(UoW.DistrictRepository.GetAll().Where(x => x.ProvinceId == provinceId).Select(x => new { x.DistrictName,x.DistrictId }).ToList());
         }
         [HttpPost]
         public ActionResult GetWardByDistrict(int districtId)
         {           
-            return Json(db.Wards.Where(x => x.DidtrictId == districtId).Select(x => new { x.WardName, x.WardId }).ToList());
+            return Json(UoW.WardRepository.GetAll().Where(x => x.DidtrictId == districtId).Select(x => new { x.WardName, x.WardId }).ToList());
         }
         #region Get Province_Distric_Ward with API
         //[HttpPost]
@@ -348,9 +343,9 @@ namespace VnBookLibrary.Web.Controllers
         [ChildActionOnly]
         public ActionResult _PartialMenu()
         {
-            ViewBag.ListCategoryLv1 = db.CategoryLv1s.ToList();
-            ViewBag.ListCategoryAuthor = db.CategoryByAuthors.ToList();
-            ViewBag.ListCategoryPublisher = db.CategoryByPublishers.ToList();
+            ViewBag.ListCategoryLv1 = UoW.CategoryLv1Repository.GetAll();
+            ViewBag.ListCategoryAuthor = UoW.CategoryByAuthorRepository.GetAll();
+            ViewBag.ListCategoryPublisher = UoW.CategoryByPublisherRepository.GetAll();
             return PartialView();
         }
         [HttpPost]
@@ -389,8 +384,7 @@ namespace VnBookLibrary.Web.Controllers
                 else
                 {
                     customer.IsBlock = false;
-                    db.Customers.Add(customer);
-                    db.SaveChanges();
+                    UoW.CustomerRepository.Insert(customer);                    
                     Session[Constants.CUSTOMER_SESSION] = customer;
                     TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng ký thành công!" };
                     return RedirectToAction("Index");

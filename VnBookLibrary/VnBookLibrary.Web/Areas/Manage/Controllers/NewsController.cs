@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using VnBookLibrary.Model.DAL;
 using VnBookLibrary.Model.Entities;
 using VnBookLibrary.Repository.Commons;
+using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
@@ -16,11 +17,17 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class NewsController : Controller
     {
-        private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
+        private VnBookLibraryDbContext db;
+        private UnitOfWork UoW;
+        public NewsController()
+        {
+            db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
+        }
 
         public ActionResult Index()
         {
-            return View(db.News.ToList());
+            return View(UoW.NewsRepository.GetAll());
         }        
 
         public ActionResult Create()
@@ -31,8 +38,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         public ActionResult Create(News news)
         {
             news.PostDate = DateTime.Now;
-            db.News.Add(news);
-            db.SaveChanges();
+            UoW.NewsRepository.Insert(news);
             TempData["Notify"] = new JsonResultBO()
             {
                 Status = true,
@@ -46,7 +52,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            News news = db.News.Find(id);
+            News news = UoW.NewsRepository.Find(id);
             if (news == null)
             {
                 return HttpNotFound();
@@ -56,8 +62,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]
         public ActionResult Edit(News news)
         {
-            db.Entry(news).State = EntityState.Modified;
-            db.SaveChanges();
+            UoW.NewsRepository.Update(news);
             TempData["Notify"] = new JsonResultBO()
             {
                 Status = true,
@@ -69,9 +74,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]        
         public ActionResult Delete(int id)
         {
-            News news = db.News.Find(id);
-            db.News.Remove(news);
-            db.SaveChanges();
+            UoW.NewsRepository.Delete(id);
             TempData["Notify"] = new JsonResultBO()
             {
                 Status = true,
@@ -84,7 +87,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

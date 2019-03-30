@@ -19,12 +19,12 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     public class EmployeesController : Controller
     {
         private VnBookLibraryDbContext db;
-        private EmployeeRepository employeeRepository;
+        private UnitOfWork UoW;
         public EmployeesController()
         {
             db = new VnBookLibraryDbContext();
-            employeeRepository = new EmployeeRepository(db);
-        }
+            UoW = new UnitOfWork(db);
+        }        
         public ActionResult ChangePassword()
         {
             return View();
@@ -42,10 +42,10 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 }
                 else
                 {
-                    Employee e = db.Employees.Find(manageSessionModel.SessionEmployee.EmployeeId);
+                    Employee e = UoW.EmployeeRepository.Find(manageSessionModel.SessionEmployee.EmployeeId);
                     e.Password = PasswordEncryption.GetVnBookLibraryCode(model.NewPassword);
                     e.RePassword = PasswordEncryption.GetVnBookLibraryCode(model.NewPassword);
-                    employeeRepository.Update(e);
+                    UoW.EmployeeRepository.Update(e);
                     ManageSession.RemoveSession(Constants.MANAGE_SESSION);
                     TempData["NotifyLogin"] = new JsonResultBO()
                     {
@@ -61,13 +61,13 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         // GET: Manage/Employees
         public ActionResult Index()
         {
-            var employees = db.Employees.Include(e => e.EmployeeType);
+            var employees = UoW.EmployeeRepository.GetAll();
             return View(employees.ToList());
         }
 
         public ActionResult Create()
         {
-            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes, "EmployeeTypeId", "EmployeeTypeName");
+            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName");
             return View();
         }
 
@@ -95,11 +95,10 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     return View(employee);                    
                 }
                 employee.Password = PasswordEncryption.GetVnBookLibraryCode(employee.Password);
-                db.Employees.Add(employee);
-                db.SaveChanges();
+                UoW.EmployeeRepository.Insert(employee);
                 return RedirectToAction("Index");
             }
-            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes, "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
+            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
         public ActionResult Edit(int? id)
@@ -108,12 +107,12 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = db.Employees.Find(id);
+            Employee employee = UoW.EmployeeRepository.Find(id);
             if (employee == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes, "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
+            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
 
@@ -133,8 +132,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 }
                 else
                 {
-                    db.Entry(employee).State = EntityState.Modified;
-                    db.SaveChanges();
+                    UoW.EmployeeRepository.Update(employee);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -143,7 +141,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes, "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
+            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
 
@@ -154,7 +152,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = db.Employees.Find(id);
+            Employee employee = UoW.EmployeeRepository.Find(id);
             if (employee == null)
             {
                 return HttpNotFound();
@@ -166,9 +164,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Employee employee = db.Employees.Find(id);
-            db.Employees.Remove(employee);
-            db.SaveChanges();
+            UoW.EmployeeRepository.Delete(id);
             return RedirectToAction("Index");
         }
 
@@ -176,7 +172,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                UoW.Dispose();
             }
             base.Dispose(disposing);
         }

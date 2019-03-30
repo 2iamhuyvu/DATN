@@ -20,77 +20,79 @@
 <h3>Danh sách loại nhân viên  @Html.ActionLink("Thêm mới", "Create", new { Area = "Manage" }, new { @class = "btn btn-danger", style = "float:right" })</h3>
 <div class="clearfix"></div>
 <hr style="margin-top:5px;" />
-<table class="table table-bordered table-striped">
-    <tr>
-        <th>
-            Tên loại nhân viên
-        </th>
-        <th>
-            Mô tả
-        </th>
-        <th>Sửa | Xóa | Phân quyền</th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+<table class="table table-bordered table-striped UseDataTables">
+    <thead>
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeTypeName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            @if (item.IsAdministrator ?? false == true)
-            {
-                <td></td>
-            }
-            else
-            {
-                <td>
-                    @{
-                        if (alowEditType)
-                        {
-                            <a title="Sửa" href="@Url.Action("Edit","EmployeeTypes",new { Area="Manage",id = item.EmployeeTypeId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
-                        }
-                        else
-                        {
-                            <a title="Bạn không có quyền sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
-                        }
-
-                        if (alowDeleteType)
-                        {
-                            <text>
-                                @using (Html.BeginForm("Delete", "EmployeeTypes", new { id = item.EmployeeTypeId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType_"+ item.EmployeeTypeId, style = "display:inline-block" }))
-                                {
-                                    <a href="javascript:void(0)" onclick="SubmitFormDeleteEmployeeType(@item.EmployeeTypeId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                }
-                            </text>
-                        }
-                        else
-                        {
-                            <text>
-                                <a href="javascript:void(0)" title="Bạn không có quyền xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                            </text>
-                        }
-                        if (alowRole_Division)
-                        {
-                            <text>
-                                <a href="@Url.Action("RoleDivision","Roles",new { Area="Manage",idType=item.EmployeeTypeId})" title="Phân quyền"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
-                            </text>
-                        }
-                        else
-                        {
-                            <text>
-                                <a href="javascript:void(0)" title="Bạn không có quyền phân quyền" style="cursor:not-allowed"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
-                            </text>
-                        }
-                    }
-
-                </td>
-            }
+            <th>
+                Tên loại nhân viên
+            </th>
+            <th>
+                Mô tả
+            </th>
+            <th data-orderable="false">Sửa | Xóa | Phân quyền</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                @if (item.IsAdministrator ?? false == true)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>
+                        @{
+                            if (alowEditType)
+                            {
+                                <a title="Sửa" href="@Url.Action("Edit","EmployeeTypes",new { Area="Manage",id = item.EmployeeTypeId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                            }
+                            else
+                            {
+                                <a title="Bạn không có quyền sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                            }
 
+                            if (alowDeleteType)
+                            {
+                                <text>
+                                    @using (Html.BeginForm("Delete", "EmployeeTypes", new { id = item.EmployeeTypeId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType_" + item.EmployeeTypeId, style = "display:inline-block" }))
+                                    {
+                                        <a href="javascript:void(0)" onclick="SubmitFormDeleteEmployeeType(@item.EmployeeTypeId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                    }
+                                </text>
+                            }
+                            else
+                            {
+                                <text>
+                                    <a href="javascript:void(0)" title="Bạn không có quyền xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                </text>
+                            }
+                            if (alowRole_Division)
+                            {
+                                <text>
+                                    <a href="@Url.Action("RoleDivision","Roles",new { Area="Manage",idType=item.EmployeeTypeId})" title="Phân quyền"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
+                                </text>
+                            }
+                            else
+                            {
+                                <text>
+                                    <a href="javascript:void(0)" title="Bạn không có quyền phân quyền" style="cursor:not-allowed"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
+                                </text>
+                            }
+                        }
+
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
 </table>
 @section scripts{
     <script>
@@ -107,10 +109,10 @@
                 },
                 callback: function ($this, type) {
                     if (type === 'yes') {
-                        $("#FormDeleteEmployeeType_"+id).submit();
+                        $("#FormDeleteEmployeeType_" + id).submit();
                     }
                 }
-            });            
+            });
         }
     </script>
 }

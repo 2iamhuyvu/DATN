@@ -6,11 +6,11 @@
     <div class="">
         @if (ViewBag.CategoryLv1Id != null)
         {
-            @Html.DropDownList("CategoryLv1Id", null, "---Chọn mục cấp 1---", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("CategoryLv1Id", null, "---Chọn mục cấp 1---", htmlAttributes: new { @class = "form-control UseSelect2" })
         }
         else
         {
-            <select id="CategoryLv1Id" name="CategoryLv1Id" class="form-control">
+            <select id="CategoryLv1Id" name="CategoryLv1Id" class="form-control UseSelect2">
                 <option>---Chọn mục cấp 1---</option>
             </select>
         }
@@ -21,17 +21,20 @@
     <div class="">
         @if (ViewBag.CategoryLv2Id != null)
         {
-            @Html.DropDownList("CategoryLv2Id", null, "---Chon danh mục cấp 2---", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("CategoryLv2Id", null, "---Chon danh mục cấp 2---", htmlAttributes: new { @class = "form-control UseSelect2" })
         }
         else
         {
-            <select id="CategoryLv2Id" name="CategoryLv2Id" class="form-control">
+            <select id="CategoryLv2Id" name="CategoryLv2Id" class="form-control UseSelect2">
                 <option>---Chọn mục cấp 2---</option>
             </select>
         }
     </div>
 </div>
 <script>
+    $(document).ready(function () {
+        $('.UseSelect2').select2();
+    })
     $("#CategoryLv1Id").change(function () {
         $.ajax({
             url: '@Url.Action("_DropdownCategory", "BookCategories",new { Area="Manage"})',

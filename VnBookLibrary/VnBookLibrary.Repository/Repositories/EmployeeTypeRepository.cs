@@ -10,8 +10,8 @@ namespace VnBookLibrary.Repository.Repositories
 {
     public class EmployeeTypeRepository : GenericRepository<EmployeeType>
     {
-        public EmployeeTypeRepository(VnBookLibraryDbContext context)
-        {            
+        public EmployeeTypeRepository(VnBookLibraryDbContext context) : base(context)
+        {
         }
         public EmployeeTypeRepository() : base()
         {

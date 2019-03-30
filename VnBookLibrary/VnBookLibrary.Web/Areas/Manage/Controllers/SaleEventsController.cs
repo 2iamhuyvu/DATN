@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using VnBookLibrary.Model.DAL;
 using VnBookLibrary.Model.Entities;
+using VnBookLibrary.Repository.Commons;
+using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
@@ -15,15 +17,19 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class SaleEventsController : Controller
     {
-        private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
-
-        // GET: Manage/SaleEvents
+        private VnBookLibraryDbContext db ;
+        private UnitOfWork UoW;
+        public SaleEventsController()
+        {
+            db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
+        }
+        
         public ActionResult Index()
         {
             return View(db.SaleEvents.ToList());
         }
-
-        // GET: Manage/SaleEvents/Details/5
+        
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -38,18 +44,16 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             return View(saleEvent);
         }
 
-        // GET: Manage/SaleEvents/Create
+        [HasRole(RoleCode = "CREATE_EVENTSALE")]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Manage/SaleEvents/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HasRole(RoleCode = "CREATE_EVENTSALE")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SaleEventId,SaleEventName,Descripton,DateStart,DateEnd,Percent")] SaleEvent saleEvent)
+        public ActionResult Create(SaleEvent saleEvent)
         {
             if (ModelState.IsValid)
             {
@@ -61,7 +65,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             return View(saleEvent);
         }
 
-        // GET: Manage/SaleEvents/Edit/5
+        [HasRole(RoleCode = "EDIT_EVENTSALE")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -76,12 +80,10 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             return View(saleEvent);
         }
 
-        // POST: Manage/SaleEvents/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HasRole(RoleCode = "EDIT_EVENTSALE")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SaleEventId,SaleEventName,Descripton,DateStart,DateEnd,Percent")] SaleEvent saleEvent)
+        public ActionResult Edit(SaleEvent saleEvent)
         {
             if (ModelState.IsValid)
             {
@@ -91,31 +93,20 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(saleEvent);
         }
-
-        // GET: Manage/SaleEvents/Delete/5
-        public ActionResult Delete(int? id)
+        [HasRole(RoleCode = "DELETE_EVENTSALE")]
+        [HttpPost]        
+        public ActionResult Delete(int id)
         {
-            if (id == null)
+            if (UoW.SaleEventRepository.Delete(id) > 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = true,
+                    Message = "Xóa thành công!",
+                };
+                return RedirectToAction("Index");
             }
-            SaleEvent saleEvent = db.SaleEvents.Find(id);
-            if (saleEvent == null)
-            {
-                return HttpNotFound();
-            }
-            return View(saleEvent);
-        }
-
-        // POST: Manage/SaleEvents/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            SaleEvent saleEvent = db.SaleEvents.Find(id);
-            db.SaleEvents.Remove(saleEvent);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
         }
 
         protected override void Dispose(bool disposing)

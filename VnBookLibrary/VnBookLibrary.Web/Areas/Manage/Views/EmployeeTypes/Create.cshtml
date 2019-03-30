@@ -1,42 +1,102 @@
 ﻿@model VnBookLibrary.Model.Entities.EmployeeType
-
+@using VnBookLibrary.Model.Entities;
 @{
     ViewBag.Title = "Thêm loại nhân viên";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+    ICollection<GroupRole> groupRoles = ViewBag.ListGroupRole;
 }
 
 <h3>Thêm loại nhân viên</h3>
+<hr style="" />
+@using (Html.BeginForm("Create", "EmployeeTypes", new { Area = "Manage" }, FormMethod.Post, new { @id = "FormCreateEmployeeType" }))
+{
+    <div class="row">
+        <div class="col-lg-6 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmployeeTypeName, "Tên loại nhân viên", htmlAttributes: new { @class = "" })<span style="color:red"> *</span>
+                <div class="">
+                    @Html.EditorFor(model => model.EmployeeTypeName, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
 
-@using (Html.BeginForm("Create","EmployeeTypes",new { Area="Manage"},FormMethod.Post,new { @id= "FormCreateEmployeeType" }))
-{    
-    <hr style="margin-top:5px;" />
-    <div class="col-lg-6 col-md-6">
-        <div class="form-group">
-            @Html.LabelFor(model => model.EmployeeTypeName, "Tên loại nhân viên", htmlAttributes: new { @class = "" })<span style="color:red"> *</span>
-            <div class="">
-                @Html.EditorFor(model => model.EmployeeTypeName, new { htmlAttributes = new { @class = "form-control" } })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, "Mô tả", htmlAttributes: new { @class = "" })
+                <div class="">
+                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", style = "resize:none;height:60px" })
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, "Mô tả", htmlAttributes: new { @class = "" })
-            <div class="">
-                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", style = "resize:none;height:100px" })
+        <div class="col-lg-6 col-md-6" style="margin-top:20px">
+            <i style="color:red">Bạn cần phân quyền cho loại nhân viên dười đây - Mặc định nếu không chọn thì không có quyền nào!</i>
+        </div>
+    </div>
+    <hr />
+    <h4 style="text-align:center;margin-bottom:20px">Phân quyền cho loại nhân viên</h4>
+    <div class="row" style="margin-bottom:100px;">
+        @foreach (var groupRole in groupRoles)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-primary" idGroupRole="@groupRole.GroupRoleId">
+                    <div class="panel-heading">
+                        <h4 style="cursor:pointer" title="Xem" idGroupRole="@groupRole.GroupRoleId" class="panel-title">@groupRole.GroupRoleName <i style="float:right" class="glyphicon glyphicon-menu-left"></i></h4>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body" style="padding-top:0px;display:none;padding-top:10px">
+                        <table class="table table-bordered table-striped" style="margin:0px;">
+                            <thead>
+                                <tr>
+                                    @*<th>Mã quyền</th>*@
+                                    <th>Tên quyền</th>
+                                    <th style="text-align:center">
+                                        <input idGroup="@groupRole.GroupRoleId" title="Tất cả" class="inputAll" type="checkbox" style="height:20px;width:20px;cursor:pointer"  />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var role in groupRole.Roles)
+                                {
+                                    <tr>
+                                        @*<td>@role.RoleCode</td>*@
+                                        <td>@role.RoleName</td>
+                                        <td style="text-align:center">
+                                            <input idGroup="@groupRole.GroupRoleId" name="ListRoleCode" title="@role.RoleName" value="@role.RoleCode" class="inputRole" type="checkbox" style="height:20px;width:20px;cursor:pointer;" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="">
-                <input type="button" value="Thêm" onclick="SubmitFormCreateEmployeeType()" class="btn btn-success" />
-            </div>
-        </div>
-        <div>
-            @Html.ActionLink("Quay lại danh sách loại nhân viên", "Index")
-        </div>
+        }
+    </div>
+    <div class="form-group" style="width:100%;position:fixed;left:0px;bottom:0px;text-align:center">
+        <input type="button" onclick="SubmitFormCreateEmployeeType()" style="width:30%;margin-left:216px" value="Thêm mới" class="btn btn-success btn-lg" />
     </div>
 }
 @section scripts{
     <script>
-        $(document).ready(function () {           
+        $(".inputAll").click(function () {
+            let idGroup = $(this).attr("idGroup");
+            if (this.checked) {
+                $(".inputRole[idGroup=" + idGroup+"]").prop('checked', true);
+            }
+            else {
+                $(".inputRole[idGroup=" + idGroup + "]").prop('checked', false);
+            }
+        })
+        $(".inputRole").click(function () {
+            let idGroup = $(this).attr("idGroup");
+            $(".inputAll[idGroup=" + idGroup + "]").prop('checked', false);            
+        })
+
+        $(".panel-title").click(function (e) {
+            let idGroupRole = $(this).attr("idGroupRole");
+            $(".panel[idGroupRole='" + idGroupRole + "'] .panel-body").slideToggle();
+            $(".panel[idGroupRole='" + idGroupRole + "'] .panel-title i").toggleClass("glyphicon-menu-left");
+            $(".panel[idGroupRole='" + idGroupRole + "'] .panel-title i").toggleClass("glyphicon-menu-down");
+        })
+        $(document).ready(function () {
             $(document).keypress(function (event) {
                 var keycode = (event.keyCode ? event.keyCode : event.which);
                 if (keycode == '13') {

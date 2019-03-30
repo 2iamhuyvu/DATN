@@ -16,7 +16,7 @@ using VnBookLibrary.Repository.Commons;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
 {
-    [AuthorizeManage]      
+    [AuthorizeManage]
     public class ProductsController : Controller
     {
         private VnBookLibraryDbContext db;
@@ -25,16 +25,16 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
-        }          
+        }
         public ActionResult Index(int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
             ViewBag.CategoryLv1Id = CategoryLv1Id;
             ViewBag.CategoryLv2Id = CategoryLv2Id;
-            ViewBag.CategoryAuthorId = CategoryAuthorId;            
+            ViewBag.CategoryAuthorId = CategoryAuthorId;
             ViewBag.CategoryPublisherId = CategoryPublisherId;
             return View();
-        }        
-        public PartialViewResult _GetProductByPage(string Search,int? CategoryLv1Id, int? CategoryLv2Id,int? CategoryAuthorId,int? CategoryPublisherId,int? TypeDisplay=1, int pageNumber = 1, int pageSize = 10)
+        }
+        public PartialViewResult _GetProductByPage(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId, int? TypeDisplay = 1, int pageNumber = 1, int pageSize = 10)
         {
             bool isSearch = true;
             if ((Search == null || Search == "") && !(CategoryLv2Id > 0) && !(CategoryLv1Id > 0) && !(CategoryAuthorId > 0) && !(CategoryPublisherId > 0))
@@ -44,111 +44,32 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             ViewBag.CategoryLv1Id = CategoryLv1Id;
             ViewBag.CategoryLv2Id = CategoryLv2Id;
             ViewBag.TypeDisplay = TypeDisplay;
-            ViewBag.CategoryAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName",CategoryAuthorId);
-            ViewBag.CategoryPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName",CategoryPublisherId);
-            return PartialView(UoW.ProductRepository.GetPageListProduct(Search,CategoryLv1Id,CategoryLv2Id,CategoryAuthorId,CategoryPublisherId, pageNumber, pageSize));
-        }           
+            ViewBag.CategoryAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName", CategoryAuthorId);
+            ViewBag.CategoryPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName", CategoryPublisherId);
+            return PartialView(UoW.ProductRepository.GetPageListProduct(Search, CategoryLv1Id, CategoryLv2Id, CategoryAuthorId, CategoryPublisherId, pageNumber, pageSize));
+        }
+
+        [HasRole(RoleCode = "CREATE_PRODUCT")]
         public ActionResult Create()
         {
-            if (ManageSession.HasRole("CREATE_PRODUCT"))
-            {
-                ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
-                ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");                
-                return View();
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền thêm sách!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
-            }
+            ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
+            ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");
+            return View();
         }
-        [HttpPost]        
+
+        [HasRole(RoleCode = "CREATE_PRODUCT")]
+        [HttpPost]
         public ActionResult Create(Product product)
         {
-            if (ManageSession.HasRole("CREATE_PRODUCT"))
-            {
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        UoW.ProductRepository.Insert(product);
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = true,
-                            Message = "Thêm sách thành công!",
-                        };
-                        return Json(new JsonResultBO(true));
-                    }
-                    catch
-                    {
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = true,
-                            Message = "Lỗi!",
-                        };
-                        return Json(new JsonResultBO(false));
-                    }
-                }
-                else
-                {
-                    ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
-                    ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");
-                    return View(product);
-                }
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền thêm sách!",
-                };
-                return Json(new JsonResultBO(false));
-            }
-        }
-        public ActionResult Edit(int? id)
-        {
-            if (ManageSession.HasRole("EDIT_PRODUCT"))
-            {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                Product product = UoW.ProductRepository.Find(id);
-                if (product == null)
-                {
-                    return HttpNotFound();
-                }
-                ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName", product.CategoryByAuthorId);
-                ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName", product.CategoryByPublisherId);
-                return View(product);
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa sách!",
-                };
-                return RedirectToAction("Index", "Products", new { Area = "Manage" });
-            }
-        }
-        [HttpPost]
-        public ActionResult Edit(Product product)
-        {
-            if (ManageSession.HasRole("EDIT_PRODUCT"))
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    UoW.ProductRepository.Update(product);
+                    UoW.ProductRepository.Insert(product);
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
-                        Message = "Sửa sách thành công!",
+                        Message = "Thêm sách thành công!",
                     };
                     return Json(new JsonResultBO(true));
                 }
@@ -164,36 +85,66 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             else
             {
+                ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
+                ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");
+                return View(product);
+            }
+        }
+        [HasRole(RoleCode = "EDIT_PRODUCT")]
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
+            }
+            Product product = UoW.ProductRepository.Find(id);
+            if (product == null)
+            {
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
+            }
+            ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName", product.CategoryByAuthorId);
+            ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName", product.CategoryByPublisherId);
+            return View(product);
+        }
+
+        [HasRole(RoleCode = "EDIT_PRODUCT")]
+        [HttpPost]
+        public ActionResult Edit(Product product)
+        {
+            try
+            {
+                UoW.ProductRepository.Update(product);
                 TempData["Notify"] = new JsonResultBO()
                 {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa sách!",
+                    Status = true,
+                    Message = "Sửa sách thành công!",
+                };
+                return Json(new JsonResultBO(true));
+            }
+            catch
+            {
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = true,
+                    Message = "Lỗi!",
                 };
                 return Json(new JsonResultBO(false));
             }
         }
+        [HasRole(RoleCode = "DELETE_PRODUCT")]
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            if (ManageSession.HasRole("DELETE_PRODUCT"))
+            if (UoW.ProductRepository.Delete(id) > 0)
             {
-                UoW.ProductRepository.Delete(id);
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
                     Message = "Xóa sách thành công!",
                 };
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền xóa sách!",
-                };
                 return RedirectToAction("Index", "Products", new { Area = "Manage" });
             }
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
         }
 
         protected override void Dispose(bool disposing)

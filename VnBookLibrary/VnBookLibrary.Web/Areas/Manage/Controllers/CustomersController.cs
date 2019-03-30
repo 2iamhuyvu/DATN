@@ -17,7 +17,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     {
         private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
 
-        // GET: Manage/Customers
+        [HasRole(RoleCode = "VIEW_CUSTOMER")]
         public ActionResult Index()
         {
             return View(db.Customers.ToList());

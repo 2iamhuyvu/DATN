@@ -65,7 +65,7 @@ namespace VnBookLibrary.Repository.Repositories
             _set.Attach(item);
             _context.Entry(item).State = EntityState.Modified;
             return _context.SaveChanges();
-        }
+        }       
         public virtual ICollection<T> GetAll()
         {
             return _set.ToList();

@@ -9,7 +9,7 @@ using VnBookLibrary.Web.Areas.Manage.Models;
 namespace VnBookLibrary.Web.Areas.Manage.Customizes
 {
     public class ManageSession
-    {        
+    {
         public static void SetSession(string Key, object Value)
         {
             HttpContext context = HttpContext.Current;
@@ -38,27 +38,31 @@ namespace VnBookLibrary.Web.Areas.Manage.Customizes
         {
             HttpContext context = HttpContext.Current;
             return context.Session[Key] != null;
-        }        
+        }
         public static List<string> GetListRole()
         {
             HttpContext context = HttpContext.Current;
             return ((ManageSessionModel)context.Session[Constants.MANAGE_SESSION]).RoleCodes;
         }
         public static bool HasRole(string roleCode)
-        {            
-            HttpContext context = HttpContext.Current;            
-            var session = context.Session[Constants.MANAGE_SESSION];
-            if (session == null) return false;            
-            var listRole = ((ManageSessionModel)session).RoleCodes;
+        {
+
+            HttpContext context = HttpContext.Current;
+            ManageSessionModel session =(ManageSessionModel)context.Session[Constants.MANAGE_SESSION];
+            if (session == null) return false;
+            if (roleCode == null&&session.SessionEmployee.EmployeeType.IsAdministrator==true) {
+                return true;
+            }
+            var listRole = (session).RoleCodes;
             if (listRole == null)
             {
                 return false;
-            }            
+            }
             if (listRole.Contains(roleCode))
             {
                 return true;
-            }            
+            }
             return false;
-        }        
+        }
     }
 }

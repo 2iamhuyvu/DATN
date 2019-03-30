@@ -9,14 +9,19 @@ using VnBookLibrary.Web.Areas.Manage.Models;
 
 namespace VnBookLibrary.Web.Areas.Manage
 {
-    public class HasRole: ActionFilterAttribute
+    public class HasRole : ActionFilterAttribute
     {
-        public string RoleCode { get; set; }        
+        public string RoleCode { get; set; }
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var session = (ManageSessionModel)filterContext.HttpContext.Session[Constants.MANAGE_SESSION];
             var roles = session.RoleCodes;
-            bool check = RoleCode==""||RoleCode==null||roles.Contains(RoleCode);
+            Employee employee = session.SessionEmployee;
+            if (employee.EmployeeType.IsAdministrator == true && RoleCode == null)
+            {
+                return;
+            }
+            bool check = roles.Contains(RoleCode);
             if (!check)
             {
                 if (filterContext.HttpContext.Request.IsAjaxRequest())
@@ -34,7 +39,7 @@ namespace VnBookLibrary.Web.Areas.Manage
                     {
                         filterContext.Result = new PartialViewResult
                         {
-                            ViewName = "~/Areas/Manage/Views/Shared/_UnAuthorizePartial.cshtml"
+                            ViewName = "~/Areas/Manage/Views/Shared/_UnAuthorizePartial.cshtml",
                         };
                     }
                 }

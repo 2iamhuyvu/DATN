@@ -14,7 +14,7 @@ using VnBookLibrary.Web.Areas.Manage.Customizes;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
 {
-    [AuthorizeManage]    
+    [AuthorizeManage]
     public class EmployeeTypesController : Controller
     {
         private VnBookLibraryDbContext db;
@@ -23,128 +23,146 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
-        }        
-        // GET: Manage/EmployeeTypes        
+        }
+        [HasRole(RoleCode = "VIEW_EMPLOYEETYPE")]
         public ActionResult Index()
         {
-            //if (ManageSession.HasRole("VIEW_EMPLOYEETYPE"))
-            //{
-                return View(UoW.EmployeeTypeRepository.GetAll());
-            //}
-            //else
-            //{
-            //    TempData["Notify"] = new JsonResultBO()
-            //    {
-            //        Status = false,
-            //        Message = "Bạn không có quyền xem loại nhân viên!",
-            //    };
-            //    return RedirectToAction("Index", "ManageHome", new { Area = "Manage" });
-            //}
+            return View(UoW.EmployeeTypeRepository.GetAll());
         }
-        
-        // GET: Manage/EmployeeTypes/Create
+
+        [HasRole(RoleCode = "CREATE_EMPLOYEETYPE")]
         public ActionResult Create()
         {
-            if (ManageSession.HasRole("CREATE_EMPLOYEETYPE"))
-            {
-                return View();
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền thêm loại nhân viên!",
-                };
-                return RedirectToAction("Index", "ManageHome", new { Area = "Manage" });
-            }
-        }        
+            ViewBag.ListGroupRole = UoW.GroupRoleRepository.GetAll();
+            return View();
+        }
+        [HasRole(RoleCode = "CREATE_EMPLOYEETYPE")]
         [HttpPost]
         public ActionResult Create(EmployeeType employeeType)
         {
-            if (ManageSession.HasRole("CREATE_EMPLOYEETYPE"))
+            var ListRoleCode = Request.Form.GetValues("ListRoleCode");
+            if (ModelState.IsValid)
             {
-                if (employeeType.EmployeeTypeName == "")
+                var temp = UoW.EmployeeTypeRepository.GetAll().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName));
+                if (temp != null)
                 {
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = false,
-                        Message = "Không được để trống tên loại nhân viên!",
+                        Message = "Tên loại đã tồn tại!",
                     };
                 }
                 else
                 {
-                    var temp = UoW.EmployeeTypeRepository.GetAll().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName));
-                    if (temp != null)
+                    UoW.EmployeeTypeRepository.Insert(employeeType);
+                    if (ListRoleCode != null)
                     {
-                        TempData["Notify"] = new JsonResultBO()
+                        ICollection<Role_EmployeeType> role_EmployeeTypes = new List<Role_EmployeeType>();
+                        foreach (var rolecode in ListRoleCode)
                         {
-                            Status = false,
-                            Message = "Tên loại đã tồn tại!",
-                        };
+                            Role_EmployeeType re = new Role_EmployeeType
+                            {
+                                RoleCode = rolecode,
+                                EmployeeTypeId = employeeType.EmployeeTypeId,
+                            };
+                            role_EmployeeTypes.Add(re);
+                        }
+                        UoW.Role_EmployeeTypeRepository.InsertRange(role_EmployeeTypes);
                     }
-                    else
-                    {
-                        UoW.EmployeeTypeRepository.Insert(employeeType);
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = true,
-                            Message = "Thêm thành công!",
-                        };
-                        return RedirectToAction("Index");
-                    }
-                }
-                return View(employeeType);
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền thêm loại nhân viên!",
-                };
-                return RedirectToAction("Index", "ManageHome", new { Area = "Manage" });
-            }
-        }        
-        public ActionResult Edit(int? id)
-        {
-            if (ManageSession.HasRole("EDIT_EMPLOYEETYPE"))
-            {
-                if (id == null)
-                {
-                    return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
-                }
-                EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
-                if (employeeType == null)
-                {
-                    return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
-                }
-                if (employeeType.IsAdministrator == true)
-                {
                     TempData["Notify"] = new JsonResultBO()
                     {
-                        Status = false,
-                        Message = "Không được xóa loại Administrator",
+                        Status = true,
+                        Message = "Thêm thành công!",
                     };
                     return RedirectToAction("Index");
                 }
-                return View(employeeType);
             }
-            else
+            ViewBag.ListGroupRole = UoW.GroupRoleRepository.GetAll();
+            return View(employeeType);
+        }
+
+        [HasRole(RoleCode = "EDIT_EMPLOYEETYPE")]
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
+            }
+            EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
+            if (employeeType == null)
+            {
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
+            }
+            if (employeeType.IsAdministrator == true)
             {
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = false,
-                    Message = "Bạn không có quyền chỉnh sửa loại nhân viên!",
+                    Message = "Không được chỉnh Sửa loại Administrator",
                 };
-                return RedirectToAction("Index", "EmployeeTypes", new { Area = "Manage" });
+                return RedirectToAction("Index");
             }
+            ViewBag.ListGroupRole = UoW.GroupRoleRepository.GetAll();
+            return View(employeeType);
         }
-        
+
+        [HasRole(RoleCode = "EDIT_EMPLOYEETYPE")]
         [HttpPost]
         public ActionResult Edit(EmployeeType employeeType)
         {
-            if (ManageSession.HasRole("EDIT_EMPLOYEETYPE"))
+            var ListRoleCode = Request.Form.GetValues("ListRoleCode").ToList();
+            if (employeeType.IsAdministrator == true)
+            {
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = false,
+                    Message = "Không được sửa loại Administrator",
+                };
+                return RedirectToAction("Index");
+            }
+            else if (employeeType.EmployeeTypeName == "")
+            {
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = false,
+                    Message = "Không được để trống tên loại nhân viên!",
+                };
+            }
+            else
+            {
+                var temp = UoW.EmployeeTypeRepository.GetAll().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName) && x.EmployeeTypeId != employeeType.EmployeeTypeId);
+                if (temp != null)
+                {
+                    TempData["Notify"] = new JsonResultBO()
+                    {
+                        Status = false,
+                        Message = "Tên loại đã tồn tại!",
+                    };
+                }
+                else
+                {
+                    var temp1 = db.EmployeeTypes.Find(employeeType.EmployeeTypeId);
+                    temp1.EmployeeTypeName = employeeType.EmployeeTypeName;
+                    temp1.Description = employeeType.Description;
+                    db.SaveChanges();
+                    UoW.EmployeeTypeRepository.ChangeRole(employeeType.EmployeeTypeId, ListRoleCode);
+                    TempData["Notify"] = new JsonResultBO()
+                    {
+                        Status = true,
+                        Message = "Sửa thành công!",
+                    };
+                    return RedirectToAction("Index");
+                }
+            }
+            ViewBag.ListGroupRole = UoW.GroupRoleRepository.GetAll();
+            return View(employeeType);
+        }
+        [HasRole(RoleCode = "DELETE_EMPLOYEETYPE")]
+        [HttpPost]
+        public ActionResult Delete(int? id)
+        {
+            EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
+            if (employeeType != null)
             {
                 if (employeeType.IsAdministrator == true)
                 {
@@ -155,83 +173,13 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     };
                     return RedirectToAction("Index");
                 }
-                else if (employeeType.EmployeeTypeName == "")
-                {
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = false,
-                        Message = "Không được để trống tên loại nhân viên!",
-                    };
-                }
                 else
                 {
-                    var temp = UoW.EmployeeTypeRepository.GetAll().FirstOrDefault(x => x.EmployeeTypeName.Equals(employeeType.EmployeeTypeName) && x.EmployeeTypeId != employeeType.EmployeeTypeId);
-                    if (temp != null)
-                    {
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = false,
-                            Message = "Tên loại đã tồn tại!",
-                        };
-                    }
-                    else
-                    {
-                        UoW.EmployeeTypeRepository.Update(employeeType);
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = true,
-                            Message = "Sửa thành công!",
-                        };
-                        return RedirectToAction("Index");
-                    }
-                }
-                return View(employeeType);
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền chỉnh sửa loại nhân viên!",
-                };
-                return RedirectToAction("Index", "EmployeeTypes", new { Area = "Manage" });
-            }
-        }
-        
-        [HttpPost]
-        public ActionResult Delete(int? id)
-        {
-            if (ManageSession.HasRole("DELETE_EMPLOYEETYPE"))
-            {
-                EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
-                if (employeeType != null)
-                {
-                    if (employeeType.IsAdministrator == true)
-                    {
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = false,
-                            Message = "Không được xóa loại Administrator",
-                        };
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        UoW.EmployeeTypeRepository.Delete(id);
-                        TempData["Notify"] = new JsonResultBO()
-                        {
-                            Status = true,
-                            Message = "Xóa thành công!",
-                        };
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
+                    UoW.EmployeeTypeRepository.Delete(id);
                     TempData["Notify"] = new JsonResultBO()
                     {
-                        Status = false,
-                        Message = "Không tồn tại!",
+                        Status = true,
+                        Message = "Xóa thành công!",
                     };
                     return RedirectToAction("Index");
                 }
@@ -241,9 +189,9 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = false,
-                    Message = "Bạn không có quyền xóa loại nhân viên!",
+                    Message = "Không tồn tại!",
                 };
-                return RedirectToAction("Index", "EmployeeTypes", new { Area = "Manage" });
+                return RedirectToAction("Index");
             }
         }
 

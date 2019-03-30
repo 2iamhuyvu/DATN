@@ -19,6 +19,6 @@ namespace VnBookLibrary.Model.Entities
         [DefaultValue(false)]
         public bool? IsAdministrator { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
-        public ICollection<Role_EmployeeType> Role_EmployeeTypes { get; set; }
+        public virtual ICollection<Role_EmployeeType> Role_EmployeeTypes { get; set; }
     }
 }

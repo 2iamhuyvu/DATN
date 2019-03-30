@@ -98,7 +98,7 @@
 
 <body>
     @{
-        ManageSessionModel manageSessionModel =(ManageSessionModel)ManageSession.GetSession(Constants.MANAGE_SESSION);
+        ManageSessionModel manageSessionModel = (ManageSessionModel)ManageSession.GetSession(Constants.MANAGE_SESSION);
     }
     <div id="wrapper">
         <div style="height:51px;position:fixed;width:100%;background:#f8f8f8;z-index:999;border-bottom:1px solid #e7e7e7">
@@ -372,6 +372,9 @@
                                 <li>
                                     <a href="@Url.Action("Create","EmployeeTypes",new { Area="Manage"})">Thêm loại nhân viên</a>
                                 </li>
+                                <li>
+                                    <a href="@Url.Action("Index","Roles",new { Area="Manage"})">Xem các quyền</a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
@@ -395,7 +398,7 @@
                                     <a href="@Url.Action("Create","News",new { Area="Manage"})">Thêm Bài viết - Tin tức</a>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("Index","Contacs",new { Area="Manage"})">Danh sách Liên hệ khách hàng</a>
+                                    <a href="@Url.Action("Index","Contacts",new { Area="Manage"})">Danh sách Liên hệ khách hàng</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

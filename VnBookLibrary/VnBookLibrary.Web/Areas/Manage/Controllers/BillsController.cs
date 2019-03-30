@@ -26,10 +26,12 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);            
         }
+        [HasRole(RoleCode ="VIEW_BILL")]
         public ActionResult Index()
-        {            
+        {                     
             return View();
         }
+        [HasRole(RoleCode = "VIEW_BILL")]
         public PartialViewResult _GetBillByStatus(int? status=-1,int page=1,int pageSize=15)
         {
             List<Bill> bills = UoW.BillRepository.GetAll().ToList();
@@ -40,12 +42,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             ViewBag.StatusBill = status;
             return PartialView(bills.OrderBy(x => x.PayDate).ToPagedList(page,bills.Count==0?100: bills.Count));
         }
+        [HasRole(RoleCode = "VIEW_BILL")]
         public ActionResult _modalDetail(int id)
         {
             ViewBag.Bill = UoW.BillRepository.Find(id);            
             ViewBag.ListBillDetail = UoW.BillRepository.GetAll().Where(x => x.BillId == id).ToList();
             return PartialView();
         }
+        [HasRole(RoleCode = "VIEW_BILL")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -59,6 +63,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(bill);
         }
+        [HasRole(RoleCode = "EDIT_BILL")]
         public ActionResult ConfirmDeliver(int billId)
         {
             Bill bill = new Bill();
@@ -75,7 +80,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
         }
-
+        [HasRole(RoleCode = "EDIT_BILL")]
         public ActionResult ConfirmPaid(int billId)
         {
             Bill bill = new Bill();
@@ -92,6 +97,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
         }
+        [HasRole(RoleCode = "EDIT_BILL")]
         public ActionResult ConfirmReturned(int billId)
         {
             Bill bill = new Bill();

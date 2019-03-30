@@ -17,27 +17,112 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class RolesController : Controller
     {
-        private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
-        private GroupRoleRepository _groupRoleRepository;
-        private RoleRepository _roleRepository;
-        // GET: Manage/Roles        
+        private VnBookLibraryDbContext db;
+        private UnitOfWork UoW;
+        public RolesController()
+        {
+            db = new VnBookLibraryDbContext();
+            UoW = new UnitOfWork(db);
+        }
+        [HasRole]
         public ActionResult Index()
         {
-            if (ManageSession.HasRole("VIEW_ROLE")||true)
-            {
-                ViewData["ListGroupRole"] = db.GroupRoles.ToList();
-                return View();
-            }
-            else
+            ViewData["ListGroupRole"] = db.GroupRoles.ToList();
+            return View();
+        }
+        [HasRole]
+        public ActionResult EditGroup(int? idGroup)
+        {
+            return View();
+        }
+        [HasRole]
+        [HttpPost]
+        public ActionResult EditGroup(GroupRole groupRole)
+        {
+            if (groupRole.GroupRoleName == "")
             {
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = false,
-                    Message = "Bạn không có quyền xem nhóm quyền!",
+                    Message = "Không được để trống tên nhóm!",
                 };
-                return RedirectToAction("Index", "ManageHome", new { Area = "Manage" });
             }
-        }       
+            else
+            {
+                db.GroupRoles.Add(groupRole);
+                db.SaveChanges();
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = true,
+                    Message = "Thêm thành công!",
+                };
+                return RedirectToAction("Index");
+            }
+            return View(groupRole);
+        }
+        [HasRole]
+        public ActionResult Create()
+        {
+            ViewBag.GroupRoleId = new SelectList(db.GroupRoles, "GroupRoleId", "GroupRoleName");
+            return View();
+        }
+        [HasRole]
+        [HttpPost]
+        public ActionResult Create(Role role)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Roles.Add(role);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.GroupRoleId = new SelectList(db.GroupRoles, "GroupRoleId", "GroupRoleName", role.GroupRoleId);
+            return View(role);
+        }
+        [HasRole]
+        public ActionResult Edit(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Role role = db.Roles.Find(id);
+            if (role == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.GroupRoleId = new SelectList(db.GroupRoles, "GroupRoleId", "GroupRoleName", role.GroupRoleId);
+            return View(role);
+        }
+        [HasRole]
+        [HttpPost]
+        public ActionResult Edit(Role role)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(role).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.GroupRoleId = new SelectList(db.GroupRoles, "GroupRoleId", "GroupRoleName", role.GroupRoleId);
+            return View(role);
+        }
+        [HasRole]
+        [HttpPost]
+        public ActionResult Delete(string id)
+        {
+            if (UoW.RoleRepository.Delete(id) > 0)
+            {
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = true,
+                    Message = "Xóa thành công!",
+                };
+                return RedirectToAction("Index");
+            }
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
+        }
 
         protected override void Dispose(bool disposing)
         {

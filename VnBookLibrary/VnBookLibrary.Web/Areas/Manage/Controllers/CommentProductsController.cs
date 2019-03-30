@@ -17,7 +17,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     {
         private VnBookLibraryDbContext db = new VnBookLibraryDbContext();
 
-        // GET: Manage/CommentProducts
+        [HasRole(RoleCode = "VIEW_COMMENT")]
         public ActionResult Index()
         {
             var commentProducts = db.CommentProducts.Include(c => c.Customer).Include(c => c.Product);

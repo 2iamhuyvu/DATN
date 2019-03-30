@@ -2,20 +2,17 @@
 @using System.Collections.Generic;
 @using VnBookLibrary.Web.Areas.Manage.Customizes
 @{
-    ViewBag.Title = "Danh sách các quyền";
-    List<GroupRole> groupRoles = (List<GroupRole>)ViewData["ListGroupRole"];
+    ViewBag.Title = "Danh sách các quyền | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
-    var alowDeteteRole = ManageSession.HasRole("DELETE_ROLE");
-    var alowEditRole = ManageSession.HasRole("EDIT_ROLE");
-    var alowCreateRole = ManageSession.HasRole("CREATE_ROLE");
-    var alowCreateGroup = ManageSession.HasRole("CREATE_GROUPROLE");
-    var alowGroup = ManageSession.HasRole("CREATE_GROUPROLE");
+
+    List<GroupRole> groupRoles = (List<GroupRole>)ViewData["ListGroupRole"];
+    var alow = ManageSession.HasRole(null);    
 }
 
 <h3>
     Danh sách quyền theo nhóm
     @{
-        if (alowCreateGroup)
+        if (alow)
         {
             <a style="float:right" class="btn btn-sm btn-success" href="@Url.Action("CreateGroup","Role",new { Area="Manage"})">Thêm nhóm quyền</a>
         }
@@ -26,6 +23,7 @@
     }
 </h3>
 <div class="clearfix"></div>
+<hr />
 <div>
     @foreach (var groupRole in groupRoles)
     {
@@ -34,25 +32,26 @@
                 <h4 style="cursor:pointer" title="Xem" idGroupRole="@groupRole.GroupRoleId" class="panel-title">Nhóm quyền @groupRole.GroupRoleName <i style="float:right" class="glyphicon glyphicon-menu-left"></i></h4>
                 <div class="clearfix"></div>
             </div>
-            <div class="panel-body" style="padding-top:0px;display:none">
-                <table class="table" style="margin:0px;">
-                    <tr>
-                        <th>Mã quyền</th>
-                        <th>Tên quyền</th>                        
-                        <th>Mô tả</th>
-                        <th></th>
-                    </tr>
-                    @if (groupRole.Roles.Count > 0)
-                    {
-                        foreach (var role in groupRole.Roles)
+            <div class="panel-body" style="padding-top:0px;display:none;padding-top:10px">
+                <table class="table table-bordered table-striped UseDataTables" style="margin:0px;">
+                    <thead>
+                        <tr>
+                            <th>Mã quyền</th>
+                            <th>Tên quyền</th>
+                            <th>Mô tả</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var role in groupRole.Roles)
                         {
                             <tr>
                                 <td>@role.RoleCode</td>
-                                <td>@role.RoleName</td>                                
+                                <td>@role.RoleName</td>
                                 <td>@role.Description</td>
-                                <td>
+                                <td style="text-align:center">
                                     @{
-                                        if (alowEditRole)
+                                        if (alow)
                                         {
                                             <a title="Sửa" href="@Url.Action("Edit", "Roles", new { Area = "Manage", id = role.RoleCode })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
                                         }
@@ -61,7 +60,7 @@
                                             <a title="Bạn không có quyền sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
                                         }
 
-                                        if (alowDeteteRole)
+                                        if (alow)
                                         {
                                             <text>
                                                 @using (Html.BeginForm("Delete", "Roles", new { id = role.RoleCode, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType", style = "display:inline-block" }))
@@ -80,17 +79,10 @@
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5">Chưa có quyền nào!</td>
-                        </tr>
-                    }
-
+                    </tbody>
                 </table>
                 <br />
-                @if (alowCreateRole)
+                @if (alow)
                 {
                     <a class="btn btn-sm btn-danger" href="@Url.Action("Create", "Roles", new { Area = "Manage", idGroup = groupRole.GroupRoleId })">Thêm quyền cho nhóm này</a>
                 }

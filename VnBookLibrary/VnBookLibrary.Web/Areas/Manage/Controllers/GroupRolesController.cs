@@ -22,15 +22,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             db = new VnBookLibraryDbContext();
             _groupRoleRepository = new GroupRoleRepository(db);
-        }        
-        // GET: Manage/GroupRoles
+        }
+        [HasRole]
         public ActionResult Index()
         {
             var list = db.GroupRoles.ToList();
             return View(db.GroupRoles.ToList());
         }
-
-        // GET: Manage/GroupRoles/Details/5
+        [HasRole]        
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -44,19 +43,15 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(groupRole);
         }
-
-        // GET: Manage/GroupRoles/Create
+        [HasRole]        
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Manage/GroupRoles/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "GroupRoleId,GroupRoleName,Description")] GroupRole groupRole)
+        [HasRole]
+        [HttpPost]        
+        public ActionResult Create(GroupRole groupRole)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +62,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
 
             return View(groupRole);
         }
-
-        // GET: Manage/GroupRoles/Edit/5
+        [HasRole]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -82,13 +76,9 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(groupRole);
         }
-
-        // POST: Manage/GroupRoles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "GroupRoleId,GroupRoleName,Description")] GroupRole groupRole)
+        [HasRole]
+        [HttpPost]        
+        public ActionResult Edit(GroupRole groupRole)
         {
             if (ModelState.IsValid)
             {
@@ -98,8 +88,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(groupRole);
         }
-
-        // GET: Manage/GroupRoles/Delete/5
+        [HasRole]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -113,10 +102,8 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(groupRole);
         }
-
-        // POST: Manage/GroupRoles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HasRole]
+        [HttpPost, ActionName("Delete")]        
         public ActionResult DeleteConfirmed(int id)
         {
             GroupRole groupRole = db.GroupRoles.Find(id);

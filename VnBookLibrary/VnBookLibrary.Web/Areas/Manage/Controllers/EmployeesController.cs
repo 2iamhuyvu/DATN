@@ -24,7 +24,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
-        }        
+        }
         public ActionResult ChangePassword()
         {
             return View();
@@ -58,19 +58,19 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             return View(model);
         }
 
-        // GET: Manage/Employees
+        [HasRole(RoleCode = "VIEW_EMPLOYEE")]
         public ActionResult Index()
         {
             var employees = UoW.EmployeeRepository.GetAll();
             return View(employees.ToList());
         }
-
+        [HasRole(RoleCode = "CREATE_EMPLOYEE")]
         public ActionResult Create()
         {
             ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName");
             return View();
         }
-
+        [HasRole(RoleCode = "CREATE_EMPLOYEE")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Employee employee)
@@ -82,17 +82,17 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     ModelState.AddModelError("LoginName", "Tên đăng nhập này đã tồn tại");
                     return View(employee);
                 }
-                if (employee.Password.Length<5||employee.LoginName.Trim() == "" || employee.Password.Trim() == null || employee.EmployeeName.Trim() == "")
+                if (employee.Password.Length < 5 || employee.LoginName.Trim() == "" || employee.Password.Trim() == null || employee.EmployeeName.Trim() == "")
                 {
-                    if(employee.LoginName.Trim() == "")
-                        ModelState.AddModelError("LoginName","Không được để trống tên đăng nhập!");
+                    if (employee.LoginName.Trim() == "")
+                        ModelState.AddModelError("LoginName", "Không được để trống tên đăng nhập!");
                     if (employee.Password.Trim() == "")
                         ModelState.AddModelError("Password", "Không được để trống mật khẩu!");
                     if (employee.Password.Length < 5)
                         ModelState.AddModelError("Password", "Mật khẩu tối thiểu 5 ký tự");
                     if (employee.EmployeeName.Trim() == "")
                         ModelState.AddModelError("EmployeeName", "Không được để trống tên nhân viên!");
-                    return View(employee);                    
+                    return View(employee);
                 }
                 employee.Password = PasswordEncryption.GetVnBookLibraryCode(employee.Password);
                 UoW.EmployeeRepository.Insert(employee);
@@ -105,20 +105,18 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
             Employee employee = UoW.EmployeeRepository.Find(id);
             if (employee == null)
             {
-                return HttpNotFound();
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
             ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
 
-        // POST: Manage/Employees/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HasRole(RoleCode = "EDIT_EMPLOYEE")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Employee employee)
@@ -144,30 +142,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
-
-        // GET: Manage/Employees/Delete/5
-        public ActionResult Delete(int? id)
+        [HasRole(RoleCode = "DELETE_EMPLOYEE")]
+        [HttpPost]
+        public ActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Employee employee = UoW.EmployeeRepository.Find(id);
-            if (employee == null)
-            {
-                return HttpNotFound();
-            }
-            return View(employee);
+            if (UoW.EmployeeRepository.Delete(id) > 0)
+                return RedirectToAction("Index");
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
         }
-
-        // POST: Manage/Employees/Delete/5
-        [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            UoW.EmployeeRepository.Delete(id);
-            return RedirectToAction("Index");
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

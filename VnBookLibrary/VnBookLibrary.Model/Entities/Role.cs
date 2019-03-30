@@ -19,6 +19,6 @@ namespace VnBookLibrary.Model.Entities
         public int? GroupRoleId { get; set; }
         [ForeignKey("GroupRoleId")]
         public virtual GroupRole GroupRole { get; set; }
-        public ICollection<Role_EmployeeType> Role_EmployeeTypes { get; set; }
+        public virtual ICollection<Role_EmployeeType> Role_EmployeeTypes { get; set; }
     }
 }

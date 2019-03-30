@@ -5,8 +5,7 @@
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
     var alowDeleteType = ManageSession.HasRole("DELETE_EMPLOYEETYPE");
     var alowEditType = ManageSession.HasRole("EDIT_EMPLOYEETYPE");
-    var alowCreateType = ManageSession.HasRole("CREATE_EMPLOYEETYPE");
-    var alowRole_Division = ManageSession.HasRole("ROLE_DIVISION");
+    var alowCreateType = ManageSession.HasRole("CREATE_EMPLOYEETYPE");    
 }
 <style>
     th {
@@ -29,7 +28,7 @@
             <th>
                 Mô tả
             </th>
-            <th data-orderable="false">Sửa | Xóa | Phân quyền</th>
+            <th data-orderable="false">Sửa,Phân quyền | Xóa</th>
         </tr>
     </thead>
     <tbody>
@@ -43,7 +42,7 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 @if (item.IsAdministrator ?? false == true)
-                {
+                {                    
                     <td></td>
                 }
                 else
@@ -52,11 +51,11 @@
                         @{
                             if (alowEditType)
                             {
-                                <a title="Sửa" href="@Url.Action("Edit","EmployeeTypes",new { Area="Manage",id = item.EmployeeTypeId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                                <a title="Sửa,Phân quyền" href="@Url.Action("Edit","EmployeeTypes",new { Area="Manage",id = item.EmployeeTypeId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
                             }
                             else
                             {
-                                <a title="Bạn không có quyền sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
+                                <a title="Bạn không có quyền này" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>
                             }
 
                             if (alowDeleteType)
@@ -71,21 +70,9 @@
                             else
                             {
                                 <text>
-                                    <a href="javascript:void(0)" title="Bạn không có quyền xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                    <a href="javascript:void(0)" title="Bạn không có quyền xóa loại nhân viên" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
                                 </text>
-                            }
-                            if (alowRole_Division)
-                            {
-                                <text>
-                                    <a href="@Url.Action("RoleDivision","Roles",new { Area="Manage",idType=item.EmployeeTypeId})" title="Phân quyền"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
-                                </text>
-                            }
-                            else
-                            {
-                                <text>
-                                    <a href="javascript:void(0)" title="Bạn không có quyền phân quyền" style="cursor:not-allowed"><i class="glyphicon glyphicon-wrench fa-lg"></i></a>
-                                </text>
-                            }
+                            }                            
                         }
 
                     </td>

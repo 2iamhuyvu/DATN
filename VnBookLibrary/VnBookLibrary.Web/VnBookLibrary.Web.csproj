@@ -217,6 +217,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Manage\Views\GroupRoles\Create.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Delete.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Details.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Edit.cshtml" />
+    <Content Include="Areas\Manage\Views\GroupRoles\Index.cshtml" />
+    <Content Include="Areas\Manage\Views\Roles\Create.cshtml" />
+    <Content Include="Areas\Manage\Views\Roles\Delete.cshtml" />
+    <Content Include="Areas\Manage\Views\Roles\Edit.cshtml" />
+    <Content Include="Areas\Manage\Views\Roles\Index.cshtml" />
     <Content Include="Assets\DataTables\css\dataTables.bootstrap.css" />
     <Content Include="Assets\DataTables\css\dataTables.bootstrap.min.css" />
     <Content Include="Assets\DataTables\css\dataTables.bootstrap4.css" />
@@ -4191,19 +4200,9 @@
     <Content Include="Areas\Manage\Views\News\Create.cshtml" />
     <Content Include="Areas\Manage\Views\News\Edit.cshtml" />
     <Content Include="Areas\Manage\Views\News\Index.cshtml" />
-    <Content Include="Areas\Manage\Views\Contacts\Create.cshtml" />
-    <Content Include="Areas\Manage\Views\Contacts\Delete.cshtml" />
-    <Content Include="Areas\Manage\Views\Contacts\Details.cshtml" />
-    <Content Include="Areas\Manage\Views\Contacts\Edit.cshtml" />
     <Content Include="Areas\Manage\Views\Contacts\Index.cshtml" />
     <Content Include="Areas\Manage\Views\Employees\ChangePassword.cshtml" />
     <Content Include="Areas\Manage\Views\CommentProducts\Index.cshtml" />
-    <Content Include="Areas\Manage\Views\GroupRoles\Create.cshtml" />
-    <Content Include="Areas\Manage\Views\GroupRoles\Delete.cshtml" />
-    <Content Include="Areas\Manage\Views\GroupRoles\Details.cshtml" />
-    <Content Include="Areas\Manage\Views\GroupRoles\Edit.cshtml" />
-    <Content Include="Areas\Manage\Views\GroupRoles\Index.cshtml" />
-    <Content Include="Areas\Manage\Views\Roles\Index.cshtml" />
     <Content Include="Areas\Manage\Views\SaleEvents\Create.cshtml" />
     <Content Include="Areas\Manage\Views\SaleEvents\Delete.cshtml" />
     <Content Include="Areas\Manage\Views\SaleEvents\Details.cshtml" />

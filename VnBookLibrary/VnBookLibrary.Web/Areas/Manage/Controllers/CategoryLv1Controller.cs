@@ -18,118 +18,73 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     public class CategoryLv1Controller : Controller
     {
         private VnBookLibraryDbContext db;
-        private  UnitOfWork UoW;
+        private UnitOfWork UoW;
         public CategoryLv1Controller()
         {
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
-        // GET: Manage/CategoryLv1/Create
+        [HasRole(RoleCode = "CREATE_CATEGORY")]
         public ActionResult Create()
         {
-            if (ManageSession.HasRole("CREATE_CATEGORY"))
-            {
-                return View();
-            }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền tạo danh mục!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
-            }
+            return View();
         }
-
+        [HasRole(RoleCode = "CREATE_CATEGORY")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(CategoryLv1 categoryLv1)
         {
-            if (ManageSession.HasRole("CREATE_CATEGORY"))
+
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    categoryLv1.OrderDisplay = categoryLv1.OrderDisplay ?? 1;
-                    UoW.CategoryLv1Repository.Insert(categoryLv1);
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = "Thêm danh mục cấp 1 thành công!",
-                    };
-                    return RedirectToAction("Index", "BookCategories", new { Area = "Manage" ,displayCategory=1});
-                }
-                return View(categoryLv1);
-            }
-            else
-            {
+                categoryLv1.OrderDisplay = categoryLv1.OrderDisplay ?? 1;
+                UoW.CategoryLv1Repository.Insert(categoryLv1);
                 TempData["Notify"] = new JsonResultBO()
                 {
-                    Status = false,
-                    Message = "Bạn không có quyền tạo danh mục!",
+                    Status = true,
+                    Message = "Thêm danh mục cấp 1 thành công!",
                 };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
+                return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 1 });
             }
+            return View(categoryLv1);
         }
+        [HasRole(RoleCode = "EDIT_CATEGORY")]
         public ActionResult Edit(int? id)
         {
-            if (ManageSession.HasRole("EDIT_CATEGORY"))
+            if (id == null)
             {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                CategoryLv1 categoryLv1 = UoW.CategoryLv1Repository.Find(id);
-                if (categoryLv1 == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(categoryLv1);
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
-            else
+            CategoryLv1 categoryLv1 = UoW.CategoryLv1Repository.Find(id);
+            if (categoryLv1 == null)
             {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa danh mục!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
+            return View(categoryLv1);
         }
+        [HasRole(RoleCode = "EDIT_CATEGORY")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(CategoryLv1 categoryLv1)
         {
-            if (ManageSession.HasRole("EDIT_CATEGORY"))
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    categoryLv1.OrderDisplay = categoryLv1.OrderDisplay ?? 1;
-                    UoW.CategoryLv1Repository.Insert(categoryLv1);
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = "Sửa danh mục cấp 1 thành công!",
-                    };                   
-                }
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 1 });
-            }
-            else
-            {
+                categoryLv1.OrderDisplay = categoryLv1.OrderDisplay ?? 1;
+                UoW.CategoryLv1Repository.Insert(categoryLv1);
                 TempData["Notify"] = new JsonResultBO()
                 {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa danh mục!",
+                    Status = true,
+                    Message = "Sửa danh mục cấp 1 thành công!",
                 };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
             }
+            return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 1 });
         }
+        [HasRole(RoleCode = "DELETE_CATEGORY")]
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            if (ManageSession.HasRole("DELETE_CATEGORY"))
+            if (UoW.CategoryLv1Repository.Delete(id) > 0)
             {
-                UoW.CategoryLv1Repository.Delete(id);
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
@@ -137,15 +92,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 };
                 return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 1 });
             }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa danh mục!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
-            }
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
         }
 
         protected override void Dispose(bool disposing)

@@ -24,16 +24,16 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
-
         public ActionResult Index()
         {
             return View(UoW.NewsRepository.GetAll());
-        }        
-
+        }
+        [HasRole(RoleCode = "CREATE_NEWS")]
         public ActionResult Create()
         {
             return View();
         }
+        [HasRole(RoleCode = "CREATE_NEWS")]
         [HttpPost]
         public ActionResult Create(News news)
         {
@@ -46,19 +46,24 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             };
             return Json(new JsonResultBO(true) { Message = "Thêm tin tức thành công!" });
         }
+
+        [HasRole(RoleCode = "EDIT_NEWS")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
             News news = UoW.NewsRepository.Find(id);
             if (news == null)
             {
-                return HttpNotFound();
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
             return View(news);
         }
+
+
+        [HasRole(RoleCode = "EDIT_NEWS")]
         [HttpPost]
         public ActionResult Edit(News news)
         {
@@ -70,17 +75,20 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             };
             return Json(new JsonResultBO(true) { Message = "Chỉnh sửa tin tức thành công!" });
         }
-       
-        [HttpPost]        
+        [HasRole(RoleCode = "DELETE_NEWS")]
+        [HttpPost]
         public ActionResult Delete(int id)
         {
-            UoW.NewsRepository.Delete(id);
-            TempData["Notify"] = new JsonResultBO()
+            if (UoW.NewsRepository.Delete(id) > 0)
             {
-                Status = true,
-                Message = "Xóa tin tức thành công!",
-            };
-            return RedirectToAction("Index");
+                TempData["Notify"] = new JsonResultBO()
+                {
+                    Status = true,
+                    Message = "Xóa tin tức thành công!",
+                };
+                return RedirectToAction("Index");
+            }
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
         }
 
         protected override void Dispose(bool disposing)

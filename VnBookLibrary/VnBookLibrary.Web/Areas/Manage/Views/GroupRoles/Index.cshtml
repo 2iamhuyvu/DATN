@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<VnBookLibrary.Model.Entities.GroupRole>
 
 @{
+    /**/
+
     ViewBag.Title = "Index";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
 }
@@ -21,20 +23,21 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.GroupRoleName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.GroupRoleId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.GroupRoleId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.GroupRoleId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupRoleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.GroupRoleId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.GroupRoleId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.GroupRoleId })
+            </td>
+        </tr>
+    }
 
 </table>

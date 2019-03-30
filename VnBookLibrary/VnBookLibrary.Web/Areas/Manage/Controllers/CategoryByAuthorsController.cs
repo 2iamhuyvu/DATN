@@ -24,6 +24,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
+        [HasRole(RoleCode = "CREATE_CATEGORY")]
         public ActionResult Create()
         {
             if (ManageSession.HasRole("CREATE_CATEGORY"))
@@ -39,96 +40,61 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 };
                 return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
             }
-        }               
-
+        }
+        [HasRole(RoleCode = "CREATE_CATEGORY")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(CategoryByAuthor categoryByAuthor)
         {
-            if (ManageSession.HasRole("CREATE_CATEGORY"))
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    UoW.CategoryByAuthorRepository.Insert(categoryByAuthor);                    
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = "Thêm danh mục tác giả thành công!",
-                    };
-                    return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
-                }
-                return View(categoryByAuthor);
-            }
-            else
-            {
+                UoW.CategoryByAuthorRepository.Insert(categoryByAuthor);
                 TempData["Notify"] = new JsonResultBO()
                 {
-                    Status = false,
-                    Message = "Bạn không có quyền tạo danh mục!",
+                    Status = true,
+                    Message = "Thêm danh mục tác giả thành công!",
                 };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
+                return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
             }
+            return View(categoryByAuthor);
         }
-
+        [HasRole(RoleCode = "EDIT_CATEGORY")]
         public ActionResult Edit(int? id)
         {
-            if (ManageSession.HasRole("EDIT_CATEGORY"))
+            if (id == null)
             {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                CategoryByAuthor categoryByAuthor = UoW.CategoryByAuthorRepository.Find(id);
-                if (categoryByAuthor == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(categoryByAuthor);
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
-            else
+            CategoryByAuthor categoryByAuthor = UoW.CategoryByAuthorRepository.Find(id);
+            if (categoryByAuthor == null)
             {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa danh mục!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
+            return View(categoryByAuthor);
         }
+        [HasRole(RoleCode = "CREATE_CATEGORY")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(CategoryByAuthor categoryByAuthor)
         {
-            if (ManageSession.HasRole("EDIT_CATEGORY"))
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {                   
-                    UoW.CategoryByAuthorRepository.Update(categoryByAuthor);
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = "Sửa danh mục tác giả thành công!",
-                    };
-                    return View();
-                }
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
-            }
-            else
-            {
+                UoW.CategoryByAuthorRepository.Update(categoryByAuthor);
                 TempData["Notify"] = new JsonResultBO()
                 {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa danh mục!",
+                    Status = true,
+                    Message = "Sửa danh mục tác giả thành công!",
                 };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
+                return View();
             }
+            return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
         }
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            if (ManageSession.HasRole("DELETE_CATEGORY"))
-            {                
-                UoW.CategoryByAuthorRepository.Delete(id);
+            if (UoW.CategoryByAuthorRepository.Delete(id) > 0)
+            {
+
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,
@@ -136,15 +102,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 };
                 return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
             }
-            else
-            {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Bạn không có quyền sửa danh mục!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage" });
-            }
+            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
         }
         [NonAction]
         [AllowAnonymous]
@@ -152,12 +110,12 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
             CategoryByAuthor categoryByAuthor = UoW.CategoryByAuthorRepository.Find(id);
             if (categoryByAuthor == null)
             {
-                return HttpNotFound();
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
             return View(categoryByAuthor);
         }

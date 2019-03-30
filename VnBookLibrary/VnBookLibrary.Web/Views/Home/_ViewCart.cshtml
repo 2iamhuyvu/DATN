@@ -25,6 +25,9 @@
             width: 100px !important;
             padding: 10px !important;
         }
+    .select2-selection__arrow {
+        top: 15px !important;
+    }
 </style>
 @if (listCart.Count > 0)
 {
@@ -134,18 +137,18 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Tỉnh thành <span style="color:red">*</span></label>
-                                <select name="Province" id="Province" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control"></select>
+                                <label style="display:block">Tỉnh thành <span style="color:red">*</span></label>
+                                <select name="Province" id="Province" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control UseSelect2"></select>
                             </div>
                             <div class="form-group">
-                                <label>Quận/Huyện <span style="color:red">*</span></label>
-                                <select name="District" id="District" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control">
+                                <label style="display:block">Quận/Huyện <span style="color:red">*</span></label>
+                                <select name="District" id="District" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control UseSelect2">
                                     <option value="">---Chọn Quận/Huyện---</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Phường/Xã <span style="color:red">*</span></label>
-                                <select name="Ward" id="Ward" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control">
+                                <label style="display:block">Phường/Xã <span style="color:red">*</span></label>
+                                <select name="Ward" id="Ward" style="max-width:100%!important;border:1px solid #ccc!important" class="form-control UseSelect2">
                                     <option value="">---Chọn Xã/Phường---</option>
                                 </select>
                             </div>
@@ -178,6 +181,7 @@
     </section>
     <script>
         LoadProvince();
+        $('.UseSelect2').select2();
         function ValidateBuyProduct() {
             $("#ConfirmBuyProduct").validate({
                 rules: {
@@ -324,7 +328,7 @@
                                 rounded: true,
                                 delayIndicator: false,
                                 msg: rs.Message,
-                                sound: false,
+                                sound: true,
                             });
                             $("#listCartCount").text("0");
                         }
@@ -334,7 +338,7 @@
                                 rounded: true,
                                 delayIndicator: false,
                                 msg: rs.Message,
-                                sound: false,
+                                sound: true,
                             });
                         }
                     },

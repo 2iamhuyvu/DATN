@@ -49,6 +49,8 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <link href="~/Content/select2.min.css" rel="stylesheet" />  
+    <script src="~/Scripts/select2.min.js"></script>
     <style>
         .main_menu > li a {
             font-weight: bold;
@@ -74,6 +76,17 @@
             max-width: 100%;
             border: 1px solid #ccc !important;
         }
+        .select2-selection--single {
+            height: 33px !important;
+        }
+
+        .select2-selection__rendered {
+            line-height: 33px !important;
+        }
+
+        .select2 {
+            width: 100% !important;
+        }       
     </style>
 </head>
 <body class="animsition">
@@ -303,8 +316,8 @@
                 </h4>
 
                 <div>
-                  
-                    
+
+
                 </div>
             </div>
         </div>
@@ -394,7 +407,7 @@
     <!--===============================================================================================-->
     <script src="~/Assets/Template/js/main.js"></script>
     <script src="~/PluginFrontend/lobibox-master/js/lobibox.js"></script>
-    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>    
     @if (TempData["Notify"] != null)
     {
         <script>
@@ -406,7 +419,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: jsonNotify.Message,
-                            sound: false,
+                            sound: true,
                         });
                     }
                     else {
@@ -415,13 +428,14 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: jsonNotify.Message,
-                            sound: false,
+                            sound: true,
                         });
                     }
                 });
         </script>
     }
     <script>
+        $('.UseSelect2').select2();
         function CloseModalDetailProduct() {
             $("#ModalDetail").modal("hide");
         }

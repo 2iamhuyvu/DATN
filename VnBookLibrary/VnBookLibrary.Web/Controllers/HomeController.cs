@@ -20,15 +20,14 @@ namespace VnBookLibrary.Web.Controllers
     public class HomeController : Controller
     {
         private VnBookLibraryDbContext db;
-        private UnitOfWork UoW;        
+        private UnitOfWork UoW;
         public HomeController()
         {
             db = new VnBookLibraryDbContext();
-            UoW = new UnitOfWork(db);            
+            UoW = new UnitOfWork(db);
         }
         public ActionResult Index(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
-            string href = "";
             var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
             var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
             var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
@@ -36,22 +35,18 @@ namespace VnBookLibrary.Web.Controllers
             if (cate1 != null)
             {
                 ViewBag.Title = "Sách " + cate1.CategoryLv1Name + " | VnBook";
-                href += "Danh mục / " + cate1.CategoryLv1Name;
             }
             else if (cate2 != null)
             {
                 ViewBag.Title = "Sách " + cate2.CategoryLv2Name + " | VnBook";
-                href += "Danh mục / " + cate2.CategoryLv1.CategoryLv1Name + " / " + cate2.CategoryLv2Name;
             }
             else if (cateAuthor != null)
             {
                 ViewBag.Title = "Sách theo Tác giả " + cateAuthor.CategoryAuthorName + " | VnBook";
-                href += "Danh mục / Tác giả / " + cateAuthor.CategoryAuthorName;
             }
             else if (catePublisher != null)
             {
                 ViewBag.Title = "Sách theo NXB - NPH " + catePublisher.CategoryByPublisherName + " | VnBook";
-                href += "Danh mục / NXB - NPH / " + catePublisher.CategoryByPublisherName;
             }
             else if (Search != null && Search != "")
             {
@@ -64,7 +59,6 @@ namespace VnBookLibrary.Web.Controllers
             bool isSearch = true;
             if (Search == null || Search == "")
                 isSearch = false;
-            ViewBag.Href = href;
             ViewBag.isSearch = isSearch;
             ViewBag.Search = Search;
             ViewBag.CategoryLv1Id = cate1 == null ? null : CategoryLv1Id;
@@ -93,9 +87,49 @@ namespace VnBookLibrary.Web.Controllers
             }
             return View(news);
         }
-        public ActionResult _GetProductByPage(string Search, string Href, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId, int page = 1, int pageSize = 10)
+        public ActionResult _GetProductByPage(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId, int page = 1, int pageSize = 10)
         {
-            ViewBag.Href = Href;
+            string href = "";
+            var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
+            var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
+            var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
+            var catePublisher = UoW.CategoryByPublisherRepository.Find(CategoryPublisherId ?? 0);
+            if (cate1 != null)
+            {
+                href = "";
+                href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>" + "<a href='/?CategoryLv1Id=" + cate1.CategoryLv1Id + "'>" + cate1.CategoryLv1Name + "</a>";
+            }
+            if (cate2 != null)
+            {
+                href = "";
+                cate1 = cate2.CategoryLv1;
+                href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
+                    + "<a href='/?CategoryLv1Id="
+                    + cate1.CategoryLv1Id + "'>"
+                    + cate1.CategoryLv1Name + "</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
+                    + "<a href='/?CategoryLv2Id="
+                    + cate2.CategoryLv2Id + "'>"
+                    + cate2.CategoryLv2Name + "</a>";
+            }
+            if (cateAuthor != null)
+            {
+                href = "";                
+                href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
+                    + "<a href='/?CategoryAuthorId="
+                    + cateAuthor.CategoryAuthorId + "'>"
+                    + cateAuthor.CategoryAuthorName + "</a>";
+            }
+            if (catePublisher != null)
+            {
+                href = "";                
+                href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
+                    + "<a href='/?CategoryAuthorId="
+                    + catePublisher.CategoryByPublisherId + "'>"
+                    + catePublisher.CategoryByPublisherName + "</a>";
+            }
+            if (href != "")
+                href += "<i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i><a href='javascript:void(0)'>Trang " + page + "</a>";
+            ViewBag.Href = href;
             ViewBag.Search = Search;
             ViewBag.CategoryLv1Id = CategoryLv1Id;
             ViewBag.CategoryLv2Id = CategoryLv2Id;
@@ -170,7 +204,7 @@ namespace VnBookLibrary.Web.Controllers
                 }
                 bill.IntoMoney = intoMoney;
                 bill.TotalNotSale = intoMoney;
-                UoW.BillRepository.Insert(bill);                
+                UoW.BillRepository.Insert(bill);
                 List<BillDetail> billDetails = new List<BillDetail>();
                 foreach (var cartVM in listCart)
                 {
@@ -182,7 +216,7 @@ namespace VnBookLibrary.Web.Controllers
                     };
                     billDetails.Add(billDetail);
                 }
-                UoW.BillDetailRepository.InsertRange(billDetails);                
+                UoW.BillDetailRepository.InsertRange(billDetails);
                 Session[Constants.CART_SESSION] = null;
                 return Json(new JsonResultBO(true) { Message = "Cám ơn bạn đã mua sách, Sách sẽ sớm được gửi cho bạn!" });
             }
@@ -233,17 +267,17 @@ namespace VnBookLibrary.Web.Controllers
         }
         [HttpPost]
         public ActionResult GetProvince()
-        {            
-            return Json(UoW.ProvinceRepository.GetAll().Select(x=>new { x.ProvinceName,x.ProvinceId}).OrderBy(x=>x.ProvinceName).ToList());
+        {
+            return Json(UoW.ProvinceRepository.GetAll().Select(x => new { x.ProvinceName, x.ProvinceId }).OrderBy(x => x.ProvinceName).ToList());
         }
         [HttpPost]
         public ActionResult GetDistrictByProvince(int provinceId)
-        {            
-            return Json(UoW.DistrictRepository.GetAll().Where(x => x.ProvinceId == provinceId).Select(x => new { x.DistrictName,x.DistrictId }).ToList());
+        {
+            return Json(UoW.DistrictRepository.GetAll().Where(x => x.ProvinceId == provinceId).Select(x => new { x.DistrictName, x.DistrictId }).ToList());
         }
         [HttpPost]
         public ActionResult GetWardByDistrict(int districtId)
-        {           
+        {
             return Json(UoW.WardRepository.GetAll().Where(x => x.DidtrictId == districtId).Select(x => new { x.WardName, x.WardId }).ToList());
         }
         #region Get Province_Distric_Ward with API
@@ -384,7 +418,7 @@ namespace VnBookLibrary.Web.Controllers
                 else
                 {
                     customer.IsBlock = false;
-                    UoW.CustomerRepository.Insert(customer);                    
+                    UoW.CustomerRepository.Insert(customer);
                     Session[Constants.CUSTOMER_SESSION] = customer;
                     TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng ký thành công!" };
                     return RedirectToAction("Index");

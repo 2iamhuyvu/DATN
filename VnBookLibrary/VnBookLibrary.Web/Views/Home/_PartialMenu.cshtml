@@ -9,18 +9,17 @@
         border-bottom: 1px solid #e65540;
     }
 
-    .partialMenu a {
-        font-size: 13px;
+    .partialMenu a {        
         border-bottom: 1px solid transparent;
     }
-    /*#MENU:hover .partialMenu{
+    #MENU:hover .partialMenu{
         display:block!important;
-    }*/
+    }
 </style>
 <div class="" id="MENU" onclick="ToggleMenu()" style="height:100%;display: block;position:absolute;left:200px">
-    <p style="color:#333333; height:100%;line-height:80px;font-size:20px;cursor:pointer">Danh mục <i id="iconmenu" style="font-size:16px;" class="glyphicon glyphicon-menu-left"></i></p>
+    <p style="color:#333333; height:100%;line-height:80px;font-size:16px;cursor:pointer">Danh mục sách @*<i id="iconmenu" style="font-size:16px;" class="glyphicon glyphicon-menu-left"></i>*@</p>
     <div class="partialMenu" style="display:none;position:absolute;left:-150px;top:81px;border:1px solid #ccc;border-radius:5px;">
-        <div style="width:1250px;background:#e2ffc3;padding:10px;box-sizing:border-box;border-radius:5px;max-height:500px;overflow
+        <div style="width:1250px;background:white;padding:10px;box-sizing:border-box;border-radius:5px;max-height:500px;overflow
     :auto">
             <div class="row">
                 @foreach (var lv1 in categoryLv1s)
@@ -33,7 +32,7 @@
                                 <div style="padding-left:10px;box-sizing:border-box;height:200px;overflow:auto">
                                     @foreach (var lv2 in lv1.CategoryLv2s)
                                     {
-                                        <div><a style=" display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryLv2Id =lv2.CategoryLv2Id})">@lv2.CategoryLv2Name</a></div>
+                                        <div><a style=" color:#0066c0; display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryLv2Id =lv2.CategoryLv2Id})">@lv2.CategoryLv2Name</a></div>
                                     }
                                 </div>
                             }
@@ -49,7 +48,7 @@
                             <div style="padding-left:15px;box-sizing:border-box;height:200px;overflow:auto">
                                 @foreach (var author in categoryByAuthors)
                                 {
-                                    <div><a style=" display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryAuthorId =author.CategoryAuthorId})">@author.CategoryAuthorName</a></div>
+                                    <div><a style=" color:#0066c0; display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryAuthorId =author.CategoryAuthorId})">@author.CategoryAuthorName</a></div>
                                 }
                             </div>
                         }
@@ -64,7 +63,7 @@
                             <div style="padding-left:15px;box-sizing:border-box;height:200px;overflow:auto">
                                 @foreach (var publish in categoryByPublishers)
                                 {
-                                    <div><a style=" display:inline-block;margin-bottom:5px;" href="@Url.Action("Index","Home",new { CategoryPublisherId =publish.CategoryByPublisherId})">@publish.CategoryByPublisherName</a></div>
+                                    <div><a  style=" display:inline-block;margin-bottom:5px; color:#0066c0" href="@Url.Action("Index","Home",new { CategoryPublisherId =publish.CategoryByPublisherId})">@publish.CategoryByPublisherName</a></div>
                                 }
                             </div>
                         }
@@ -77,8 +76,8 @@
 </div>
 <script>
     function ToggleMenu() {
-        $(".partialMenu").slideToggle();        
-        $("#iconmenu").toggleClass("glyphicon-menu-left");
-        $("#iconmenu").toggleClass("glyphicon-menu-down");
+        //$(".partialMenu").slideToggle();        
+        //$("#iconmenu").toggleClass("glyphicon-menu-left");
+        //$("#iconmenu").toggleClass("glyphicon-menu-down");
     }
 </script>

@@ -17,14 +17,15 @@
 }
 <style>
 
-    td {
+    .table-shopping-cart td {
         padding-right: 20px;
     }
 
-        td:first-child {
+        .table-shopping-cart td:first-child {
             width: 100px !important;
             padding: 10px !important;
         }
+
     .select2-selection__arrow {
         top: 15px !important;
     }
@@ -54,9 +55,11 @@
                                 total += Convert.ToInt32(item.Quantity * item.Product.Price);
                                 <tr class="table-row" productid="@item.Product.ProductId">
                                     <td class="">
-                                        <img src="@item.Product.AvatarLink" alt="@item.Product.ProductName">
+                                        <img onclick="DetailProduct(@item.Product.ProductId)"  style="cursor:pointer" width="100px" src="@item.Product.AvatarLink" alt="@item.Product.ProductName">
                                     </td>
-                                    <td style="width:500px;" class="">@item.Product.ProductName</td>
+                                    <td style="width:400px;" class="">                                    
+                                        <a href="javascript:void(0)" onclick="DetailProduct(@item.Product.ProductId)"> @item.Product.ProductName</a>
+                                    </td>
                                     <td class="">@item.Product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
                                     <td class="">
 
@@ -241,9 +244,9 @@
                 url: '@Url.Action("GetProvince","Home")',
                 type: 'POST',
                 dataType:'json',
-                success: function (provinces) {                                        
+                success: function (provinces) {
                     let html = `<option value="" selected>---Chọn Tỉnh/TP---</option>`;
-                    $.each(provinces, function (index, province) {                        
+                    $.each(provinces, function (index, province) {
                         html += `<option value="${province.ProvinceId}">${province.ProvinceName}</option>`
                     })
                     $("#Province").html(html)
@@ -295,9 +298,9 @@
                     dataType: 'json',
                     data: JSON.stringify({ "districtId": districtId }),
                     contentType: 'application/json;charset=utf-8',
-                    success: function (wards) {                        
+                    success: function (wards) {
                         let html = `<option value="" selected>---Chọn Xã/Phường---</option>`;
-                        $.each(wards, function (index, ward) {                            
+                        $.each(wards, function (index, ward) {
                             html += `<option value="${ward.WardId}">${ward.WardName}</option>`
                         })
                         $("#Ward").html(html)

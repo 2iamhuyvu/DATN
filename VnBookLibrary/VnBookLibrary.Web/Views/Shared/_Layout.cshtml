@@ -49,7 +49,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <link href="~/Content/select2.min.css" rel="stylesheet" />  
+    <link href="~/Content/select2.min.css" rel="stylesheet" />
     <script src="~/Scripts/select2.min.js"></script>
     <style>
         .main_menu > li a {
@@ -76,6 +76,7 @@
             max-width: 100%;
             border: 1px solid #ccc !important;
         }
+
         .select2-selection--single {
             height: 33px !important;
         }
@@ -86,7 +87,7 @@
 
         .select2 {
             width: 100% !important;
-        }       
+        }
     </style>
 </head>
 <body class="animsition">
@@ -103,7 +104,6 @@
                 <span class="topbar-child1" style="font-size:13px;color: white">
                     Miễn phí vận chuyển với hóa đơn trên 500.000 vnđ
                 </span>
-
                 <div class="topbar-child2">
                     <span class="topbar-email" style="font-size:13px;color: white">
                         @if (customer != null)
@@ -128,7 +128,6 @@
                 <a href='@Url.Action("Index","Home")' class="logo" style="height:100%;display:block;text-decoration:none;" title="Trang chủ VnBook">
                     <h2 style="height:100%;line-height:80px">VnBook</h2>
                 </a>
-
                 @{Html.RenderAction("_PartialMenu", "Home");}
                 <!-- Header Icon -->
                 <div class="header-icons">
@@ -389,14 +388,14 @@
         <div class="modal-dialog" style="width:1200px;">
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header" style="background:#e0ff94">
+                <div class="modal-header" style="">
                     <button type="button" class="close" onclick="CloseModalDetailProduct()">&times;</button>
-                    <h3 class="modal-title">Thông tin sách</h3>
+                    <h4 style="color:red" class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="CloseModalDetailProduct()">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="CloseModalDetailProduct()">Đóng</button>
                 </div>
             </div>
         </div>
@@ -407,7 +406,7 @@
     <!--===============================================================================================-->
     <script src="~/Assets/Template/js/main.js"></script>
     <script src="~/PluginFrontend/lobibox-master/js/lobibox.js"></script>
-    <script src="~/Scripts/jquery.validate.min.js"></script>    
+    <script src="~/Scripts/jquery.validate.min.js"></script>
     @if (TempData["Notify"] != null)
     {
         <script>
@@ -438,6 +437,38 @@
         $('.UseSelect2').select2();
         function CloseModalDetailProduct() {
             $("#ModalDetail").modal("hide");
+        }
+         function AddToCart(productid) {
+            $.ajax({
+                url: '@Url.Action("AddToCart","Home")',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ "productId": productid }),
+                contentType: 'application/json;charset=utf-8',
+                success: function (rs) {
+                    if (rs.Status == true) {
+                        Lobibox.notify('success', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: rs.Message,
+                            sound: true,
+                        });
+                        $("span#listCartCount").text(rs.Param);
+                        ViewBoxCart();
+                        UpdateContentViewCart();
+                    }
+                    else {
+                        Lobibox.notify('warning', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: rs.Message,
+                            sound: true,
+                        });
+                    }
+                },
+            });
         }
         function DetailProduct(id) {
             $.ajax({

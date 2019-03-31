@@ -3,32 +3,47 @@
 @{
     Product product = ViewBag.Product;
 }
+<style>
+    .DescriptionProduct p {
+        color: black;
+    }
+
+    table, td, th {
+        border: none !important;
+    }
+</style>
 @if (product == null)
 {
     <h4 style="color:red">Có lỗi!</h4>
 }
+<span>
+    <a href="@Url.Action("Index","Home")">Trang chủ</a><i class="fa fa-lg" style="font-weight:normal">&nbsp;&#xf0da;&nbsp;</i>
+    <a href="@Url.Action("Index","Home",new { CategoryLv1Id=product.CategoryLv1Id})">@product.CategoryLv1.CategoryLv1Name</a><i class="fa fa-lg" style="font-weight:normal">&nbsp;&#xf0da;&nbsp;</i>
+    <a href="@Url.Action("Index","Home",new { CategoryLv1Id=product.CategoryLv2Id})">@product.CategoryLv2.CategoryLv2Name</a><i class="fa fa-lg" style="font-weight:normal">&nbsp;&#xf0da;&nbsp;</i>@product.ProductName
+</span>
+<hr />
 <div>
     <div class="row">
-        <div class="col-md-3">
-            <div style="height:300px;">
-                <img height="100%" width="100%" src="@product.AvatarLink" />
+        <div class="col-md-2">
+            <div style="height:250px;" >
+                <img height="100%" src="@product.AvatarLink" />
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-10">
             <table class="table table-bordered">
-                <tr>
-                    <th>Tên sách</th>
+                @*<tr>
+                    <th>Tên sách:</th>
                     <th style="color:red" colspan="3">@product.ProductName</th>
 
-                </tr>
+                </tr>*@
                 <tr>
-                    <th>Giá bán</th>
+                    <th>Giá bán:</th>
                     <td>@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
-                    <th>Giá bìa</th>
+                    <th>Giá bìa:</th>
                     <td>@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
                 </tr>
                 <tr>
-                    <th>Tác giả</th>
+                    <th>Tác giả:</th>
                     @if (product.CategoryByAuthor != null)
                     {
                         <td>@product.CategoryByAuthor.CategoryAuthorName</td>
@@ -37,7 +52,7 @@
                     {
                         <td></td>
                     }
-                    <th>NXB - NPH</th>
+                    <th>NXB - NPH:</th>
                     @if (product.CategoryByPublisher != null)
                     {
                         <td>@product.CategoryByPublisher.CategoryByPublisherName</td>
@@ -48,7 +63,7 @@
                     }
                 </tr>
                 <tr>
-                    <th>Danh mục sách cha</th>
+                    <th>Danh mục sách cha:</th>
                     @if (product.CategoryLv1 != null)
                     {
                         <td>@product.CategoryLv1.CategoryLv1Name</td>
@@ -57,7 +72,7 @@
                     {
                         <td></td>
                     }
-                    <th>Danh mục sách con</th>
+                    <th>Danh mục sách con:</th>
                     @if (product.CategoryLv2 != null)
                     {
                         <td>@product.CategoryLv2.CategoryLv2Name</td>
@@ -68,11 +83,16 @@
                     }
                 </tr>
             </table>
-            <button onclick="AddToCart(@product.ProductId)" class="btn btn-default btn-lg" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:green"></i></button>
+            <button onclick="AddToCart(@product.ProductId)" class="btn btn-danger btn-lg" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i> Mua ngay</button>
         </div>
         <div class="clearfix"></div>
     </div>
-    <div style="margin-top:20px;max-height:400px;overflow:auto; border:1px solid #ccc;border-radius:5px;padding:10px">
+    <div class="DescriptionProduct" style="margin-top:20px;max-height:400px;overflow:auto; border:1px solid #ccc;border-radius:5px;padding:10px">
         @Html.Raw(product.Description)
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $("#ModalDetail h4.modal-title").text("@Html.Raw(product.ProductName)");
+    })
+</script>

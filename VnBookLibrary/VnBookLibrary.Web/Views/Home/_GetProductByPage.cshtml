@@ -9,8 +9,8 @@
         float: left;
         position: relative;
         min-height: 1px;
-        padding-right: 15px;
-        padding-left: 15px;
+        padding-right: 5px;
+        padding-left: 5px;
     }
 
     .block2-labelnew::before {
@@ -31,11 +31,10 @@
 {
     if (Model.Count > 0)
     {
-        <h4 style="margin-bottom:10px;">@ViewBag.Href / Trang @Model.PageNumber</h4>
+        <h4 style="">@Html.Raw(ViewBag.Href)</h4>
         <div style="float:right;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
-                new {
-                    Href=ViewBag.Href,
+                new {                    
                     Search = ViewBag.Search,
                     page = page,
                     pageSize = 10 ,
@@ -58,13 +57,12 @@
     }
     else
     {
-        <h4 style="margin-bottom:10px;">
-            @ViewBag.Href
+        <h4 style="">
+            @Html.Raw(ViewBag.Href)
         </h4>
         <div style="float:right;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
-                new {
-                    Href=ViewBag.Href,
+                new {                    
                     Search = ViewBag.Search,
                     page = page,
                     pageSize = 10 ,
@@ -104,7 +102,7 @@
                 <!-- Block2 -->
                 <div class="block2" style="box-shadow:#ccc 0px 0px 15px 5px;border-radius:5px;">
                     <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
-                        <div style="height:300px;border-radius:5px 5px 0px 0px">
+                        <div style="height:200px;border-radius:5px 5px 0px 0px">
                             <img height="100%" style="border-radius:5px 5px 0px 0px" src="@product.AvatarLink" alt="@product.ProductName">
                         </div>
                         <div class="block2-overlay trans-0-4">
@@ -137,7 +135,7 @@
                         </div>
                         <div style="margin-top:10px;">
                             <a style="color:black" title="Xem chi tiết" onclick="DetailProduct(@product.ProductId)" class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
-                            <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-default" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:green"></i></button>
+                            <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
                             <div class="clearfix"></div>
                         </div>
                     </div>
@@ -147,8 +145,7 @@
         <div class="clearfix"></div>
         <div style="float:right;margin-right:15px;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
-                new {
-                    Href=ViewBag.Href,
+                new {                    
                     Search = ViewBag.Search,
                     page = page,
                     pageSize = 10 ,

@@ -37,7 +37,7 @@
                 new {                    
                     Search = ViewBag.Search,
                     page = page,
-                    pageSize = 10 ,
+                    pageSize = Model.PageSize ,
                     CategoryLv1Id = ViewBag.CategoryLv1Id,
                     CategoryLv2Id = ViewBag.CategoryLv2Id,
                     CategoryAuthorId=ViewBag.CategoryAuthorId,
@@ -62,10 +62,10 @@
         </h4>
         <div style="float:right;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
-                new {                    
+                new {
                     Search = ViewBag.Search,
                     page = page,
-                    pageSize = 10 ,
+                    pageSize = Model.PageSize,
                     CategoryLv1Id = ViewBag.CategoryLv1Id,
                     CategoryLv2Id = ViewBag.CategoryLv2Id,
                     CategoryAuthorId=ViewBag.CategoryAuthorId,
@@ -145,10 +145,10 @@
         <div class="clearfix"></div>
         <div style="float:right;margin-right:15px;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
-                new {                    
+                new {
                     Search = ViewBag.Search,
                     page = page,
-                    pageSize = 10 ,
+                    pageSize = Model.PageSize,
                     CategoryLv1Id = ViewBag.CategoryLv1Id,
                     CategoryLv2Id = ViewBag.CategoryLv2Id,
                     CategoryAuthorId=ViewBag.CategoryAuthorId,

@@ -9,18 +9,53 @@
         border-bottom: 1px solid #e65540;
     }
 
-    .partialMenu a {        
+    .partialMenu a {
         border-bottom: 1px solid transparent;
     }
-    #MENU:hover .partialMenu{
-        display:block!important;
+
+    #MENU:hover .partialMenu {
+        display: block !important;
+    }
+
+    #MENU .partialMenu >div {        
+        width: 1250px;
+        background: white;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        max-height: 500px;
+        overflow: auto;
+    }    
+
+    #MENU:hover > p {
+        color: #e65540 !important;
+    }
+
+    #MENU > p {
+        position: relative;
+        border-radius: 5px;
+    }
+
+    #MENU:hover > p:after {
+        border-bottom: 20px solid #e65540 !important;
+    }
+
+    #MENU > p:after {
+        z-index: 9999;
+        bottom: -2px;
+        left: 50px;
+        position: absolute;
+        border-bottom: 20px solid transparent;
+        border-top: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-left: 20px solid transparent;
+        content: "";
     }
 </style>
 <div class="" id="MENU" onclick="ToggleMenu()" style="height:100%;display: block;position:absolute;left:200px">
-    <p style="color:#333333; height:100%;line-height:80px;font-size:16px;cursor:pointer">Danh mục sách @*<i id="iconmenu" style="font-size:16px;" class="glyphicon glyphicon-menu-left"></i>*@</p>
-    <div class="partialMenu" style="display:none;position:absolute;left:-150px;top:81px;border:1px solid #ccc;border-radius:5px;">
-        <div style="width:1250px;background:white;padding:10px;box-sizing:border-box;border-radius:5px;max-height:500px;overflow
-    :auto">
+    <p style="color:#333333; height:100%;line-height:80px;font-size:18px;cursor:pointer"><i class="glyphicon glyphicon-menu-hamburger fa-lg"></i>&nbsp;Menu sách</p>
+    <div class="partialMenu" style="display:none;position:absolute;left:-150px;top:81px;border:2px solid #e65540;border-radius:5px;">
+        <div>
             <div class="row">
                 @foreach (var lv1 in categoryLv1s)
                 {
@@ -63,7 +98,7 @@
                             <div style="padding-left:15px;box-sizing:border-box;height:200px;overflow:auto">
                                 @foreach (var publish in categoryByPublishers)
                                 {
-                                    <div><a  style=" display:inline-block;margin-bottom:5px; color:#0066c0" href="@Url.Action("Index","Home",new { CategoryPublisherId =publish.CategoryByPublisherId})">@publish.CategoryByPublisherName</a></div>
+                                    <div><a style=" display:inline-block;margin-bottom:5px; color:#0066c0" href="@Url.Action("Index","Home",new { CategoryPublisherId =publish.CategoryByPublisherId})">@publish.CategoryByPublisherName</a></div>
                                 }
                             </div>
                         }
@@ -76,7 +111,7 @@
 </div>
 <script>
     function ToggleMenu() {
-        //$(".partialMenu").slideToggle();        
+        //$(".partialMenu").slideToggle();
         //$("#iconmenu").toggleClass("glyphicon-menu-left");
         //$("#iconmenu").toggleClass("glyphicon-menu-down");
     }

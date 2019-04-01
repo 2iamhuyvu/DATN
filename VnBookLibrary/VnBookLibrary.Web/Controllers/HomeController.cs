@@ -26,6 +26,51 @@ namespace VnBookLibrary.Web.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
+        [HttpPost]
+        public ActionResult CommentProduct(string Comments, int ProductId, int CustomerId)
+        {
+            UoW.CommentProductRepository.Insert(new CommentProduct() {
+                AlowDisplay = false,
+                CommentDate=DateTime.Now,
+                Comments=Comments,
+                CustomerId=CustomerId,
+                ProductId=ProductId,                
+            });
+            return Json(new JsonResultBO(true));
+        }
+        [HttpPost]
+        public ActionResult RateProduct(int Point, int ProductId, int CustomerId)
+        {
+            UoW.RateProductRepository.Delete(ProductId, CustomerId);
+            if (Point > 0 && Point < 6)
+            {
+                UoW.RateProductRepository.Insert(new RateProduct()
+                {
+                    CustomerId = CustomerId,
+                    ProductId = ProductId,
+                    Point = Point,
+                });
+            }
+            return Json(new JsonResultBO(true));
+        }
+
+        [HttpPost]
+        public ActionResult LikeProduct(int StatusLike, int ProductId, int CustomerId)
+        {
+            if (StatusLike == 1)
+            {
+                UoW.LikeProductRepository.Delete(ProductId, CustomerId);
+            }
+            else
+            {
+                UoW.LikeProductRepository.Insert(new LikeProduct()
+                {
+                    CustomerId = CustomerId,
+                    ProductId = ProductId
+                });
+            }
+            return Json(new JsonResultBO(true));
+        }
         public ActionResult Index(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
             var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
@@ -113,7 +158,7 @@ namespace VnBookLibrary.Web.Controllers
             }
             if (cateAuthor != null)
             {
-                href = "";                
+                href = "";
                 href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
                     + "<a href='/?CategoryAuthorId="
                     + cateAuthor.CategoryAuthorId + "'>"
@@ -121,7 +166,7 @@ namespace VnBookLibrary.Web.Controllers
             }
             if (catePublisher != null)
             {
-                href = "";                
+                href = "";
                 href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
                     + "<a href='/?CategoryAuthorId="
                     + catePublisher.CategoryByPublisherId + "'>"
@@ -140,6 +185,25 @@ namespace VnBookLibrary.Web.Controllers
         }
         public ActionResult _DetailProduct(int productId)
         {
+            Customer customer = null;
+            RateProduct rateProduct = null;
+            bool liked = false;
+            List<CommentProduct> commentProducts = null;
+            List<RateProduct> rateProducts = new List<RateProduct>();
+            rateProducts = UoW.RateProductRepository.GetAll().Where(x => x.ProductId == productId).ToList();
+            commentProducts = UoW.CommentProductRepository.GetAll().Where(x => x.ProductId == productId).ToList();
+            if (Session[Constants.CUSTOMER_SESSION] != null)
+            {
+                customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                rateProduct = UoW.RateProductRepository.GetAll().FirstOrDefault(x => x.ProductId == productId && x.CustomerId == customer.CustomerId);
+                liked = UoW.LikeProductRepository.GetAll().FirstOrDefault(x => x.ProductId == productId && x.CustomerId == customer.CustomerId) == null ? false : true;
+            }
+            ViewBag.CommentProducts = commentProducts;
+            ViewBag.RateProducts = rateProducts;
+            ViewBag.NumberLike = UoW.LikeProductRepository.GetAll().Where(x => x.ProductId == productId).ToList().Count;
+            ViewBag.Liked = liked;
+            ViewBag.Rate = rateProduct;
+            ViewBag.Customer = customer;
             Product product = new Product();
             product = UoW.ProductRepository.Find(productId);
             ViewBag.Product = product;
@@ -399,7 +463,6 @@ namespace VnBookLibrary.Web.Controllers
             }
         }
 
-        [Route("dang-ky-tai-khoan")]
         public ActionResult SignUp()
         {
             return View();

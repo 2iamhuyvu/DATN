@@ -11,9 +11,10 @@ namespace VnBookLibrary.Model.Entities
 {
     public class CommentProduct
     {
-        [Key, Column(Order = 0)]
-        public int ProductId { get; set; }
-        [Key, Column(Order = 1)]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CommentProductId { get; set; }
+        public int ProductId { get; set; }        
         public int CustomerId { get; set; }
         [Column(TypeName ="NTEXT")]
         public string Comments { get; set; }

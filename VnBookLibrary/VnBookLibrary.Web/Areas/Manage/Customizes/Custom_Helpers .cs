@@ -7,6 +7,6 @@ using System.Web.Mvc;
 namespace VnBookLibrary.Web.Areas.Manage.Customizes
 {
     public static class Custom_Helpers
-    {       
+    {        
     }
 }

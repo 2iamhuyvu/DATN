@@ -16,8 +16,6 @@ namespace VnBookLibrary.Model.Entities
         public int CustomerId { get; set; }
         [DefaultValue(1)]
         public int? Point { get; set; }
-        [DefaultValue(false)]
-        public bool? AlowDisplay { get; set; }
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
         [ForeignKey("CustomerId")]

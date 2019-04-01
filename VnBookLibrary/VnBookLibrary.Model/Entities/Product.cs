@@ -30,10 +30,7 @@ namespace VnBookLibrary.Model.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name ="Ngày xuất bản - Ngày phát hành")]
         public DateTime? PublishDate { get; set; }
-
-        [Display(Name ="Đánh giá của khách hàng")]
-        public int? RatePoint { get; set; }
-
+        
         [Display(Name ="Thông tin sách - bộ sách")]
         [Column(TypeName ="NTEXT")]
         public string Description { get; set; }

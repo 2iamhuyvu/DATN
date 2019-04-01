@@ -19,7 +19,7 @@ namespace VnBookLibrary.Model.Entities
         public string CustomerName { get; set; }      
         
         [Required(ErrorMessage ="Không được để trống Email!")]
-        [RegularExpression(@"^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$",ErrorMessage ="Không đúng định dạng Email")]
+        [EmailAddress]        
         public string Email { get; set; } 
         
         [Display(Name ="Điện thoại")]

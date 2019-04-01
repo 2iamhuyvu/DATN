@@ -334,6 +334,8 @@
                                 sound: true,
                             });
                             $("#listCartCount").text("0");
+                            ViewBoxCart();
+                            UpdateContentViewCart();
                         }
                         else {
                             Lobibox.notify('warning', {
@@ -344,10 +346,10 @@
                                 sound: true,
                             });
                         }
+                        ViewBoxCart();
+                        UpdateContentViewCart();
                     },
-                });
-                ViewBoxCart();
-                UpdateContentViewCart();
+                });                
             }
         }
         function DownQuantity(productId) {

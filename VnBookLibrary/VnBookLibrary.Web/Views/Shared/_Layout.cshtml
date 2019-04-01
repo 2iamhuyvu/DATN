@@ -48,7 +48,7 @@
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>    
     <link href="~/Content/select2.min.css" rel="stylesheet" />
     <script src="~/Scripts/select2.min.js"></script>
     <style>
@@ -392,10 +392,10 @@
                     <button type="button" class="close" onclick="CloseModalDetailProduct()">&times;</button>
                     <h4 style="color:red" class="modal-title"></h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="max-height:1000px;overflow:auto">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="CloseModalDetailProduct()">Đóng</button>
+                    <button type="button" class="btn btn-info" onclick="CloseModalDetailProduct()">Đóng</button>
                 </div>
             </div>
         </div>
@@ -410,7 +410,10 @@
     @if (TempData["Notify"] != null)
     {
         <script>
-                var jsonNotify = @Html.Raw(Json.Encode(TempData["Notify"]));
+            var jsonNotify = @Html.Raw(Json.Encode(TempData["Notify"]));
+            Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
+                soundPath: '../../PluginFrontend/lobibox-master/sounds/',
+            });
                 $(document).ready(function () {
                     if (jsonNotify.Status == true) {
                         Lobibox.notify('success', {
@@ -434,6 +437,11 @@
         </script>
     }
     <script>
+        $(document).ready(function () {
+            Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
+                soundPath: '../../PluginFrontend/lobibox-master/sounds/',
+            });
+        });
         $('.UseSelect2').select2();
         function CloseModalDetailProduct() {
             $("#ModalDetail").modal("hide");

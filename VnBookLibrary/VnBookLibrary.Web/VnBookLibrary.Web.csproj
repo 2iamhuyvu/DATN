@@ -214,6 +214,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CartVM.cs" />
+    <Compile Include="Models\RateProductVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -4248,6 +4249,7 @@
     <Content Include="Views\Home\SignUp.cshtml" />
     <Content Include="Views\Home\News.cshtml" />
     <Content Include="Views\Home\DetailsNews.cshtml" />
+    <Content Include="Views\Home\_RateStar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

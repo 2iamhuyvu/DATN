@@ -13,7 +13,7 @@
 <div class=" col-md-6 col-md-offset-3">
     <h3 style="text-align:center;margin-bottom:20px;">Thông tin đăng ký</h3>
 
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("SignUp","Home",FormMethod.Post))
     {
         @Html.AntiForgeryToken()
 

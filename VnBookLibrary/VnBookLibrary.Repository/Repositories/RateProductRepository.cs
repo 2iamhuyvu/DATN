@@ -15,6 +15,13 @@ namespace VnBookLibrary.Repository.Repositories
         }
         public RateProductRepository() : base()
         {
-        }       
+        }
+        public int Delete(int ProductId, int CustomerId)
+        {
+            RateProduct rateProduct = _context.RateProducts.FirstOrDefault(x => x.ProductId == ProductId && x.CustomerId == CustomerId);
+            if (rateProduct != null)
+                _context.RateProducts.Remove(rateProduct);
+            return _context.SaveChanges();
+        }
     }
 }

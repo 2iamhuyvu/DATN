@@ -146,8 +146,8 @@
         @Html.Raw(product.Description)
     </div>
     <hr />
-    <div class="row">        
-        <div class="col-md-6">            
+    <div class="row">
+        <div class="col-md-6">
             <div class="row">
                 <div class="col-md-5">
                     <div style="padding-top:20px;">
@@ -251,67 +251,66 @@
             }
         </div>
     </div>
-    @if (customer != null)
-    {
-        <hr />
+
+    <hr />
+    <div>        
         <div>
-            <h4 style="color:green;margin-bottom:25px;">Nhận xét,bình luận từ khách hàng</h4>
-            <div>
-                <div class="col-md-6">
-                    @if (commentProducts != null && commentProducts.Count > 0)
+            <div class="col-md-6">
+                <h4 style="color:green;margin-bottom:25px;">Nhận xét,bình luận từ khách hàng</h4>
+                @if (commentProducts != null && commentProducts.Count > 0)
+                {
+                    foreach (var item in commentProducts)
                     {
-                        foreach (var item in commentProducts)
+                        <div style="border-bottom:1px dashed #ccc;border-top:1px dashed #ccc;padding:10px 0px">
+                            <h5 style="font-weight:bold;font-size:20px;">@item.Customer.CustomerName</h5>
+                            <span style="color:#afb2b7;font-size:12px"><i>@item.CommentDate</i></span>
+                            <p style="color:black;padding-left:15px;"> @item.Comments</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span>Chưa có nhận xét nào!</span>
+                }
+            </div>
+            <div class="col-md-6">
+                @if (customer == null)
+                {
+                    <div class="loginSpecial" style="padding-left:30px;">
+                        <p style="color:black;" class="note">Đăng nhập để gửi nhận xét của Bạn</p>
+                        <p style="margin-top:10px;">
+                            <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="GotoLogin()">Đăng nhập</a>
+                            <span class="not-have-account">
+                                Bạn chưa có tài khoản? &nbsp;
+                                Hãy
+                                <a style="color:#0066c0" href="@Url.Action("SignUp","Home")">Đăng ký</a>
+                            </span>
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        @using (Ajax.BeginForm("CommentProduct", "Home", FormMethod.Post, new AjaxOptions()
                         {
-                            <div style="border-bottom:1px dashed #ccc;border-top:1px dashed #ccc;padding:10px 0px">
-                                <h5 style="font-weight:bold;font-size:20px;">@item.Customer.CustomerName</h5>
-                                <span style="color:#afb2b7;font-size:12px"><i>@item.CommentDate</i></span>
-                                <p style="color:black;padding-left:15px;"> @item.Comments</p>
+                            OnSuccess = "CommentSuccsess",
+                        }, new { @id = "FormComment" }))
+                        {
+                            <input type="hidden" name="ProductId" value="@product.ProductId" />
+                            <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
+                            <div class="form-group" style="padding:0px 20px;">
+                                <label>Nội dung bình luận <span style="color:red">*</span></label>
+                                <textarea name="Comments" t class="form-control" style="max-width:100%!important;resize:none;height:60px;" placeholder="Nhập bình luận của bạn"></textarea>
+                                <br />
+                                <input type="submit" style="float:right" value="Bình luận" class="btn btn-primary" />
+                                <div class="clearfix"></div>
                             </div>
                         }
-                    }
-                    else {
-                        <span>Chưa có nhận xét nào!</span>
-                    }
-                </div>
-                <div class="col-md-6">
-                    @if (customer == null)
-                    {
-                        <div class="loginSpecial" style="padding-top:20px;padding-left:30px;">
-                            <p style="color:black;" class="note">Đăng nhập để gửi nhận xét của Bạn</p>
-                            <p style="margin-top:10px;">
-                                <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="GotoLogin()">Đăng nhập</a>
-                                <span class="not-have-account">
-                                    Bạn chưa có tài khoản? &nbsp;
-                                    Hãy
-                                    <a style="color:#0066c0" href="@Url.Action("SignUp","Home")">Đăng ký</a>
-                                </span>
-                            </p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div>
-                            @using (Ajax.BeginForm("CommentProduct", "Home", FormMethod.Post, new AjaxOptions()
-                            {
-                                OnSuccess = "CommentSuccsess",
-                            }, new { @id = "FormComment" }))
-                            {
-                                <input type="hidden" name="ProductId" value="@product.ProductId" />
-                                <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
-                                <div class="form-group" style="padding:0px 20px;">
-                                    <label>Nội dung bình luận <span style="color:red">*</span></label>
-                                    <textarea name="Comments" t class="form-control" style="max-width:100%!important;resize:none;height:60px;" placeholder="Nhập bình luận của bạn"></textarea>
-                                    <br />
-                                    <input type="submit" style="float:right" value="Bình luận" class="btn btn-primary" />
-                                    <div class="clearfix"></div>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         </div>
-    }
+    </div>
 </div>
 <script>
     $(document).ready(function () {
@@ -341,27 +340,9 @@
             msg:"Cảm ơn bạn đã nhận xét,Nhận xét của bạn đang chờ duyệt",
             sound: false,
         });
-         $.ajax({
-                url: '@Url.Action("_DetailProduct", "Home")',
-                type: 'POST',
-                dataType: 'html',
-                data: JSON.stringify({"productId":"@product.ProductId"}),
-                contentType: 'application/json;charset=utf-8',
-                success: function (html) {
-                    $("#ModalDetail .modal-body").html(html);
-                },
-         });
+         DetailProduct(@product.ProductId)
     }
     function LikeProductSuccess() {
-        $.ajax({
-                url: '@Url.Action("_DetailProduct", "Home")',
-                type: 'POST',
-                dataType: 'html',
-                data: JSON.stringify({"productId":"@product.ProductId"}),
-                contentType: 'application/json;charset=utf-8',
-                success: function (html) {
-                    $("#ModalDetail .modal-body").html(html);
-                },
-            });
+        DetailProduct(@product.ProductId)
     }
 </script>

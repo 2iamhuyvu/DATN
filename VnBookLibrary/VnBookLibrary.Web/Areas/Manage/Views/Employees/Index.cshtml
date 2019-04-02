@@ -10,6 +10,7 @@
 <table class="table table-bordered UseDataTables">
     <thead>
         <tr>
+            <th>Loại nhân viên</th>
             <th>
                 @Html.DisplayNameFor(model => model.EmployeeName)
             </th>
@@ -25,6 +26,7 @@
             <th data-orderable="false">
                 @Html.DisplayNameFor(model => model.Phone)
             </th>
+            <th>Tình trạng</th>
             <th data-orderable="false"></th>
         </tr>
     </thead>
@@ -32,29 +34,48 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.EmployeeType.EmployeeTypeName</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EmployeeName)
+                    @item.EmployeeName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.LoginName)
+                    @item.LoginName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Email)
+                    @item.Email
                 </td>
 
                 <td>
-                    @Html.DisplayFor(modelItem => item.DateBirth)
+                    @item.DateBirth
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Phone)
+                    @item.Phone
                 </td>
+                <td>@(item.IsBlock == true ? "Bị khóa" : "Hoạt động")</td>
                 <td style="text-align:center">
-                    <a href="/Manage/Employees/Details/@item.EmployeeId"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                    @*<a href="/Manage/Employees/Details/@item.EmployeeId"><i style="color:royalblue" class="glyphicon glyphicon-eye-open fa-lg"></i></a>*@
                     @* <a href="/Manage/Employees/Edit/@item.EmployeeId"><i class="glyphicon glyphicon-edit fa-lg"></i></a> |*@
                     @*@using (Html.BeginForm("Delete", "Employees", new { Area = "Manage", id = item.EmployeeId }, FormMethod.Post, new { style = "display:inline-block", onsubmit = "return confirm('Bạn có thực sự xóa không')" }))
+                        {
+                            <button style="border:none;background:transparent" type="submit"><i style="color:red" class="glyphicon glyphicon-trash fa-lg"></i></button>
+                        }*@
+                    @if (item.EmployeeType.IsAdministrator == false || item.EmployeeType.IsAdministrator == null)
                     {
-                        <button style="border:none;background:transparent" type="submit"><i style="color:red" class="glyphicon glyphicon-trash fa-lg"></i></button>
-                    }*@
+                        if (item.IsBlock == false || item.IsBlock == null)
+                        {
+                            using (Html.BeginForm("BlockEmployee", "Employees", new { id = item.EmployeeId, IsBlock = true, Area = "Manage" }, FormMethod.Post, new { @id = "BlockCtm", style = "display:inline-block" }))
+                            {
+                                <a onclick="document.getElementById('BlockCtm').submit()" href="javascript:void(0)" style="padding:0px;color:black" class="fa fa-lock fa-lg" title="Khóa tài khoản"></a>
+                            }
+                        }
+                        else
+                        {
+                            using (Html.BeginForm("BlockEmployee", "Employees", new { id = item.EmployeeId, IsBlock = false, Area = "Manage" }, FormMethod.Post, new { @id = "UnBlockCtm", style = "display:inline-block" }))
+                            {
+                                <a onclick="document.getElementById('UnBlockCtm').submit()" href="javascript:void(0)" style="padding:0px;color:black" class="fa fa-unlock fa-lg" title="Mở khóa tài khoản"></a>
+                            }
+                        }
+                    }
                 </td>
             </tr>
         }

@@ -1,58 +1,84 @@
 ﻿@model IEnumerable<VnBookLibrary.Model.Entities.CommentProduct>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Phê duyệt bình luận | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
 }
 
-<h2>Index</h2>
+<h3>Danh sách các bình luận</h3>
+<hr />
+<table class="table table-bordered UseDataTables">
+    <thead>
+        <tr>
+            <th>
+                Khách hàng
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.ProductName)
+            </th>
+            <th>
+                Nội dung bình luận
+            </th>
+            <th>
+                Thời gian bình luận
+            </th>
+            <th>
+                Tình trạng
+            </th>
+            <th data-orderable="false">Phê duyệt</th>
+        </tr>
+    </thead>
+    <tbody>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Customer.CustomerName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Product.ProductName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Comments)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CommentDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AlowDisplay)
-        </th>
-        <th></th>
-    </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @(item.Customer.CustomerName + " (" + item.Customer.CustomerName + ")")
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Customer.CustomerName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.ProductName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comments)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CommentDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AlowDisplay)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
-
+                </td>
+                <td>
+                    @item.Product.ProductName
+                </td>
+                <td>
+                    @item.Comments
+                </td>
+                <td data-order="@(Html.Raw(Json.Encode(item.CommentDate)).ToString())">@item.CommentDate</td>
+                @if (item.AlowDisplay == true)
+                {
+                    <td data-order="1">
+                        Hiển thị
+                    </td>
+                }
+                else
+                {
+                    <td data-order="0">
+                        Không hiển thị
+                    </td>
+                }
+                <td style="text-align:center">
+                    @if (item.AlowDisplay == true)
+                    {
+                        using (Html.BeginForm("DisplayComment", "CommentProducts", new { id = item.CommentProductId, isDisplay = false, Area = "Manage" }, FormMethod.Post, new { @id="UnAlowDisplay", style = "display:inline-block" }))
+                        {
+                            <a onclick="document.getElementById('UnAlowDisplay').submit()" href="javascript:void(0)" style="padding:0px;color:black" class=" glyphicon glyphicon-eye-close fa-lg" title="Ẩn bình luận"></a>
+                        }                        
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("DisplayComment", "CommentProducts", new { id = item.CommentProductId, isDisplay = true, Area = "Manage" }, FormMethod.Post, new {@id="AlowDisplay", style = "display:inline-block" }))
+                        {
+                            <a  onclick="document.getElementById('AlowDisplay').submit()" href="javascript:void(0)" class=" glyphicon glyphicon-eye-open fa-lg" style="padding:0px;color:green" title="Hiện bình luận"></a>
+                        }
+                    }
+                    @using (Html.BeginForm("Delete", "CommentProducts", new { id = item.CommentProductId, Area = "Manage" }, FormMethod.Post, new { style ="display:inline-block",@id="DeleteCmt", onsubmit="return confirm('Bạn có chắc xóa bình luận này không!')" }))
+                    {
+                        <button  type="submit" AlowDisplay class=" glyphicon glyphicon-trash fa-lg" style="padding:0px;color:red;border: none;background: transparent;" title="Xóa bình luận"></button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
+<script>    
+</script>

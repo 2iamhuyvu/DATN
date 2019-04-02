@@ -169,16 +169,7 @@
                 data: JSON.stringify({ "ProductId": "@Model.ProductId", "CustomerId": "@Model.CustomerId", "Point": value }),
                 contentType: 'application/json;charset=utf-8',
                 success: function (rs) {
-                   $.ajax({
-                        url: '@Url.Action("_DetailProduct", "Home")',
-                        type: 'POST',
-                        dataType: 'html',
-                        data: JSON.stringify({"productId":"@Model.ProductId"}),
-                        contentType: 'application/json;charset=utf-8',
-                        success: function (html) {
-                            $("#ModalDetail .modal-body").html(html);
-                        },
-                    });
+                    DetailProduct(@Model.ProductId);
                 },
             });
         });

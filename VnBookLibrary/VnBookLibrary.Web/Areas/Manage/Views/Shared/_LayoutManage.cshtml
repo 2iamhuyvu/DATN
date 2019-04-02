@@ -332,16 +332,6 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        @*<li class="sidebar-search">
-                                <div class="input-group custom-search-form">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                            </li>*@
                         <li>
                             <a href="@Url.Action("Index","ManageHome",new { Area="Manage"})"><i class="fa fa-dashboard fa-fw"></i> Trang chủ quản lý</a>
                         </li>
@@ -380,9 +370,6 @@
                         </li>
 
                         <li>
-                            <a href="@Url.Action("Index","BookCategories",new { Area="Manage"})"><i class="fa fa-folder-open fa-fw"></i> Danh mục - Tác giả - NXB,NPH</a>
-                        </li>
-                        <li>
                             <a href="@Url.Action("Index","Bills",new { Area="Manage"})"><i class="fa fa-money fa-fw"></i> Quản lý hóa đơn</a>
                         </li>
                         <li>
@@ -402,6 +389,24 @@
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-share-alt-square fa-fw"></i> Tương tác của khách hàng<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="@Url.Action("Index","CommentProducts",new { Area="Manage"})">Duyệt bình luận khách hàng</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index","RateProducts",new { Area="Manage"})">Thống kê đánh đánh giá sách</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index","LikeProducts",new { Area="Manage"})">Thống kê Lượt thích  sách</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","BookCategories",new { Area="Manage"})"><i class="fa fa-folder-open fa-fw"></i> Danh mục - Tác giả - NXB,NPH</a>
                         </li>
                     </ul>
                 </div>
@@ -547,7 +552,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: jsonNotify.Message,
-                            sound: true,
+                            sound: false,
                         });
                     }
                     else {
@@ -556,7 +561,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: jsonNotify.Message,
-                            sound: true,
+                            sound: false,
                         });
                     }
                 });

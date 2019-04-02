@@ -22,6 +22,8 @@
             <th>
                 @Html.DisplayNameFor(model => model.LoginName)
             </th>
+            <th>Tình trạng</th>
+            <th data-orderable="false"></th>
         </tr>
     </thead>
     <tbody>
@@ -39,6 +41,24 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.LoginName)
+                </td>
+                <td>@(item.IsBlock==true?"Bị khóa":"Hoạt động")</td>
+                <td style="text-align:center">
+                    @if (item.IsBlock == false || item.IsBlock == null)
+                    {
+                        using (Html.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = true, Area = "Manage" }, FormMethod.Post, new { @id = "BlockCtm", style = "display:inline-block" }))
+                        {
+                            <a onclick="document.getElementById('BlockCtm').submit()" href="javascript:void(0)" style="padding:0px;color:black" class=" fa fa-lock fa-lg" title="Khóa tài khoản"></a>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = false, Area = "Manage" }, FormMethod.Post, new { @id = "UnBlockCtm", style = "display:inline-block" }))
+                        {
+                            <a onclick="document.getElementById('UnBlockCtm').submit()" href="javascript:void(0)" style="padding:0px;color:black" class=" fa fa-unlock fa-lg" title="Mở khóa tài khoản"></a>
+                        }
+                    }
+
                 </td>
             </tr>
         }

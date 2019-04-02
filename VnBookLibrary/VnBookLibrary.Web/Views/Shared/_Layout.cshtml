@@ -88,6 +88,9 @@
         .select2 {
             width: 100% !important;
         }
+        .block2-overlay>a{
+            display:none;
+        }
     </style>
 </head>
 <body class="animsition">
@@ -421,7 +424,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: jsonNotify.Message,
-                            sound: true,
+                            sound: false,
                         });
                     }
                     else {
@@ -430,7 +433,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: jsonNotify.Message,
-                            sound: true,
+                            sound: false,
                         });
                     }
                 });
@@ -460,7 +463,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: rs.Message,
-                            sound: true,
+                            sound: false,
                         });
                         $("span#listCartCount").text(rs.Param);
                         ViewBoxCart();
@@ -472,7 +475,7 @@
                             rounded: true,
                             delayIndicator: false,
                             msg: rs.Message,
-                            sound: true,
+                            sound: false,
                         });
                     }
                 },

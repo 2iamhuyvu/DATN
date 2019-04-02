@@ -25,6 +25,35 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
+        [HasRole(RoleCode = "EDIT_EMPLOYEE")]
+        [HttpPost]
+        public ActionResult BlockEmployee(int id,bool IsBlock)
+        {
+            var e = UoW.EmployeeRepository.Find(id);
+            if (e != null)
+            {
+                if (e.EmployeeType.IsAdministrator == true)
+                {
+                    TempData["Notify"] = new JsonResultBO()
+                    {
+                        Status = false,
+                        Message = "Không được khóa tài khoản Administrator",
+                    };
+                }
+                else
+                {
+                    e.IsBlock = IsBlock;
+                    e.RePassword = e.Password;
+                    UoW.EmployeeRepository.Update(e);
+                    TempData["Notify"] = new JsonResultBO()
+                    {
+                        Status = true,
+                        Message = IsBlock ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!",
+                    };
+                }
+            }
+            return RedirectToAction("Index");
+        }
         public ActionResult ChangePassword()
         {
             return View();

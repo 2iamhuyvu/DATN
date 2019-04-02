@@ -29,12 +29,13 @@ namespace VnBookLibrary.Web.Controllers
         [HttpPost]
         public ActionResult CommentProduct(string Comments, int ProductId, int CustomerId)
         {
-            UoW.CommentProductRepository.Insert(new CommentProduct() {
+            UoW.CommentProductRepository.Insert(new CommentProduct()
+            {
                 AlowDisplay = false,
-                CommentDate=DateTime.Now,
-                Comments=Comments,
-                CustomerId=CustomerId,
-                ProductId=ProductId,                
+                CommentDate = DateTime.Now,
+                Comments = Comments,
+                CustomerId = CustomerId,
+                ProductId = ProductId,
             });
             return Json(new JsonResultBO(true));
         }
@@ -191,7 +192,7 @@ namespace VnBookLibrary.Web.Controllers
             List<CommentProduct> commentProducts = null;
             List<RateProduct> rateProducts = new List<RateProduct>();
             rateProducts = UoW.RateProductRepository.GetAll().Where(x => x.ProductId == productId).ToList();
-            commentProducts = UoW.CommentProductRepository.GetAll().Where(x => x.ProductId == productId).ToList();
+            commentProducts = UoW.CommentProductRepository.GetAll().Where(x => x.ProductId == productId && x.AlowDisplay == true).ToList();
             if (Session[Constants.CUSTOMER_SESSION] != null)
             {
                 customer = (Customer)Session[Constants.CUSTOMER_SESSION];
@@ -452,15 +453,21 @@ namespace VnBookLibrary.Web.Controllers
             Customer customer = db.Customers.FirstOrDefault(x => x.LoginName.Equals(loginname) && x.Password.Equals(password));
             if (customer != null)
             {
-                Session[Constants.CUSTOMER_SESSION] = customer;
-                TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng nhập thành công!" };
-                return RedirectToAction("Index");
+                if (customer.IsBlock == true)
+                {
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Tài khoản bị khóa!" };
+                }
+                else
+                {
+                    Session[Constants.CUSTOMER_SESSION] = customer;
+                    TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng nhập thành công!" };
+                }
             }
             else
             {
                 TempData["Notify"] = new JsonResultBO(false) { Message = "Tên đăng nhập hoặc mật khẩu không đúng!" };
-                return RedirectToAction("Index");
             }
+            return RedirectToAction("Index");
         }
 
         public ActionResult SignUp()

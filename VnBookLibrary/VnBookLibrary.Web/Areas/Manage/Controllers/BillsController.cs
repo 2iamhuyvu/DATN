@@ -46,7 +46,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         public ActionResult _modalDetail(int id)
         {
             ViewBag.Bill = UoW.BillRepository.Find(id);            
-            ViewBag.ListBillDetail = UoW.BillRepository.GetAll().Where(x => x.BillId == id).ToList();
+            ViewBag.ListBillDetail = UoW.BillDetailRepository.GetAll().Where(x => x.BillId == id).ToList();
             return PartialView();
         }
         [HasRole(RoleCode = "VIEW_BILL")]

@@ -132,31 +132,7 @@
             }
         </tbody>
     </table>
-    <div class="clearfix"></div>
-    @*<div style="float:right">
-            <span>Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount</span>
-            @Html.PagedListPager(Model, page => Url.Action("_GetBillByStatus", "Bills",
-                new {
-                    Area = "Manage",
-                    page=page,
-                    status=ViewBag.StatusBill
-                }),
-               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
-               new PagedListRenderOptions()
-               {
-                   MaximumPageNumbersToDisplay = 15,
-               },
-               new AjaxOptions()
-               { HttpMethod = "POST",
-                   UpdateTargetId = "divBills"
-               }))
-        </div>
-        <div class="clearfix"></div>*@
-    @*}
-        else
-        {
-            <h4 style="color:red">Không có hóa đơn nào!</h4>
-        }*@
+    <div class="clearfix"></div>   
     <script>
         $(document).ready(function () {
             $('#TableBills').DataTable({

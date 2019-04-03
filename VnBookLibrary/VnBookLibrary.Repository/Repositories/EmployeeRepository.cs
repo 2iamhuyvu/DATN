@@ -18,8 +18,7 @@ namespace VnBookLibrary.Repository.Repositories
         }
         public List<string> ListRoleCodeByEmployee (int employeeId) {
             Employee employee = _context.Employees.Find(employeeId);
-            int tempType = employee.EmployeeTypeId;
-            return _context.Role_EmployeeTypes.ToList().Where(x => x.EmployeeTypeId == tempType).Select(x => x.RoleCode).ToList();
+            return employee.EmployeeType.Role_EmployeeTypes.Select(x => x.RoleCode).ToList();
         }       
         public int CheckLogin(string loginName, string password, out Employee employee)
         {

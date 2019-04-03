@@ -33,5 +33,6 @@ namespace VnBookLibrary.Model.Entities
         public int? SaleEventId { get; set; }
         [ForeignKey("SaleEventId")]
         public  virtual SaleEvent SaleEvent { get; set; }
+        public virtual ICollection<BillDetail> BillDetails { get; set; }
     }
 }

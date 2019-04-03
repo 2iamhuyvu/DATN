@@ -7,7 +7,7 @@
 
 <h3>Danh sách khách hàng</h3>
 <hr />
-<table class="table table-bordered UseDataTables">
+<table class="table table-bordered UseDataTables" id="TableCustomer">
     <thead>
         <tr>
             <th>
@@ -23,7 +23,7 @@
                 @Html.DisplayNameFor(model => model.LoginName)
             </th>
             <th>Tình trạng</th>
-            <th data-orderable="false"></th>
+            <th data-orderable="false">Khóa / Mở khóa</th>
         </tr>
     </thead>
     <tbody>
@@ -46,21 +46,61 @@
                 <td style="text-align:center">
                     @if (item.IsBlock == false || item.IsBlock == null)
                     {
-                        using (Html.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = true, Area = "Manage" }, FormMethod.Post, new { @id = "BlockCtm", style = "display:inline-block" }))
+                        using (Ajax.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId,IsBlock=true, Area = "Manage" }, new AjaxOptions()
                         {
-                            <a onclick="document.getElementById('BlockCtm').submit()" href="javascript:void(0)" style="padding:0px;color:black" class=" fa fa-lock fa-lg" title="Khóa tài khoản"></a>
+                            OnSuccess = "SuccessBlockCustomer",
+                            HttpMethod = "POST"
+                        }, new { @id = "BlockCtm"+item.CustomerId, style = "display:inline-block" }))
+                        {
+                            <button type="submit"  style="padding:0px;color:black;border:none;background: transparent" class=" fa fa-lock fa-lg" title="Khóa tài khoản"> Khóa</button>
                         }
                     }
                     else
                     {
-                        using (Html.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = false, Area = "Manage" }, FormMethod.Post, new { @id = "UnBlockCtm", style = "display:inline-block" }))
+                        using (Ajax.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = false, Area = "Manage" }, new AjaxOptions()
                         {
-                            <a onclick="document.getElementById('UnBlockCtm').submit()" href="javascript:void(0)" style="padding:0px;color:black" class=" fa fa-unlock fa-lg" title="Mở khóa tài khoản"></a>
+                            OnSuccess = "SuccessBlockCustomer",
+                            HttpMethod = "POST"
+                        }, new { @id = "UnBlockCtm"+item.CustomerId, style = "display:inline-block" }))
+                        {
+                            <button style="padding:0px;color:black;border:none;background: transparent" type="submit" class=" fa fa-unlock fa-lg"  title="Mở khóa tài khoản"> Mở khóa</button>
                         }
-                    }
-
+                    }                       
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<script>
+    function SuccessBlockCustomer(rs) {
+        LoadTableCustomer();
+        if (rs.Status == true) {
+            Lobibox.notify('success', {
+                size: 'mini',
+                rounded: true,
+                delayIndicator: false,
+                msg: rs.Message,
+                sound: false,
+            });
+        }
+        else {
+            Lobibox.notify('warning', {
+                size: 'mini',
+                rounded: true,
+                delayIndicator: false,
+                msg: rs.Message,
+                sound: false,
+            });
+        }
+    }
+    function LoadTableCustomer() {
+        $.ajax({
+            url: '@Url.Action("_TableCustomer", "Customers", new { Area = "Manage" })',
+            type: 'GET',
+            dataType: 'html',
+            success: function (html) {
+                $("#TableCustomer tbody").html(html)
+            },
+        });
+    }
+</script>

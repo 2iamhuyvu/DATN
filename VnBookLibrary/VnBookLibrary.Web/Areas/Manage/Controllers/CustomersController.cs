@@ -17,7 +17,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class CustomersController : Controller
     {
-        private VnBookLibraryDbContext db ;
+        private VnBookLibraryDbContext db;
         private UnitOfWork UoW;
         public CustomersController()
         {
@@ -29,8 +29,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             return View(db.Customers.ToList());
         }
+        [HasRole(RoleCode = "VIEW_CUSTOMER")]
+        public ActionResult _TableCustomer()
+        {
+            return PartialView(db.Customers.ToList());
+        }
+        [HasRole(RoleCode = "BLOCK_CUSTOMER")]
         [HttpPost]
-        public ActionResult BlockCustomer(int id,bool IsBlock)
+        public ActionResult BlockCustomer(int id, bool IsBlock)
         {
             var ctm = UoW.CustomerRepository.Find(id);
             if (ctm != null)
@@ -38,14 +44,10 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 ctm.IsBlock = IsBlock;
                 ctm.RePassword = ctm.Password;
                 UoW.CustomerRepository.Update(ctm);
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = true,
-                    Message = IsBlock? "Đã khóa tài khoản!":"Đã mở khóa tài khoản!",
-                };
+                return Json(new JsonResultBO(true) { Message = IsBlock?"Đã khóa khách hàng":"Đã mở khóa khách hàng" });
             }
-            return RedirectToAction("Index");
-        }               
+            return Json(new JsonResultBO(false) { Message = "Không tồn tại khách hàng này" });
+        }        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -4209,6 +4209,11 @@
     <Content Include="Areas\Manage\Views\SaleEvents\Details.cshtml" />
     <Content Include="Areas\Manage\Views\SaleEvents\Edit.cshtml" />
     <Content Include="Areas\Manage\Views\SaleEvents\Index.cshtml" />
+    <Content Include="Areas\Manage\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Manage\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Manage\Views\CommentProducts\_TableComment.cshtml" />
+    <Content Include="Areas\Manage\Views\Employees\_TableEmployee.cshtml" />
+    <Content Include="Areas\Manage\Views\Customers\_TableCustomer.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\dataTables.bootstrap.min.js" />
     <Content Include="Scripts\datatables.min.js" />

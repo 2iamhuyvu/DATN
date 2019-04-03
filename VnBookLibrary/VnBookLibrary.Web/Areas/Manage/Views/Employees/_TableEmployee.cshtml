@@ -1,0 +1,51 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.Employee>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.EmployeeType.EmployeeTypeName</td>
+        <td>
+            @item.EmployeeName
+        </td>
+        <td>
+            @item.LoginName
+        </td>
+        <td>
+            @item.Email
+        </td>
+
+        <td>
+            @item.DateBirth
+        </td>
+        <td>
+            @item.Phone
+        </td>
+        <td id_Employee="@item.EmployeeId">@(item.IsBlock == true ? "Bị khóa" : "Hoạt động")</td>
+        <td style="text-align:center">
+            @if (item.EmployeeType.IsAdministrator == false || item.EmployeeType.IsAdministrator == null)
+            {
+                if (item.IsBlock == false || item.IsBlock == null)
+                {
+                    using (Ajax.BeginForm("BlockEmployee", "Employees", new { id = item.EmployeeId,IsBlock=true, Area = "Manage" }, new AjaxOptions()
+                    {
+                        OnSuccess = "SuccessBlockEmployee",
+                        HttpMethod = "POST"
+                    }, new { style = "display:inline-block" }))
+                    {
+                        <button type="submit" id_Employee="@item.EmployeeId" style="padding:0px;color:black;border:none;background: transparent" class="fa fa-lock fa-lg" title="Khóa tài khoản"> Khóa</button>
+                    }
+                }
+                else
+                {
+                    using (Ajax.BeginForm("BlockEmployee", "Employees", new { id = item.EmployeeId, IsBlock = false, Area = "Manage" }, new AjaxOptions()
+                    {
+                        OnSuccess = "SuccessBlockEmployee",
+                        HttpMethod="POST"
+                    }, new { style = "display:inline-block" }))
+                    {
+                        <button type="submit" id_Employee="@item.EmployeeId" style="padding:0px;color:black;border:none;background: transparent" class="fa fa-unlock fa-lg" title="Mở khóa tài khoản"> Mở khóa</button>
+                    }
+                }
+            }
+        </td>
+    </tr>
+}

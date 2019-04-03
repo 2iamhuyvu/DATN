@@ -6,7 +6,7 @@
     ViewBag.Title = "Chỉnh sửa loại nhân viên | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
     ICollection<GroupRole> groupRoles = ViewBag.ListGroupRole;
-    var ourRoles = ManageSession.GetListRole();
+    var ourRoles = ViewBag.HasRole;
 }
 
 <h3>Chỉnh sửa loại nhân viên</h3>

@@ -37,7 +37,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             if (cmt != null)
                 cmt.AlowDisplay = isDisplay;
             Uow.CommentProductRepository.Update(cmt);
-            return RedirectToAction("Index");
+            return Json(new JsonResultBO(true) { Message = isDisplay ? "Đã hiện bình luận" : "Đã ẩn bình luận" });
         }
         [HasRole(RoleCode = "DELETE_COMMENT")]
         [HttpPost]
@@ -45,15 +45,16 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             if (Uow.CommentProductRepository.Delete(id) > 0)
             {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = true,
-                    Message = "Xóa thành công!",
-                };
+                return Json(new JsonResultBO(true) { Message = "Đã xóa bình luận!" });
             }
-            return RedirectToAction("Index");
+            return Json(new JsonResultBO(false) { Message = "Không tồn tại bình luận này" });
         }
-
+        [HasRole(RoleCode = "VIEW_COMMENT")]
+        [HttpGet]
+        public ActionResult _TableComment()
+        {
+            return PartialView(Uow.CommentProductRepository.GetAll());
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

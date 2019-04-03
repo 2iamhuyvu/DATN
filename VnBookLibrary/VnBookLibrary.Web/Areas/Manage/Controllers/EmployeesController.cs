@@ -34,25 +34,18 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 if (e.EmployeeType.IsAdministrator == true)
                 {
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = false,
-                        Message = "Không được khóa tài khoản Administrator",
-                    };
+                    return Json(new JsonResultBO(false) { Message = "Không thực hiện thao tác này với tài khoản Admin" ,});
                 }
                 else
                 {
                     e.IsBlock = IsBlock;
                     e.RePassword = e.Password;
                     UoW.EmployeeRepository.Update(e);
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = IsBlock ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!",
-                    };
+
+                    return Json(new JsonResultBO(true) { Message = IsBlock ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!"});
                 }
             }
-            return RedirectToAction("Index");
+            return Json(new JsonResultBO(false) { Message = "Nhân viên không tồn tại" });
         }
         public ActionResult ChangePassword()
         {
@@ -89,9 +82,13 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
 
         [HasRole(RoleCode = "VIEW_EMPLOYEE")]
         public ActionResult Index()
+        {            
+            return View(UoW.EmployeeRepository.GetAll());
+        }
+        [HasRole(RoleCode = "VIEW_EMPLOYEE")]
+        public ActionResult _TableEmployee()
         {
-            var employees = UoW.EmployeeRepository.GetAll();
-            return View(employees.ToList());
+            return PartialView(UoW.EmployeeRepository.GetAll());
         }
         [HasRole(RoleCode = "CREATE_EMPLOYEE")]
         public ActionResult Create()

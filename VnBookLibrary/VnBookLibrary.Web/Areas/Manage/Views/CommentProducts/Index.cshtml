@@ -7,7 +7,7 @@
 
 <h3>Danh sách các bình luận</h3>
 <hr />
-<table class="table table-bordered UseDataTables">
+<table class="table table-bordered UseDataTables" id="TableComment">
     <thead>
         <tr>
             <th>
@@ -29,56 +29,65 @@
         </tr>
     </thead>
     <tbody>
-
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @(item.Customer.CustomerName + " (" + item.Customer.CustomerName + ")")
-
-                </td>
-                <td>
-                    @item.Product.ProductName
-                </td>
-                <td>
-                    @item.Comments
-                </td>
-                <td data-order="@(Html.Raw(Json.Encode(item.CommentDate)).ToString())">@item.CommentDate</td>
-                @if (item.AlowDisplay == true)
-                {
-                    <td data-order="1">
-                        Hiển thị
-                    </td>
-                }
-                else
-                {
-                    <td data-order="0">
-                        Không hiển thị
-                    </td>
-                }
-                <td style="text-align:center">
-                    @if (item.AlowDisplay == true)
-                    {
-                        using (Html.BeginForm("DisplayComment", "CommentProducts", new { id = item.CommentProductId, isDisplay = false, Area = "Manage" }, FormMethod.Post, new { @id="UnAlowDisplay", style = "display:inline-block" }))
-                        {
-                            <a onclick="document.getElementById('UnAlowDisplay').submit()" href="javascript:void(0)" style="padding:0px;color:black" class=" glyphicon glyphicon-eye-close fa-lg" title="Ẩn bình luận"></a>
-                        }                        
-                    }
-                    else
-                    {
-                        using (Html.BeginForm("DisplayComment", "CommentProducts", new { id = item.CommentProductId, isDisplay = true, Area = "Manage" }, FormMethod.Post, new {@id="AlowDisplay", style = "display:inline-block" }))
-                        {
-                            <a  onclick="document.getElementById('AlowDisplay').submit()" href="javascript:void(0)" class=" glyphicon glyphicon-eye-open fa-lg" style="padding:0px;color:green" title="Hiện bình luận"></a>
-                        }
-                    }
-                    @using (Html.BeginForm("Delete", "CommentProducts", new { id = item.CommentProductId, Area = "Manage" }, FormMethod.Post, new { style ="display:inline-block",@id="DeleteCmt", onsubmit="return confirm('Bạn có chắc xóa bình luận này không!')" }))
-                    {
-                        <button  type="submit" AlowDisplay class=" glyphicon glyphicon-trash fa-lg" style="padding:0px;color:red;border: none;background: transparent;" title="Xóa bình luận"></button>
-                    }
-                </td>
-            </tr>
-        }
+        @{Html.RenderAction("_TableComment", "CommentProducts",new { Area="Manage"});}
     </tbody>
 </table>
-<script>    
+<script>
+    function LoadTableComment() {
+        $.ajax({
+            url: '@Url.Action("_TableComment", "CommentProducts", new { Area = "Manage" })',
+            type: 'GET',
+            dataType: 'html',            
+            success: function (html) {
+                $("#TableComment tbody").html(html)
+            },            
+        });
+    }
+    function SuccessDelete(rs) {
+        LoadTableComment();
+        if (rs.Status == true) {
+            Lobibox.notify('success', {
+                size: 'mini',
+                rounded: true,
+                delayIndicator: false,
+                msg: rs.Message,
+                sound: false,
+            });
+        }
+        else {
+            Lobibox.notify('warning', {
+                size: 'mini',
+                rounded: true,
+                delayIndicator: false,
+                msg: rs.Message,
+                sound: false,
+            });
+        }
+    }
+    function SuccessDisplayComment(rs) {
+        LoadTableComment();
+        //if (rs.Status == true) {            
+        //    Lobibox.notify('success', {
+        //        size: 'mini',
+        //        rounded: true,
+        //        delayIndicator: false,
+        //        msg: rs.Message,
+        //        sound: false,
+        //    });
+        //}
+        //else {
+        //    Lobibox.notify('warning', {
+        //        size: 'mini',
+        //        rounded: true,
+        //        delayIndicator: false,
+        //        msg: rs.Message,
+        //        sound: false,
+        //    });
+        //}
+    }
+    function SubmitDelete(id) {
+        if (confirm("Bạn có thực sự xóa bình luận này không!")) {
+            $("#FormDelete" + id).submit();
+        }
+    }
 </script>

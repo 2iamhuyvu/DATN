@@ -103,6 +103,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.ListGroupRole = UoW.GroupRoleRepository.GetAll();
+            ViewBag.HasRole = UoW.Role_EmployeeTypeRepository.GetAll().Where(x => x.EmployeeTypeId == id).Select(x => x.RoleCode).ToList();
             return View(employeeType);
         }
 

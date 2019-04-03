@@ -15,6 +15,23 @@ namespace VnBookLibrary.Repository.Repositories
         }
         public CustomerRepository() : base()
         {
-        }        
+        }
+        public List<Product> GetPurchasedProducts(int customerId)
+        {
+            List<Product> rs = new List<Product>();
+            List<Bill> bills = _context.Bills.Where(x => x.CustomerId == customerId).ToList();
+            if (bills != null && bills.Count > 0)
+            {
+                foreach (var bill in bills)
+                {
+                    var billDetais = bill.BillDetails;
+                    foreach (var item in billDetais)
+                    {
+                        rs.Add(item.Product);
+                    }
+                }
+            }
+            return rs;
+        }       
     }
 }

@@ -14,6 +14,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Net;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
+using System.Threading.Tasks;
 
 namespace VnBookLibrary.Web.Controllers
 {
@@ -74,6 +75,11 @@ namespace VnBookLibrary.Web.Controllers
         }
         public ActionResult Index(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
+            if (Session[Constants.CUSTOMER_SESSION] != null)
+            {
+                var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);                
+            }            
             var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
             var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
             var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
@@ -199,6 +205,7 @@ namespace VnBookLibrary.Web.Controllers
                 rateProduct = UoW.RateProductRepository.GetAll().FirstOrDefault(x => x.ProductId == productId && x.CustomerId == customer.CustomerId);
                 liked = UoW.LikeProductRepository.GetAll().FirstOrDefault(x => x.ProductId == productId && x.CustomerId == customer.CustomerId) == null ? false : true;
             }
+            ViewBag.RecommendProductByProduct = UoW.RecommendRepository.GetRecommendProductByProduct(productId);
             ViewBag.CommentProducts = commentProducts;
             ViewBag.RateProducts = rateProducts;
             ViewBag.NumberLike = UoW.LikeProductRepository.GetAll().Where(x => x.ProductId == productId).ToList().Count;
@@ -248,7 +255,7 @@ namespace VnBookLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ConfirmBuyProduct(Bill bill)
+        public async Task<ActionResult> ConfirmBuyProduct(Bill bill)
         {
             Customer customer = (Customer)Session[Constants.CUSTOMER_SESSION];
             if (customer != null)
@@ -281,6 +288,7 @@ namespace VnBookLibrary.Web.Controllers
                     };
                     billDetails.Add(billDetail);
                 }
+                await UoW.RecommendRepository.InsertOrUpdateAsync(billDetails);
                 UoW.BillDetailRepository.InsertRange(billDetails);
                 Session[Constants.CART_SESSION] = null;
                 return Json(new JsonResultBO(true) { Message = "Cám ơn bạn đã mua sách, Sách sẽ sớm được gửi cho bạn!" });
@@ -290,6 +298,7 @@ namespace VnBookLibrary.Web.Controllers
                 return Json(new JsonResultBO(false) { Message = "Có lỗi,Xin hãy thử lại!" });
             }
         }
+
         [Route("gio-hang")]
         public ActionResult ViewCart()
         {

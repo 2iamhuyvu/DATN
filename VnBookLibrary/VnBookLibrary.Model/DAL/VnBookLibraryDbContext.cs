@@ -36,5 +36,8 @@ namespace VnBookLibrary.Model.DAL
         public DbSet<SaleEvent_Product> SaleEvent_Products { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<News> News { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Tag_Product> Tag_Products { get; set; }
+        public DbSet<Recommend> Recommends { get; set; }
     }
 }

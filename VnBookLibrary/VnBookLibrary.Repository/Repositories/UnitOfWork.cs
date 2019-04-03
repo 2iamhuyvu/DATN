@@ -68,7 +68,14 @@ namespace VnBookLibrary.Repository.Repositories
             SaleEventRepository = new SaleEventRepository(_context);
             SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
             WardRepository = new WardRepository(_context);
+            RecommendRepository = new RecommendRepository(_context);
+            TagRepository = new TagRepository(_context);
+            Tag_ProductRepository = new Tag_ProductRepository(_context);
         }
+
+        public RecommendRepository RecommendRepository { get; set; }
+        public TagRepository TagRepository { get; set; }
+        public Tag_ProductRepository Tag_ProductRepository { get; set; }
         public EmployeeRepository EmployeeRepository { get; set; }
         public EmployeeTypeRepository EmployeeTypeRepository { get; set; }
         public BillDetailRepository BillDetailRepository { get; set; }

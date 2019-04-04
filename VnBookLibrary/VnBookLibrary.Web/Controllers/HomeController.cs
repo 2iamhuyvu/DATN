@@ -78,8 +78,8 @@ namespace VnBookLibrary.Web.Controllers
             if (Session[Constants.CUSTOMER_SESSION] != null)
             {
                 var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
-                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);                
-            }            
+                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
+            }
             var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
             var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
             var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
@@ -189,6 +189,23 @@ namespace VnBookLibrary.Web.Controllers
             ViewBag.CategoryPublisherId = CategoryPublisherId;
             var model = UoW.ProductRepository.GetPageListProduct(Search, CategoryLv1Id, CategoryLv2Id, CategoryAuthorId, CategoryPublisherId, page, pageSize);
             return PartialView(model);
+        }
+        public ActionResult DetailProduct(int? id)
+        {
+            if (id == null)
+            {
+                return View("~/Views/Shared/BadRequest.cshtml");
+            }
+            Product product = new Product();
+            product = UoW.ProductRepository.Find(id);
+            if (product == null)
+            {
+                return View("~/Views/Shared/BadRequest.cshtml");
+            }
+            ViewBag.Title = product.ProductName + " | VnBook";
+            ViewBag.ProductId = id;
+            ViewBag.Product = product;
+            return View();
         }
         public ActionResult _DetailProduct(int productId)
         {
@@ -457,7 +474,7 @@ namespace VnBookLibrary.Web.Controllers
             return PartialView();
         }
         [HttpPost]
-        public ActionResult Login(string loginname, string password)
+        public ActionResult Login(string loginname, string password,string returnUrl)
         {
             Customer customer = db.Customers.FirstOrDefault(x => x.LoginName.Equals(loginname) && x.Password.Equals(password));
             if (customer != null)
@@ -475,6 +492,10 @@ namespace VnBookLibrary.Web.Controllers
             else
             {
                 TempData["Notify"] = new JsonResultBO(false) { Message = "Tên đăng nhập hoặc mật khẩu không đúng!" };
+            }
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
             }
             return RedirectToAction("Index");
         }

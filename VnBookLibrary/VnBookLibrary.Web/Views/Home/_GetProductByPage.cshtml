@@ -122,7 +122,7 @@
 
                     <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
                         <div style="height:30px;overflow:hidden">
-                            <a href='javascript:void(0)' onclick="DetailProduct(@product.ProductId)" style="font-size:16px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
+                            <a href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' style="font-size:16px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
                                 @product.ProductName
                             </a>
                         </div>
@@ -134,7 +134,7 @@
                             }
                         </div>
                         <div style="margin-top:10px;">
-                            <a style="color:black" title="Xem chi tiết" onclick="DetailProduct(@product.ProductId)" class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                            <a style="color:black" title="Xem chi tiết"  href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
                             <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
                             <div class="clearfix"></div>
                         </div>

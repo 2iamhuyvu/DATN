@@ -82,11 +82,10 @@
         </div>
         <div class="col-md-10">
             <table class="table table-bordered">
-                @*<tr>
-                        <th>Tên sách:</th>
-                        <th style="color:red" colspan="3">@product.ProductName</th>
+                <tr>
+                    <th style="font-size:20px; color:red" colspan="4">@product.ProductName</th>
 
-                    </tr>*@
+                </tr>
                 <tr>
                     <th>Giá bán:</th>
                     <td>@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
@@ -138,11 +137,51 @@
                 <div class="col-md-4">
                     <button onclick="AddToCart(@product.ProductId)" class="btn btn-danger btn-lg" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i> Mua ngay</button>
                 </div>
+                <div class="col-md-8">
+                    @if (customer != null)
+                    {
+                        <div style="">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @if (rateProduct == null)
+                                    {
+                                        @Html.Partial("_RateStar", new RateProductVM { CustomerId = customer.CustomerId, ProductId = product.ProductId, Point = 0 })
+                                    }
+                                    else
+                                    {
+                                        @Html.Partial("_RateStar", new RateProductVM { CustomerId = customer.CustomerId, ProductId = product.ProductId, Point = rateProduct.Point ?? 0 })
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    @using (Ajax.BeginForm("LikeProduct", "Home", FormMethod.Post, new AjaxOptions()
+                                    {
+                                        OnSuccess = "LikeProductSuccess"
+                                    }, new { @id = "FormLiked" }))
+                                    {
+                                        @Html.Hidden("StatusLike", liked ? "1" : "0")
+                                        <input type="hidden" name="ProductId" value="@product.ProductId" />
+                                        <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
+                                        <button type="submit" class="btn btn-default btn-lg" style="background:white!important">
+                                            @if (liked)
+                                            {
+                                                <text><span style="color:#3784ff"><i class="fa fa-thumbs-up fa-lg"></i>&nbsp; Thích</span></text>
+                                            }
+                                            else
+                                            {
+                                                <text><span style="color:#afb2b7"><i class="fa fa-thumbs-up fa-lg"></i>&nbsp; </span>Thích</text>
+                                            }
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
             <div class="clearfix"></div>
         </div>
     </div>
-    <div class="DescriptionProduct" style="margin-top:20px;max-height:400px;overflow:auto; border:1px solid #ccc;border-radius:5px;padding:10px">
+    <div class="DescriptionProduct" style="margin-top:20px;">
         @Html.Raw(product.Description)
     </div>
     <hr />
@@ -216,43 +255,24 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            @if (customer != null)
-            {
-                <div style=" padding:50px ">
-                    <div class="row">
-                        <div class="col-md-6">
-                            @if (rateProduct == null)
-                            {
-                                @Html.Partial("_RateStar", new RateProductVM { CustomerId = customer.CustomerId, ProductId = product.ProductId, Point = 0 })
-                            }
-                            else
-                            {
-                                @Html.Partial("_RateStar", new RateProductVM { CustomerId = customer.CustomerId, ProductId = product.ProductId, Point = rateProduct.Point ?? 0 })
-                            }
+        <div class="col-md-6">                       
+            @if(customer!=null){
+                <div>
+                    @using (Ajax.BeginForm("CommentProduct", "Home", FormMethod.Post, new AjaxOptions()
+                    {
+                        OnSuccess = "CommentSuccsess",
+                    }, new { @id = "FormComment" }))
+                    {
+                        <input type="hidden" name="ProductId" value="@product.ProductId" />
+                        <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
+                        <div class="form-group" style="padding:0px 20px;">
+                            <label>Nội dung bình luận <span style="color:red">*</span></label>
+                            <textarea name="Comments" t class="form-control" style="max-width:100%!important;resize:none;height:60px;" placeholder="Nhập bình luận của bạn"></textarea>
+                            <br />
+                            <input type="submit" style="float:right" value="Bình luận" class="btn btn-primary" />
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="col-md-6">
-                            @using (Ajax.BeginForm("LikeProduct", "Home", FormMethod.Post, new AjaxOptions()
-                            {
-                                OnSuccess = "LikeProductSuccess"
-                            }, new { @id = "FormLiked" }))
-                            {
-                                @Html.Hidden("StatusLike", liked ? "1" : "0")
-                                <input type="hidden" name="ProductId" value="@product.ProductId" />
-                                <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
-                                <button type="submit" class="btn btn-default btn-lg" style="background:white!important">
-                                    @if (liked)
-                                    {
-                                        <text><span style="color:#3784ff"><i class="fa fa-thumbs-up fa-lg"></i>&nbsp; Thích</span></text>
-                                    }
-                                    else
-                                    {
-                                        <text><span style="color:#afb2b7"><i class="fa fa-thumbs-up fa-lg"></i>&nbsp; </span>Thích</text>
-                                    }
-                                </button>
-                            }
-                        </div>
-                    </div>
+                    }
                 </div>
             }
         </div>
@@ -280,47 +300,14 @@
                 }
             </div>
             <div class="col-md-6">
-                @if (customer == null)
-                {
-                    <div class="loginSpecial" style="padding-left:30px;">
-                        <p style="color:black;" class="note">Đăng nhập để gửi nhận xét của Bạn</p>
-                        <p style="margin-top:10px;">
-                            <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="GotoLogin()">Đăng nhập</a>
-                            <span class="not-have-account">
-                                Bạn chưa có tài khoản? &nbsp;
-                                Hãy
-                                <a style="color:#0066c0" href="@Url.Action("SignUp","Home")">Đăng ký</a>
-                            </span>
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <div>
-                        @using (Ajax.BeginForm("CommentProduct", "Home", FormMethod.Post, new AjaxOptions()
-                        {
-                            OnSuccess = "CommentSuccsess",
-                        }, new { @id = "FormComment" }))
-                        {
-                            <input type="hidden" name="ProductId" value="@product.ProductId" />
-                            <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
-                            <div class="form-group" style="padding:0px 20px;">
-                                <label>Nội dung bình luận <span style="color:red">*</span></label>
-                                <textarea name="Comments" t class="form-control" style="max-width:100%!important;resize:none;height:60px;" placeholder="Nhập bình luận của bạn"></textarea>
-                                <br />
-                                <input type="submit" style="float:right" value="Bình luận" class="btn btn-primary" />
-                                <div class="clearfix"></div>
-                            </div>
-                        }
-                    </div>
-                }
+
             </div>
         </div>
     </div>
 </div>
+<div class="clearfix"></div>
 <script>
     $(document).ready(function () {
-        $("#ModalDetail h4.modal-title").text("@Html.Raw(product.ProductName)");
         $("#FormComment").validate({
             rules: {
                 Comments: {
@@ -334,10 +321,6 @@
             }
         });
     })
-    function GotoLogin() {
-        CloseModalDetailProduct();
-        OpenLogin();
-    }
     function CommentSuccsess() {
         Lobibox.notify('success', {
             size: 'mini',

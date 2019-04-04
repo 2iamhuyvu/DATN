@@ -4255,6 +4255,9 @@
     <Content Include="Views\Home\News.cshtml" />
     <Content Include="Views\Home\DetailsNews.cshtml" />
     <Content Include="Views\Home\_RateStar.cshtml" />
+    <Content Include="Views\Home\_RecommendProductByCustomer.cshtml" />
+    <Content Include="Views\Shared\BadRequest.cshtml" />
+    <Content Include="Views\Home\DetailProduct.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

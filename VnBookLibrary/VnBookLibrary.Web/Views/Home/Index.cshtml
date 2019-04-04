@@ -9,18 +9,22 @@
         color: yellow !important;
     }
 </style>
+@if ((List<Product>)ViewBag.ReCommendProductByCustomer != null&& ((List<Product>)ViewBag.ReCommendProductByCustomer).Count()>0)
+{
+    Html.RenderPartial("~/Views/Home/_RecommendProductByCustomer.cshtml", (List<Product>)ViewBag.ReCommendProductByCustomer);
+}
 <div id="ContentIndex">
     @{
         Html.RenderAction("_GetProductByPage", "Home", new
-        {            
+        {
             Search = ViewBag.Search,
             CategoryLv1Id = ViewBag.CategoryLv1Id,
             CategoryLv2Id = ViewBag.CategoryLv2Id,
             CategoryAuthorId = ViewBag.CategoryAuthorId,
             CategoryPublisherId = ViewBag.CategoryPublisherId,
-            pageSize=15
+            pageSize = 15
         });
     }
 </div>
-@section scripts{   
+@section scripts{
 }

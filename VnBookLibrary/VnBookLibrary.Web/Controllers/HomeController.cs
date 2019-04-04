@@ -201,10 +201,16 @@ namespace VnBookLibrary.Web.Controllers
             if (product == null)
             {
                 return View("~/Views/Shared/BadRequest.cshtml");
-            }
+            }            
             ViewBag.Title = product.ProductName + " | VnBook";
             ViewBag.ProductId = id;
             ViewBag.Product = product;
+            ViewBag.RecommendProductByProduct = UoW.RecommendRepository.GetRecommendProductByProduct(product.ProductId);
+            if (Session[Constants.CUSTOMER_SESSION] != null)
+            {
+                var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
+            }
             return View();
         }
         public ActionResult _DetailProduct(int productId)

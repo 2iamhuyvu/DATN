@@ -92,16 +92,18 @@
         .block2-overlay > a {
             display: none;
         }
+
         .DivLogin {
-            margin-top: 40px;
-            padding: 10px;                       
-            background: #f0f0f0;           
+            margin-top: 50px;
+            padding: 10px;
+            background: #f0f0f0;
         }
-        .DivLoginFixed {            
+
+        .DivLoginFixed {
             padding: 10px;
             border-radius: 5px;
             background: #ffffff;
-            bottom: 40px;
+            bottom: 20px;
             border: 1px solid black;
             position: fixed;
         }
@@ -224,18 +226,22 @@
     <footer class="bg6 p-t-45 p-b-43 p-l-45 p-r-45">
         <div class="container">
             <div class="row p-b-90">
-                <div class="col-md-4">
-                    <h4 class="s-text12 p-b-30">
-                        Thông tin liên hệ
-                    </h4>
-
-                    <div>
-                        <p class="s-text7 w-size27">
-                            Bất cứ thắc mắc nào? Hãy cho chúng tôi biết tại cửa hàng số ..., đường ..., quận ..., Hà nội - Việt Nam hoặc liên hệ chúng tôi theo số điện thoại (+84) 987654321 hoặc email email@gmail.com
-                        </p>
-                    </div>
+                <div class="col-md-5">
+                    @if (customer == null)
+                    {
+                        <div id="loginSpecial" class="loginSpecial DivLogin" style="width:420px">
+                            <p style="color:black;" class="note">Đăng nhập để tương tác với chúng tôi!</p>
+                            <p style="margin-top:10px;">
+                                <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="OpenLogin()">Đăng nhập</a>
+                                <span class="not-have-account">
+                                    Bạn chưa có tài khoản?
+                                    Hãy
+                                    <a style="color:#0066c0" href="@Url.Action("SignUp","Home")">Đăng ký</a>
+                                </span>
+                            </p>
+                        </div>
+                    }
                 </div>
-
                 <div class="col-md-3">
                     <h4 class="s-text12 p-b-30">
                         Danh mục
@@ -267,21 +273,16 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-md-5">
-                    @if (customer == null)
-                    {
-                        <div id="loginSpecial" class="loginSpecial DivLogin" style="width:420px">
-                            <p style="color:black;" class="note">Đăng nhập để tương tác với chúng tôi!</p>
-                            <p style="margin-top:10px;">
-                                <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="OpenLogin()">Đăng nhập</a>
-                                <span class="not-have-account">
-                                    Bạn chưa có tài khoản?
-                                    Hãy
-                                    <a style="color:#0066c0" href="@Url.Action("SignUp","Home")">Đăng ký</a>
-                                </span>
-                            </p>
-                        </div>
-                    }
+                <div class="col-md-4">
+                    <h4 class="s-text12 p-b-30">
+                        Thông tin liên hệ
+                    </h4>
+
+                    <div>
+                        <p class="s-text7 w-size27">
+                            Bất cứ thắc mắc nào? Hãy cho chúng tôi biết tại cửa hàng số ..., đường ..., quận ..., Hà nội - Việt Nam hoặc liên hệ chúng tôi theo số điện thoại (+84) 987654321 hoặc email email@gmail.com
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -390,7 +391,7 @@
             Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
                 soundPath: '../../PluginFrontend/lobibox-master/sounds/',
             });
-            $(document).on('scroll', function () {                
+            $(document).on('scroll', function () {
                 if ($(window).scrollTop() > 45 && ($(window).scrollTop() + $(window).height() < $(document).height() - 151)) {
                     $('#loginSpecial').removeClass("DivLogin").addClass('DivLoginFixed');
                 } else {
@@ -418,8 +419,7 @@
                         });
                         $("span#listCartCount").text(rs.Param);
                         ViewBoxCart();
-                        UpdateContentViewCart();
-                        DetailProduct(productid);
+                        UpdateContentViewCart();                        
                     }
                     else {
                         Lobibox.notify('warning', {

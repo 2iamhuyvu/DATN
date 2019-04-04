@@ -75,12 +75,12 @@
 <hr />
 <div>
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div style="height:250px;">
                 <img height="100%" width="100%" style="border:1px solid #ccc;border-radius:5px;" src="@product.AvatarLink" />
             </div>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-9">
             <table class="table table-bordered">
                 <tr>
                     <th style="font-size:20px; color:red" colspan="4">@product.ProductName</th>
@@ -135,7 +135,7 @@
             </table>
             <div class="row" style="margin-top:40px;">
                 <div class="col-md-4">
-                    <button onclick="AddToCart(@product.ProductId)" class="btn btn-danger btn-lg" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i> Mua ngay</button>
+                    <button onclick="AddToCartDetail(@product.ProductId)" class="btn btn-danger btn-lg" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i> Mua ngay</button>
                 </div>
                 <div class="col-md-8">
                     @if (customer != null)
@@ -255,8 +255,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">                       
-            @if(customer!=null){
+        <div class="col-md-6">
+            @if (customer != null)
+            {
                 <div>
                     @using (Ajax.BeginForm("CommentProduct", "Home", FormMethod.Post, new AjaxOptions()
                     {
@@ -333,5 +334,11 @@
     }
     function LikeProductSuccess() {
         DetailProduct(@product.ProductId)
+    }
+</script>
+<script>
+    function AddToCartDetail(productid) {
+        AddToCart(productid);
+        DetailProduct(productid)
     }
 </script>

@@ -29,7 +29,7 @@
                         <h5 style="font-weight:bold" class="panel-title">Sách mua cùng nhiều nhất!</h5>
                     </div>
                     <div class="panel-body">
-                        <div id="carousel-main1" class="carousel slide " data-ride="carousel" data-interval="2500">
+                        <div id="carousel-main1" class="carousel slide " data-ride="carousel" data-interval="2400">
                             <!-- Carousel items -->
                             <div class="carousel-inner">
                                 @for (int j = 0; j < RecomendByProduct.Count && j < 10; j++)
@@ -37,7 +37,7 @@
                                     if (j == 0)
                                     {
                                         <div class="active item">
-                                            <div class="block2" style="margin-bottom:20px;border-radius:5px;">
+                                            <div class="block2" style="border-radius:5px;">
                                                 <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
                                                     <div style="height:150px;border-radius:3px 5px 0px 0px">
                                                         <img height="100%" style="border-radius:3px 0px 0px 0px" src="@RecomendByProduct[j].AvatarLink" alt="@RecomendByProduct[j].ProductName">
@@ -82,7 +82,7 @@
                                     else
                                     {
                                         <div class="item">
-                                            <div class="block2" style="margin-bottom:20px;border-radius:5px;">
+                                            <div class="block2" style="border-radius:5px;">
                                                 <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
                                                     <div style="height:150px;border-radius:3px 0px 0px 0px">
                                                         <img height="100%" style="border-radius:3px 0px 0px 0px" src="@RecomendByProduct[j].AvatarLink" alt="@RecomendByProduct[j].ProductName">
@@ -147,7 +147,7 @@
                         <h5 style="font-weight:bold" class="panel-title">Có thể bàn quan tâm!</h5>
                     </div>
                     <div class="panel-body">
-                        <div id="carousel-main2" class="carousel slide " data-ride="carousel" data-interval="2500">
+                        <div id="carousel-main2" class="carousel slide " data-ride="carousel" data-interval="2600">
                             <!-- Carousel items -->
                             <div class="carousel-inner">
                                 @for (int j = 0; j < RecomendByCustommer.Count && j < 10; j++)

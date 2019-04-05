@@ -1,0 +1,44 @@
+﻿@model IEnumerable<VnBookLibrary.Model.Entities.Tag>
+
+@{
+    ViewBag.Title = "Danh sách Tag | VnBook";
+    Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+}
+
+<h3>Danh sách các Tag</h3>
+<hr />
+<table class="table table-bordered table-striped UseDataTables">
+    <thead>
+        <tr>
+            <th>
+                Mã Tag
+            </th>
+            <th>
+                Tên Tag
+            </th>
+            <th>
+                Mô tả
+            </th>
+            <th data-orderable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.TagId
+                </td>
+                <td>
+                    @item.TagName
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @Html.ActionLink("Xem | Sửa", "Edit", new { id = item.TagId }, new { @class = "btn btn-primary" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

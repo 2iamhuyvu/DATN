@@ -301,7 +301,21 @@
                 }
             </div>
             <div class="col-md-6">
+                @if (customer == null)
+                {
 
+                    <div id="loginSpecial" class="loginSpecial DivLogin" style="width:420px">
+                        <p style="color:black;" class="note">Đăng nhập để tương tác với chúng tôi!</p>
+                        <p style="margin-top:10px;">
+                            <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="OpenLogin()">Đăng nhập</a>
+                            <span class="not-have-account">
+                                Bạn chưa có tài khoản?
+                                Hãy
+                                <a style="color:#0066c0" href="@Url.Action("SignUp", "Home")">Đăng ký</a>
+                            </span>
+                        </p>
+                    </div>
+                }
             </div>
         </div>
     </div>

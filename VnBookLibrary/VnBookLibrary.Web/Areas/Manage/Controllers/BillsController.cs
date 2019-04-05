@@ -19,20 +19,20 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
     [AuthorizeManage]
     public class BillsController : Controller
     {
-        private VnBookLibraryDbContext db ;
-        private UnitOfWork UoW;        
+        private VnBookLibraryDbContext db;
+        private UnitOfWork UoW;
         public BillsController()
         {
             db = new VnBookLibraryDbContext();
-            UoW = new UnitOfWork(db);            
+            UoW = new UnitOfWork(db);
         }
-        [HasRole(RoleCode ="VIEW_BILL")]
+        [HasRole(RoleCode = "VIEW_BILL")]
         public ActionResult Index()
-        {                     
+        {
             return View();
         }
         [HasRole(RoleCode = "VIEW_BILL")]
-        public PartialViewResult _GetBillByStatus(int? status=-1,int page=1,int pageSize=15)
+        public PartialViewResult _GetBillByStatus(int? status = -1, int page = 1, int pageSize = 15)
         {
             List<Bill> bills = UoW.BillRepository.GetAll().ToList();
             if (status > 0)
@@ -40,12 +40,12 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 bills = bills.Where(x => x.Status == status).ToList();
             }
             ViewBag.StatusBill = status;
-            return PartialView(bills.OrderBy(x => x.PayDate).ToPagedList(page,bills.Count==0?100: bills.Count));
+            return PartialView(bills.OrderBy(x => x.PayDate).ToPagedList(page, bills.Count == 0 ? 100 : bills.Count));
         }
         [HasRole(RoleCode = "VIEW_BILL")]
         public ActionResult _modalDetail(int id)
         {
-            ViewBag.Bill = UoW.BillRepository.Find(id);            
+            ViewBag.Bill = UoW.BillRepository.Find(id);
             ViewBag.ListBillDetail = UoW.BillDetailRepository.GetAll().Where(x => x.BillId == id).ToList();
             return PartialView();
         }
@@ -64,54 +64,78 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             return View(bill);
         }
         [HasRole(RoleCode = "EDIT_BILL")]
+        [HttpPost]
         public ActionResult ConfirmDeliver(int billId)
         {
-            Bill bill = new Bill();
-            bill = UoW.BillRepository.Find(billId);
-            if (bill == null)
+            if (ManageSession.HasRole("EDIT_BILL"))
             {
-                TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                Bill bill = new Bill();
+                bill = UoW.BillRepository.Find(billId);
+                if (bill == null)
+                {
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                }
+                else
+                {
+                    bill.Status = Constants.STATTUS_BILL_DELIVERING;
+                    UoW.BillRepository.Update(bill);
+                    TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái thành đang giao hàng" };
+                }
             }
-            else
+            TempData["Notify"] = new JsonResultBO(false)
             {
-                bill.Status = Constants.STATTUS_BILL_DELIVERING;
-                UoW.BillRepository.Update(bill);
-                TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái thành đang giao hàng" };
-            }
+                Message = "Bạn không có quyền này"
+            };
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
         }
         [HasRole(RoleCode = "EDIT_BILL")]
+        [HttpPost]
         public ActionResult ConfirmPaid(int billId)
         {
-            Bill bill = new Bill();
-            bill = UoW.BillRepository.Find(billId);
-            if (bill == null)
+            if (ManageSession.HasRole("EDIT_BILL"))
             {
-                TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                Bill bill = new Bill();
+                bill = UoW.BillRepository.Find(billId);
+                if (bill == null)
+                {
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                }
+                else
+                {
+                    bill.Status = Constants.STATTUS_BILL_PAID;
+                    UoW.BillRepository.Update(bill);
+                    TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái đã thanh toán" };
+                }
             }
-            else
+            TempData["Notify"] = new JsonResultBO(false)
             {
-                bill.Status = Constants.STATTUS_BILL_PAID;
-                UoW.BillRepository.Update(bill);
-                TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái đã thanh toán" };
-            }
+                Message = "Bạn không có quyền này"
+            };
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
         }
         [HasRole(RoleCode = "EDIT_BILL")]
+        [HttpPost]
         public ActionResult ConfirmReturned(int billId)
         {
-            Bill bill = new Bill();
-            bill = UoW.BillRepository.Find(billId);
-            if (bill == null)
+            if (ManageSession.HasRole("EDIT_BILL"))
             {
-                TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                Bill bill = new Bill();
+                bill = UoW.BillRepository.Find(billId);
+                if (bill == null)
+                {
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                }
+                else
+                {
+                    bill.Status = Constants.STATTUS_BILL_RETURNED;
+                    UoW.BillRepository.Update(bill);
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Đã chuyển đổi trạng thái bị trả về" };
+                }
             }
-            else
+            TempData["Notify"] = new JsonResultBO(false)
             {
-                bill.Status = Constants.STATTUS_BILL_RETURNED;
-                UoW.BillRepository.Update(bill);
-                TempData["Notify"] = new JsonResultBO(false) { Message = "Đã chuyển đổi trạng thái bị trả về" };
-            }
+                Message = "Bạn không có quyền này"
+            };
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
         }
 

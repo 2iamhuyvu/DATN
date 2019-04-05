@@ -4220,6 +4220,7 @@
     <Content Include="Areas\Manage\Views\Tags\Create.cshtml" />
     <Content Include="Areas\Manage\Views\Tags\Edit.cshtml" />
     <Content Include="Areas\Manage\Views\Tags\Index.cshtml" />
+    <Content Include="Areas\Manage\Views\Tags\_Edit.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\dataTables.bootstrap.min.js" />
     <Content Include="Scripts\datatables.min.js" />

@@ -33,21 +33,29 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]
         public ActionResult DisplayComment(int id,bool isDisplay)
         {
-            var cmt=Uow.CommentProductRepository.Find(id);
-            if (cmt != null)
-                cmt.AlowDisplay = isDisplay;
-            Uow.CommentProductRepository.Update(cmt);
-            return Json(new JsonResultBO(true) { Message = isDisplay ? "Đã hiện bình luận" : "Đã ẩn bình luận" });
+            if (ManageSession.HasRole("EDIT_COMMENT"))
+            {
+                var cmt = Uow.CommentProductRepository.Find(id);
+                if (cmt != null)
+                    cmt.AlowDisplay = isDisplay;
+                Uow.CommentProductRepository.Update(cmt);
+                return Json(new JsonResultBO(true) { Message = isDisplay ? "Đã hiện bình luận" : "Đã ẩn bình luận" });
+            }
+            return Json(new JsonResultBO(false) { Message="Bạn không có quyền này" });
         }
         [HasRole(RoleCode = "DELETE_COMMENT")]
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            if (Uow.CommentProductRepository.Delete(id) > 0)
+            if (ManageSession.HasRole("DELETE_COMMENT"))
             {
-                return Json(new JsonResultBO(true) { Message = "Đã xóa bình luận!" });
+                if (Uow.CommentProductRepository.Delete(id) > 0)
+                {
+                    return Json(new JsonResultBO(true) { Message = "Đã xóa bình luận!" });
+                }
+                return Json(new JsonResultBO(false) { Message = "Không tồn tại bình luận này" });
             }
-            return Json(new JsonResultBO(false) { Message = "Không tồn tại bình luận này" });
+            return Json(new JsonResultBO(false) { Message = "Bạn không có quyền này" });
         }
         [HasRole(RoleCode = "VIEW_COMMENT")]
         [HttpGet]

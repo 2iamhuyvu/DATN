@@ -135,16 +135,25 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            if (UoW.ProductRepository.Delete(id) > 0)
+            if (ManageSession.HasRole("DELETE_PRODUCT"))
             {
-                TempData["Notify"] = new JsonResultBO()
+                if (UoW.ProductRepository.Delete(id) > 0)
                 {
-                    Status = true,
-                    Message = "Xóa sách thành công!",
-                };
-                return RedirectToAction("Index", "Products", new { Area = "Manage" });
+                    TempData["Notify"] = new JsonResultBO()
+                    {
+                        Status = true,
+                        Message = "Xóa sách thành công!",
+                    };
+                    return RedirectToAction("Index", "Products", new { Area = "Manage" });
+                }
+                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
-            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
+            TempData["Notify"] = new JsonResultBO()
+            {
+                Status = false,
+                Message = "Bạn không có quyền này!",
+            };
+            return RedirectToAction("Index", "Products", new { Area = "Manage" });
         }
 
         protected override void Dispose(bool disposing)

@@ -89,36 +89,30 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
         }
+        [HasRole(RoleCode ="DELETE_CATEGORY")]
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            if (UoW.CategoryByAuthorRepository.Delete(id) > 0)
+            if (ManageSession.HasRole("DELETE_CATEGORY"))
             {
-
-                TempData["Notify"] = new JsonResultBO()
+                if (UoW.CategoryByAuthorRepository.Delete(id) > 0)
                 {
-                    Status = true,
-                    Message = "Xóa danh mục thành công!",
-                };
-                return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
-            }
-            return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
-        }
-        [NonAction]
-        [AllowAnonymous]
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
+                    TempData["Notify"] = new JsonResultBO()
+                    {
+                        Status = true,
+                        Message = "Xóa danh mục thành công!",
+                    };
+                    return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
+                }
                 return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
-            CategoryByAuthor categoryByAuthor = UoW.CategoryByAuthorRepository.Find(id);
-            if (categoryByAuthor == null)
+            TempData["Notify"] = new JsonResultBO()
             {
-                return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
-            }
-            return View(categoryByAuthor);
-        }
+                Status = false,
+                Message = "Bạn không có quyền này!",
+            };
+            return RedirectToAction("Index", "BookCategories", new { Area = "Manage", displayCategory = 2 });
+        }       
         protected override void Dispose(bool disposing)
         {
             if (disposing)

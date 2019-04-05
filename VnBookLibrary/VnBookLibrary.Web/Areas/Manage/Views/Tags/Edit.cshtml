@@ -1,44 +1,96 @@
 ﻿@model VnBookLibrary.Model.Entities.Tag
-
+@using VnBookLibrary.Model.Entities;
+@using System.Globalization;
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Sửa nhãn | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+    List<Product> Products = (List<Product>)ViewBag.Products;
+    List<Tag_Product> Tag_Products = (List<Tag_Product>)ViewBag.Tag_Products;
 }
 
-<h2>Edit</h2>
-
-@using (Html.BeginForm())
-{        
-    <div class="form-horizontal">
-        <h4>Tag</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.TagId)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TagName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TagName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TagName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+<h3 class="">Sửa nhãn</h3>
+<hr />
+<div id="ContentViewEditTag">
+    @{Html.RenderAction("_Edit", "Tags", new { Area = "Manage", id = Model.TagId });}   
 </div>
+<script>
+    $(document).ready(function () {
+
+    })
+    $("#ckbAll").click(function () {
+        if (this.checked) {
+            $(".ckbChoose").prop('checked', true);
+        }
+        else {
+            $(".ckbChoose").prop('checked', false);
+        }
+    })
+    $(".ckbChoose").click(function () {
+        $("#ckbAll").prop('checked', false);
+    })
+    $("#ckbAll1").click(function () {
+        if (this.checked) {
+            $(".ckbChoose1").prop('checked', true);
+        }
+        else {
+            $(".ckbChoose1").prop('checked', false);
+        }
+    })
+    $(".ckbChoose1").click(function () {
+        $("#ckbAll1").prop('checked', false);
+    })   
+    function LoadViewEditTag() {
+        $.ajax({
+            url: '@Url.Action("_Edit", "Tags", new { Area = "Manage", id =Model.TagId})',
+            type: 'POST',
+            dataType: 'html',
+            success: function (html) {
+                $("#ContentViewEditTag").html(html);
+            },
+        });
+    }
+    function MultiDeleteTag_Product() {
+        let a = $("input[name='Tag_ProductId']:checked");
+        if (a == null || a.length==0) {
+            Lobibox.notify('warning', {
+                size: 'mini',
+                rounded: true,
+                delayIndicator: false,
+                msg: "Chưa có sách nào được chọn",
+                sound: false,
+            });
+        } else {
+            let Tag_ProductId = [];
+            $.each(a, function (e, index) {
+                Tag_ProductId.push(parseInt(($(this)).val()));
+            })  
+             $.ajax({
+                url: '@Url.Action("MultiDeleteTag_Product", "Tags", new { Area = "Manage", TagId = Model.TagId})',
+                 type: 'POST',
+                 data: { Tag_ProductId: Tag_ProductId},
+                dataType: 'json',
+                success: function (rs) {
+                    if (rs.Status == true) {
+                        Lobibox.notify('success', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: rs.Message,
+                            sound: false,
+                        });
+                    }
+                    else {
+                        Lobibox.notify('warning', {
+                            size: 'mini',
+                            rounded: true,
+                            delayIndicator: false,
+                            msg: rs.Message,
+                            sound: false,
+                        });
+                    }
+                    LoadViewEditTag();
+                },
+            });
+        }        
+    }
+</script>

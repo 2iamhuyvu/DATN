@@ -376,15 +376,7 @@
         $(document).ready(function () {
             Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
                 soundPath: '../../PluginFrontend/lobibox-master/sounds/',
-            });
-            $(document).on('scroll', function () {
-                if (($(window).scrollTop() + $(window).height() < $(document).height() - 151)) {
-                    $('#loginSpecial').removeClass("DivLogin").addClass('DivLoginFixed');
-                } else {
-                    $('#loginSpecial').removeClass("DivLoginFixed").addClass('DivLogin');
-                }
-            });
-
+            });            
         });
         $('.UseSelect2').select2();
          function AddToCart(productid) {

@@ -1,6 +1,7 @@
 ﻿@using VnBookLibrary.Model.Entities;
 @using PagedList.Mvc
 @using System.Globalization;
+@using VnBookLibrary.Web.Areas.Manage.Customizes;
 @model PagedList.IPagedList<Product>
 @{
     int c1 = ViewBag.CategoryLv1Id ?? -1;
@@ -113,7 +114,7 @@
             <button type="submit" class="btn btn-danger btn-sm"><i class=" glyphicon glyphicon-search"></i> Lọc</button>
             &nbsp;<i style="color:green">Không chọn gì để hiện tất cả!</i>
         </div>
-    }    
+    }
     <div class="clearfix"></div>
     @if (Model.Count > 0)
     {
@@ -288,9 +289,12 @@
                                     </div>
                                     <div>
                                         <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })" class="btn btn-success btn-sm">Xem | Chỉnh sửa</a>
-                                        @using (Html.BeginForm("Delete", "Products", new { id = product.ProductId }, FormMethod.Post, new { style = "display:inline", @id = "FormDeleteProduct_" + product.ProductId }))
+                                        @if (ManageSession.HasRole("DELETE_PRODUCT"))
                                         {
-                                            <button type="button" onclick="SubmitFormDeleteProduct(@product.ProductId)" title="Xóa" class="btn btn-danger btn-sm">Xóa</button>
+                                            using (Html.BeginForm("Delete", "Products", new { id = product.ProductId }, FormMethod.Post, new { style = "display:inline", @id = "FormDeleteProduct_" + product.ProductId }))
+                                            {
+                                                <button type="button" onclick="SubmitFormDeleteProduct(@product.ProductId)" title="Xóa" class="btn btn-danger btn-sm">Xóa</button>
+                                            }
                                         }
                                     </div>
                                 </div>
@@ -334,11 +338,14 @@
                                     <td>
                                         <a style="width:110px" href="@Url.Action("Edit", "Products", new { id = product.ProductId })" class="btn btn-success btn-sm">Xem | Chỉnh sửa</a>
                                         <hr style="margin:10px 0px" />
-                                        @using (Html.BeginForm("Delete", "Products", new { id = product.ProductId }, FormMethod.Post, new { style = "display:inline", @id = "FormDeleteProduct_" + product.ProductId }))
+                                        @if (ManageSession.HasRole("DELETE_PRODUCT"))
                                         {
-                                            <button style="width:110px" type="button" onclick="SubmitFormDeleteProduct(@product.ProductId)" title="Xóa" class="btn btn-danger btn-sm">Xóa</button>
+                                            using (Html.BeginForm("Delete", "Products", new { id = product.ProductId }, FormMethod.Post, new { style = "display:inline", @id = "FormDeleteProduct_" + product.ProductId }))
+                                            {
+                                                <button style="width:110px" type="button" onclick="SubmitFormDeleteProduct(@product.ProductId)" title="Xóa" class="btn btn-danger btn-sm">Xóa</button>
+                                            }
                                         }
-                                    </td>
+                                        </td>
                                 </tr>
                             }
                         </tbody>
@@ -352,7 +359,7 @@
                 new {
                     Area = "Manage",
                     Search =search ,
-                    pageNumber = page,                    
+                    pageNumber = page,
                     categoryLv1Id = ViewBag.CategoryLv1Id,
                     CategoryLv2Id = ViewBag.CategoryLv2Id,
                     CategoryAuthorId = categoryAuthorId,

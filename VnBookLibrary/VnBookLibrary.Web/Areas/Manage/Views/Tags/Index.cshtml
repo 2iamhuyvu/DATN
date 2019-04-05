@@ -1,23 +1,24 @@
 ﻿@model IEnumerable<VnBookLibrary.Model.Entities.Tag>
 
 @{
-    ViewBag.Title = "Danh sách Tag | VnBook";
+    ViewBag.Title = "Danh sách nhãn | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
 }
 
-<h3>Danh sách các Tag</h3>
+<h3>Danh sách các nhãn,thẻ <a style="float:right" class="btn btn-success" href="@Url.Action("Create","Tags",new { Area="Manage"})">Thêm nhãn,thẻ</a></h3>
+<div class="clearfix"></div>
 <hr />
 <table class="table table-bordered table-striped UseDataTables">
     <thead>
         <tr>
             <th>
-                Mã Tag
+                Mã nhãn
             </th>
             <th>
-                Tên Tag
+                Tên nhãn
             </th>
             <th>
-                Mô tả
+                Mô tả nhãn
             </th>
             <th data-orderable="false"></th>
         </tr>

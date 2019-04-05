@@ -38,15 +38,19 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]
         public ActionResult BlockCustomer(int id, bool IsBlock)
         {
-            var ctm = UoW.CustomerRepository.Find(id);
-            if (ctm != null)
+            if (ManageSession.HasRole("BLOCK_CUSTOMER"))
             {
-                ctm.IsBlock = IsBlock;
-                ctm.RePassword = ctm.Password;
-                UoW.CustomerRepository.Update(ctm);
-                return Json(new JsonResultBO(true) { Message = IsBlock?"Đã khóa khách hàng":"Đã mở khóa khách hàng" });
+                var ctm = UoW.CustomerRepository.Find(id);
+                if (ctm != null)
+                {
+                    ctm.IsBlock = IsBlock;
+                    ctm.RePassword = ctm.Password;
+                    UoW.CustomerRepository.Update(ctm);
+                    return Json(new JsonResultBO(true) { Message = IsBlock ? "Đã khóa khách hàng" : "Đã mở khóa khách hàng" });
+                }
+                return Json(new JsonResultBO(false) { Message = "Không tồn tại khách hàng này" });
             }
-            return Json(new JsonResultBO(false) { Message = "Không tồn tại khách hàng này" });
+            return Json(new JsonResultBO(false) { Message = "Bạn không có quyền này" });
         }        
         protected override void Dispose(bool disposing)
         {

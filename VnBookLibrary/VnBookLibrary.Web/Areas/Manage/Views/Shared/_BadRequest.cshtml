@@ -5,4 +5,14 @@
 }
 
 <h3 style="color:red">Đường dẫn không tồn tại!</h3>
-
+<script>
+    $(document).ready(function () {
+        Lobibox.notify('warning', {
+            size: 'mini',
+            rounded: true,
+            delayIndicator: false,
+            msg: "Đường dẫn không đúng!",
+            sound: false,
+        });
+    })
+</script>

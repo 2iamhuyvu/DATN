@@ -29,23 +29,27 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]
         public ActionResult BlockEmployee(int id,bool IsBlock)
         {
-            var e = UoW.EmployeeRepository.Find(id);
-            if (e != null)
+            if (ManageSession.HasRole("EDIT_EMPLOYEE"))
             {
-                if (e.EmployeeType.IsAdministrator == true)
+                var e = UoW.EmployeeRepository.Find(id);
+                if (e != null)
                 {
-                    return Json(new JsonResultBO(false) { Message = "Không thực hiện thao tác này với tài khoản Admin" ,});
-                }
-                else
-                {
-                    e.IsBlock = IsBlock;
-                    e.RePassword = e.Password;
-                    UoW.EmployeeRepository.Update(e);
+                    if (e.EmployeeType.IsAdministrator == true)
+                    {
+                        return Json(new JsonResultBO(false) { Message = "Không thực hiện thao tác này với tài khoản Admin", });
+                    }
+                    else
+                    {
+                        e.IsBlock = IsBlock;
+                        e.RePassword = e.Password;
+                        UoW.EmployeeRepository.Update(e);
 
-                    return Json(new JsonResultBO(true) { Message = IsBlock ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!"});
+                        return Json(new JsonResultBO(true) { Message = IsBlock ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!" });
+                    }
                 }
+                return Json(new JsonResultBO(false) { Message = "Nhân viên không tồn tại" });
             }
-            return Json(new JsonResultBO(false) { Message = "Nhân viên không tồn tại" });
+            return Json(new JsonResultBO(false) { Message = "Bạn không có quyền này" });
         }
         public ActionResult ChangePassword()
         {
@@ -127,6 +131,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
+        [HasRole(RoleCode = "EDIT_EMPLOYEE")]
         public ActionResult Edit(int? id)
         {
             if (id == null)

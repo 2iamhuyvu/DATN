@@ -2,12 +2,12 @@
 @using VnBookLibrary.Model.Entities;
 @using System.Globalization;
 @{
-    ViewBag.Title = "Tạo Tag | VnBook";
+    ViewBag.Title = "Tạo nhãn | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
     List<Product> Products = (List<Product>)ViewBag.Products;
 }
 
-<h3 class="">Tạo Tag</h3>
+<h3 class="">Tạo nhãn</h3>
 <hr />
 @using (Html.BeginForm())
 {
@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.TagId, "Mã Tag", htmlAttributes: new { @class = "control-label " })
+                    @Html.LabelFor(model => model.TagId, "Mã nhãn", htmlAttributes: new { @class = "control-label " })
                     <span style="color:red">*</span>
                     <div class="">
                         @Html.EditorFor(model => model.TagId, new { htmlAttributes = new { @class = "form-control" } })
@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.TagName, "Tên Tag", htmlAttributes: new { @class = "control-label " })
+                    @Html.LabelFor(model => model.TagName, "Tên nhãn", htmlAttributes: new { @class = "control-label " })
                     <span style="color:red">*</span>
                     <div class="">
                         @Html.EditorFor(model => model.TagName, new { htmlAttributes = new { @class = "form-control" } })
@@ -44,44 +44,47 @@
         </div>
 
         <div style="padding-bottom:100px;">
-            <hr />
-            <h4 style="text-align:center">Lựa chọn sách!</h4>
-            <div>
-                <table class="table table-bordered table-striped UseDataTables" >
-                    <thead>
-                        <tr>
-                            <th data-orderable="false" style="width:25px;text-align:center">
-                                <input id="ckbAll" type="checkbox" style="height:20px;width:20px" />
-                            </th>
-                            <th>
-                                Tên sách
-                            </th>
-                            <th>Giá bán</th>
-                            <th>Giá bìa</th>
-                            <th>Danh mục cấp 1</th>
-                            <th>Danh mục cấp 2</th>
-                            <th>Tác giả</th>
-                            <th>NXB-NPH</th>                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var product in Products)
-                        {
-                            <tr>   
-                                <td style="width:25px;text-align:center">
-                                    <input name="ListProductId" value="@product.ProductId" class="ckbChoose" type="checkbox" style="height:20px;width:20px" />
-                                </td>
-                                <td style="width:120px;color:orangered">@product.ProductName</td>
-                                <td style="width:100px" data-order="@product.Price">@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
-                                <td style="width:100px" data-order="@product.CoverPrice">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
-                                <td style="width:100px">@product.CategoryLv1.CategoryLv1Name</td>
-                                <td style="width:100px">@(product.CategoryLv2 != null ? product.CategoryLv2.CategoryLv2Name : "")</td>
-                                <td style="width:100px">@(product.CategoryByAuthor != null ? product.CategoryByAuthor.CategoryAuthorName : "")</td>
-                                <td style="width:100px">@(product.CategoryByPublisher != null ? product.CategoryByPublisher.CategoryByPublisherName : "")</td>                              
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Lựa chọn sách!</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped UseDataTables">
+                        <thead>
+                            <tr>
+                                <th data-orderable="false" style="width:25px;text-align:center">
+                                    <input id="ckbAll" type="checkbox" style="height:20px;width:20px" />
+                                </th>
+                                <th>
+                                    Tên sách
+                                </th>
+                                <th>Giá bán</th>
+                                <th>Giá bìa</th>
+                                <th>Danh mục cấp 1</th>
+                                <th>Danh mục cấp 2</th>
+                                <th>Tác giả</th>
+                                <th>NXB-NPH</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Products)
+                            {
+                                <tr>
+                                    <td style="width:25px;text-align:center">
+                                        <input name="ListProductId" value="@product.ProductId" class="ckbChoose" type="checkbox" style="height:20px;width:20px" />
+                                    </td>
+                                    <td style="width:120px;color:orangered">@product.ProductName</td>
+                                    <td style="width:100px" data-order="@product.Price">@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                                    <td style="width:100px" data-order="@product.CoverPrice">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                                    <td style="width:100px">@product.CategoryLv1.CategoryLv1Name</td>
+                                    <td style="width:100px">@(product.CategoryLv2 != null ? product.CategoryLv2.CategoryLv2Name : "")</td>
+                                    <td style="width:100px">@(product.CategoryByAuthor != null ? product.CategoryByAuthor.CategoryAuthorName : "")</td>
+                                    <td style="width:100px">@(product.CategoryByPublisher != null ? product.CategoryByPublisher.CategoryByPublisherName : "")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="form-group" style="width:100%;position:fixed;left:0px;bottom:0px;text-align:center">

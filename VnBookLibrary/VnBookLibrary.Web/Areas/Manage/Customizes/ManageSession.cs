@@ -46,11 +46,10 @@ namespace VnBookLibrary.Web.Areas.Manage.Customizes
         }
         public static bool HasRole(string roleCode)
         {
-
             HttpContext context = HttpContext.Current;
             ManageSessionModel session =(ManageSessionModel)context.Session[Constants.MANAGE_SESSION];
             if (session == null) return false;
-            if (roleCode == null&&session.SessionEmployee.EmployeeType.IsAdministrator==true) {
+            if (session.SessionEmployee.EmployeeType.IsAdministrator==true) {
                 return true;
             }
             var listRole = (session).RoleCodes;
@@ -58,7 +57,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Customizes
             {
                 return false;
             }
-            if (listRole.Contains(roleCode))
+            if (roleCode!=null&&listRole.Contains(roleCode))
             {
                 return true;
             }

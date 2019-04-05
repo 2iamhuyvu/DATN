@@ -162,38 +162,47 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HttpPost]
         public ActionResult Delete(int? id)
         {
-            EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
-            if (employeeType != null)
+            if (ManageSession.HasRole("DELETE_EMPLOYEETYPE"))
             {
-                if (employeeType.IsAdministrator == true)
+                EmployeeType employeeType = UoW.EmployeeTypeRepository.Find(id);
+                if (employeeType != null)
+                {
+                    if (employeeType.IsAdministrator == true)
+                    {
+                        TempData["Notify"] = new JsonResultBO()
+                        {
+                            Status = false,
+                            Message = "Không được xóa loại Administrator",
+                        };
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        UoW.EmployeeTypeRepository.Delete(id);
+                        TempData["Notify"] = new JsonResultBO()
+                        {
+                            Status = true,
+                            Message = "Xóa thành công!",
+                        };
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
                 {
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = false,
-                        Message = "Không được xóa loại Administrator",
-                    };
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    UoW.EmployeeTypeRepository.Delete(id);
-                    TempData["Notify"] = new JsonResultBO()
-                    {
-                        Status = true,
-                        Message = "Xóa thành công!",
+                        Message = "Không tồn tại!",
                     };
                     return RedirectToAction("Index");
                 }
             }
-            else
+            TempData["Notify"] = new JsonResultBO()
             {
-                TempData["Notify"] = new JsonResultBO()
-                {
-                    Status = false,
-                    Message = "Không tồn tại!",
-                };
-                return RedirectToAction("Index");
-            }
+                Status = false,
+                Message = "Bạn không có quyền này!",
+            };
+            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

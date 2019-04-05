@@ -1,0 +1,159 @@
+﻿@model VnBookLibrary.Model.Entities.Tag
+@using VnBookLibrary.Model.Entities;
+@using System.Globalization;
+@{
+    List<Product> Products = (List<Product>)ViewBag.Products;
+    List<Tag_Product> Tag_Products = (List<Tag_Product>)ViewBag.Tag_Products;
+}
+<div>
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(model => model.TagId);
+        <div class="">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TagName, "Tên nhãn", htmlAttributes: new { @class = "control-label " })
+                        <span style="color:red">*</span>
+                        <div class="">
+                            @Html.EditorFor(model => model.TagName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.TagName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, "Mô tả", htmlAttributes: new { @class = "control-label " })
+                <div class="">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Sách đã có trong nhãn!</h3>
+                    </div>
+                    <div class="panel-body">
+                        @if (Tag_Products != null && Tag_Products.Count > 0)
+                        {
+                            <button onclick="MultiDeleteTag_Product()" type="button" class="btn btn-warning">Xóa các sách đã chọn khỏi nhãn</button>
+                            <table class="table table-bordered table-striped UseDataTablesTag">
+                                <thead>
+                                    <tr>
+                                        <th data-orderable="false" style="width:25px;text-align:center">
+                                            <input id="ckbAll1" type="checkbox" style="height:20px;width:20px" />
+                                        </th>
+                                        <th>
+                                            Tên sách
+                                        </th>
+                                        <th>Giá bán</th>
+                                        <th>Giá bìa</th>
+                                        <th>Danh mục cấp 1</th>
+                                        <th>Danh mục cấp 2</th>
+                                        <th>Tác giả</th>
+                                        <th>NXB-NPH</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var tag_product in Tag_Products)
+                                    {
+                                        Product product = tag_product.Product;
+                                        <tr>
+                                            <td style="width:25px;text-align:center">
+                                                <input name="Tag_ProductId" value="@product.ProductId" class="ckbChoose1" type="checkbox" style="height:20px;width:20px" />
+                                            </td>
+                                            <td style="width:120px;color:orangered">@product.ProductName</td>
+                                            <td style="width:100px" data-order="@product.Price">@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                                            <td style="width:100px" data-order="@product.CoverPrice">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                                            <td style="width:100px">@product.CategoryLv1.CategoryLv1Name</td>
+                                            <td style="width:100px">@(product.CategoryLv2 != null ? product.CategoryLv2.CategoryLv2Name : "")</td>
+                                            <td style="width:100px">@(product.CategoryByAuthor != null ? product.CategoryByAuthor.CategoryAuthorName : "")</td>
+                                            <td style="width:100px">@(product.CategoryByPublisher != null ? product.CategoryByPublisher.CategoryByPublisherName : "")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <p style="color:red">Chưa có sách nào trong nhãn!</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div style="padding-bottom:100px;">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Thêm sách vào nhãn!</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered table-striped UseDataTablesTag">
+                            <thead>
+                                <tr>
+                                    <th data-orderable="false" style="width:25px;text-align:center">
+                                        <input id="ckbAll" type="checkbox" style="height:20px;width:20px" />
+                                    </th>
+                                    <th>
+                                        Tên sách
+                                    </th>
+                                    <th>Giá bán</th>
+                                    <th>Giá bìa</th>
+                                    <th>Danh mục cấp 1</th>
+                                    <th>Danh mục cấp 2</th>
+                                    <th>Tác giả</th>
+                                    <th>NXB-NPH</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var product in Products)
+                                {
+                                    <tr>
+                                        <td style="width:25px;text-align:center">
+                                            <input name="ListProductId" value="@product.ProductId" class="ckbChoose" type="checkbox" style="height:20px;width:20px" />
+                                        </td>
+                                        <td style="width:120px;color:orangered">@product.ProductName</td>
+                                        <td style="width:100px" data-order="@product.Price">@product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
+                                        <td style="width:100px" data-order="@product.CoverPrice">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                                        <td style="width:100px">@product.CategoryLv1.CategoryLv1Name</td>
+                                        <td style="width:100px">@(product.CategoryLv2 != null ? product.CategoryLv2.CategoryLv2Name : "")</td>
+                                        <td style="width:100px">@(product.CategoryByAuthor != null ? product.CategoryByAuthor.CategoryAuthorName : "")</td>
+                                        <td style="width:100px">@(product.CategoryByPublisher != null ? product.CategoryByPublisher.CategoryByPublisherName : "")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="width:100%;position:fixed;left:0px;bottom:0px;text-align:center">
+                <input type="submit" style="width:30%;margin-left:216px" value="Sửa" class="btn btn-dropbox btn-lg" />
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.UseDataTablesTag').DataTable({
+            "language": {
+                "sProcessing": "Đang xử lý...",
+                "sLengthMenu": "Số bản ghi _MENU_",
+                "sZeroRecords": "Không có bản ghi nào",
+                "sInfo": "Từ bản ghi _START_ đến bản gi _END_ trong tổng số _TOTAL_ bản ghi",
+                "sInfoEmpty": "Không có bản ghi nào",
+                "sInfoFiltered": "(được lọc từ _MAX_ bản ghi)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm kiếm: ",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "<i class='fa fa-angle-double-left fa-lg'></i>",
+                    "sPrevious": "<i class='fa fa-angle-left fa-lg'></i>",
+                    "sNext": "<i class='fa fa-angle-right fa-lg'></i>",
+                    "sLast": "<i class='fa fa-angle-double-right fa-lg'></i>"
+                }
+            },
+            "pagingType": "full_numbers",
+            "stateSave": true
+        });
+    })
+</script>

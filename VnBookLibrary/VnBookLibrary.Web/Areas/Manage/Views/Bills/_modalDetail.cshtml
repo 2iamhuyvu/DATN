@@ -6,26 +6,17 @@
     var a = ViewBag.ListBillDetail;
     List<BillDetail> billDetails = ViewBag.ListBillDetail;
 }
-<style>
-    fieldset {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    legend {
-        border: none;
-        margin-left: 10px;
-        width: inherit;
-    }
-
+<style>    
     table {
         margin-bottom: -1px !important;
     }
 </style>
 <div>
-    <fieldset>
-        <legend>Thông tin chung</legend>
-        <div style="padding:10px;">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Thông tin chung</h3>
+        </div>
+        <div class="panel-body">
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>Tên khách hàng</th>
@@ -72,11 +63,12 @@
                 </tr>
             </table>
         </div>
-    </fieldset>
-    <br />
-    <fieldset>
-        <legend>Thông tin chi tiết</legend>
-        <div style="padding:10px;">
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Thông tin chi tiết</h3>
+        </div>
+        <div class="panel-body">
             <table class="table table-bordered table-striped UseDataTables1">
                 <thead>
                     <tr>
@@ -106,7 +98,7 @@
                 </tbody>
             </table>
         </div>
-    </fieldset>
+    </div>        
 </div>
 <script>
     $(document).ready(function () {

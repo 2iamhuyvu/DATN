@@ -147,7 +147,7 @@
                             <a href="@Url.Action("Index","ManageHome",new { Area="Manage"})"><i class="fa fa-dashboard fa-fw"></i> Trang chủ quản lý</a>
                         </li>
                         <li>
-                            <a href="#"><i class="glyphicon glyphicon-book fa-fw"></i> Quản lý sách<span class="fa arrow"></span></a>
+                            <a href="#"><i class="glyphicon glyphicon-book fa-fw"></i> Quản lý Sách - Nhãn<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
                                     <a href="@Url.Action("Index","Products",new { Area="Manage"})">Danh sách sách</a>
@@ -155,11 +155,17 @@
                                 <li>
                                     <a href="@Url.Action("Create","Products",new { Area="Manage"})">Thêm sách</a>
                                 </li>
+                                <li>
+                                    <a href="@Url.Action("Index","Tags",new { Area="Manage"})">Danh sách nhãn</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Create","Tags",new { Area="Manage"})">Thêm nhãn</a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-user fa-fw"></i> Quản lý nhân viên<span class="fa arrow"></span></a>
+                            <a href="#"><i class="fa fa-user fa-fw"></i> Nhân viên - Loại nhân viên<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
                                     <a href="@Url.Action("Index","Employees",new { Area="Manage"})">Danh sách nhân viên</a>
@@ -347,7 +353,7 @@
                         rounded: true,
                         delayIndicator: false,
                         msg: jsonNotify.Message,
-                        sound: true,
+                        sound: false,
                     });
                 });
             </script>

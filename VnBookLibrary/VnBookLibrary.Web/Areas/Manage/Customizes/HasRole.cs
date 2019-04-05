@@ -17,11 +17,11 @@ namespace VnBookLibrary.Web.Areas.Manage
             var session = (ManageSessionModel)filterContext.HttpContext.Session[Constants.MANAGE_SESSION];
             var roles = session.RoleCodes;
             Employee employee = session.SessionEmployee;
-            if (employee.EmployeeType.IsAdministrator == true && RoleCode == null)
+            if (employee.EmployeeType.IsAdministrator == true)
             {
                 return;
             }
-            bool check = roles.Contains(RoleCode);
+            bool check = RoleCode==null?false:roles.Contains(RoleCode);
             if (!check)
             {
                 if (filterContext.HttpContext.Request.IsAjaxRequest())

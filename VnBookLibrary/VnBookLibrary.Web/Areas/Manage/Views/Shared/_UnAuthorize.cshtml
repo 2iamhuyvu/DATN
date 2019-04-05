@@ -2,4 +2,15 @@
     ViewBag.Title = "Không có quyền | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
 }
-<h3 style="color:red">Bạn không có quyền xem trang này !</h3>
+<h3 style="color:red">Bạn không có quyền này !</h3>
+<script>
+    $(document).ready(function () {
+        Lobibox.notify('warning', {
+            size: 'mini',
+            rounded: true,
+            delayIndicator: false,
+            msg: "Bạn không có quyền này",
+            sound: false,
+        });
+    })
+</script>

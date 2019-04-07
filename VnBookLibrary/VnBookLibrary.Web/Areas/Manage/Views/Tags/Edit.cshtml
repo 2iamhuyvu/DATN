@@ -7,90 +7,131 @@
     List<Product> Products = (List<Product>)ViewBag.Products;
     List<Tag_Product> Tag_Products = (List<Tag_Product>)ViewBag.Tag_Products;
 }
+<style>
+    .error {
+        color: red !important;
+        font-weight: normal !important;
+    }
+    .select2-container {
+        display: block !important;
+        width: 100% !important;
+    }
 
+    .select2-selection__choice {
+        background: #bcffbb !important;
+    }
+
+    .select2-selection__choice__remove {
+        width: 20px;
+        text-align: center;
+        font-size: 20px;
+    }
+    .select2-results__options {
+        max-height: 200px!important
+    }
+    .select2-selection__rendered li {
+        width: 199px !important;
+        overflow: hidden !important;
+        font-size: 12px !important
+    }
+</style>
 <h3 class="">Sửa nhãn</h3>
 <hr />
-<div id="ContentViewEditTag">
-    @{Html.RenderAction("_Edit", "Tags", new { Area = "Manage", id = Model.TagId });}   
+<div id="ContentViewEditTag">    
+    <div id="divFormEdit">
+        @using (Html.BeginForm("Edit", "Tags", FormMethod.Post))
+        {
+            @Html.HiddenFor(model => model.TagId);
+            <div class="">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TagName, "Tên nhãn", htmlAttributes: new { @class = "control-label " })
+                            <span style="color:red">*</span>
+                            <div class="">
+                                @Html.EditorFor(model => model.TagName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.TagName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Description, "Mô tả", htmlAttributes: new { @class = "control-label " })
+                            <div class="">
+                                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", style = "height:60px;resize:none" })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.EditorFor(model => model.IsDisplay, new { htmlAttributes = new { @class = "",style="height:20px;width:20px;" } })
+                            @Html.LabelFor(model => model.IsDisplay, "Hiển thị trên trang chủ", new { @class = "control-label " })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.OrderDisplay, "Thứ tự hiển thị", new { @class = "control-label " })
+                            <div class="">
+                                @Html.EditorFor(model => model.OrderDisplay, new { htmlAttributes = new { @class = "form-control", min = "0" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom:100px;">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Chọn sách vào nhãn!</h3>
+                        </div>
+                        <div class="panel-body" style="min-height:300px">
+                            <select id="ListProductId" class="UseSelect2" name="ListProductId" multiple="multiple">
+                                @foreach (var product in Products)
+                                {
+                                    if (Tag_Products != null && Tag_Products.Count > 0 && Tag_Products.FirstOrDefault(x => x.ProductId == product.ProductId) != null)
+                                    {
+                                        <option selected value="@product.ProductId">@product.ProductName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@product.ProductId">@product.ProductName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="width:100%;position:fixed;left:0px;bottom:0px;text-align:center">
+                    <input type="submit" style="width:30%;margin-left:216px" value="Sửa" class="btn btn-dropbox btn-lg" />
+                </div>
+            </div>
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#divFormEdit>form").validate({
+                rules: {
+                    TagName: {
+                        notNull: true,
+                    },
+                },
+                messages: {
+                    TagName: {
+                        notNull: 'Tên nhãn không được để trống hoăc toàn ký tự trắng',
+                    },
+                }
+            });
+            $.validator.addMethod(
+                "notNull",
+                function (value, element, check) {
+                    if (check && value.trim() == "") {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                },
+                "Không được để trống hoăc toàn ký tự trắng"
+            );
+        })
+    </script>
 </div>
 <script>
     $(document).ready(function () {
 
     })
-    $("#ckbAll").click(function () {
-        if (this.checked) {
-            $(".ckbChoose").prop('checked', true);
-        }
-        else {
-            $(".ckbChoose").prop('checked', false);
-        }
-    })
-    $(".ckbChoose").click(function () {
-        $("#ckbAll").prop('checked', false);
-    })
-    $("#ckbAll1").click(function () {
-        if (this.checked) {
-            $(".ckbChoose1").prop('checked', true);
-        }
-        else {
-            $(".ckbChoose1").prop('checked', false);
-        }
-    })
-    $(".ckbChoose1").click(function () {
-        $("#ckbAll1").prop('checked', false);
-    })   
-    function LoadViewEditTag() {
-        $.ajax({
-            url: '@Url.Action("_Edit", "Tags", new { Area = "Manage", id =Model.TagId})',
-            type: 'POST',
-            dataType: 'html',
-            success: function (html) {
-                $("#ContentViewEditTag").html(html);
-            },
-        });
-    }
-    function MultiDeleteTag_Product() {
-        let a = $("input[name='Tag_ProductId']:checked");
-        if (a == null || a.length==0) {
-            Lobibox.notify('warning', {
-                size: 'mini',
-                rounded: true,
-                delayIndicator: false,
-                msg: "Chưa có sách nào được chọn",
-                sound: false,
-            });
-        } else {
-            let Tag_ProductId = [];
-            $.each(a, function (e, index) {
-                Tag_ProductId.push(parseInt(($(this)).val()));
-            })  
-             $.ajax({
-                url: '@Url.Action("MultiDeleteTag_Product", "Tags", new { Area = "Manage", TagId = Model.TagId})',
-                 type: 'POST',
-                 data: { Tag_ProductId: Tag_ProductId},
-                dataType: 'json',
-                success: function (rs) {
-                    if (rs.Status == true) {
-                        Lobibox.notify('success', {
-                            size: 'mini',
-                            rounded: true,
-                            delayIndicator: false,
-                            msg: rs.Message,
-                            sound: false,
-                        });
-                    }
-                    else {
-                        Lobibox.notify('warning', {
-                            size: 'mini',
-                            rounded: true,
-                            delayIndicator: false,
-                            msg: rs.Message,
-                            sound: false,
-                        });
-                    }
-                    LoadViewEditTag();
-                },
-            });
-        }        
-    }
 </script>

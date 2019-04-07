@@ -97,7 +97,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         [HasRole(RoleCode = "CREATE_EMPLOYEE")]
         public ActionResult Create()
         {
-            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName");
+            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes.Where(x=>x.IsAdministrator==false|| x.IsAdministrator==null), "EmployeeTypeId", "EmployeeTypeName");
             return View();
         }
         [HasRole(RoleCode = "CREATE_EMPLOYEE")]
@@ -128,7 +128,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 UoW.EmployeeRepository.Insert(employee);
                 return RedirectToAction("Index");
             }
-            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
+            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes.Where(x => x.IsAdministrator == false || x.IsAdministrator == null), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
         [HasRole(RoleCode = "EDIT_EMPLOYEE")]
@@ -143,7 +143,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
-            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
+            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes.Where(x => x.IsAdministrator == false || x.IsAdministrator == null), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
 
@@ -170,7 +170,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            ViewBag.EmployeeTypeId = new SelectList(UoW.EmployeeTypeRepository.GetAll(), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
+            ViewBag.EmployeeTypeId = new SelectList(db.EmployeeTypes.Where(x => x.IsAdministrator == false || x.IsAdministrator == null), "EmployeeTypeId", "EmployeeTypeName", employee.EmployeeTypeId);
             return View(employee);
         }
         [HasRole(RoleCode = "DELETE_EMPLOYEE")]

@@ -45,7 +45,7 @@ namespace VnBookLibrary.Model.Entities
         [DefaultValue(false)]
 
         [Display(Name = "Bị khóa")]
-        public bool? IsBlock { get; set; }
+        public bool IsBlock { get; set; }
 
         [Display(Name = "Loại nhân viên")]
         [Required(ErrorMessage = "Không được để loại nhân viên!")]

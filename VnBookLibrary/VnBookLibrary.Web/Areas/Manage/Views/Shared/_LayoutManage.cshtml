@@ -102,7 +102,7 @@
     }
     <div id="wrapper">
         <div style="height:51px;position:fixed;width:100%;background:#f8f8f8;z-index:999;border-bottom:1px solid #e7e7e7">
-            <ul class="nav navbar-top-links navbar-right">               
+            <ul class="nav navbar-top-links navbar-right">
                 <!-- /.dropdown -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="@manageSessionModel.SessionEmployee.EmployeeName">
@@ -113,7 +113,7 @@
                                 <a href="#"><i class="fa fa-user fa-fw"></i> Xem hồ sơ</a>
                             </li>*@
                         <li style="padding:0px">
-                            <a style="color:#337ab7;padding:5px 0px;" href="@Url.Action("ChangePassword","Employees",new {area="Manage"})"><i class="fa fa-gear fa-fw"></i> Đổi mật khẩu</a>
+                            <a style="color:#337ab7;padding:5px 0px;" href="@Url.Action("ChangePassword", "Employees", new { area = "Manage" })"><i class="fa fa-gear fa-fw"></i> Đổi mật khẩu</a>
                         </li>
                         <li class="divider"></li>
                         <li>
@@ -144,87 +144,135 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="@Url.Action("Index","ManageHome",new { Area="Manage"})"><i class="fa fa-dashboard fa-fw"></i> Trang chủ quản lý</a>
+                            <a href="@Url.Action("Index", "ManageHome", new { Area = "Manage" })"><i class="fa fa-dashboard fa-fw"></i> Trang chủ quản lý</a>
                         </li>
-                        <li>
+                        <li class="menuDown">
                             <a href="#"><i class="glyphicon glyphicon-book fa-fw"></i> Quản lý Sách - Nhãn<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="@Url.Action("Index","Products",new { Area="Manage"})">Danh sách sách</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Create","Products",new { Area="Manage"})">Thêm sách</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","Tags",new { Area="Manage"})">Danh sách nhãn</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Create","Tags",new { Area="Manage"})">Thêm nhãn</a>
-                                </li>
+                                @if (ManageSession.HasRole("VIEW_PRODUCT"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Products", new { Area = "Manage" })">Danh sách sách</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("CREATE_PRODUCT"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Create", "Products", new { Area = "Manage" })">Thêm sách</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("VIEW_TAG"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Tags", new { Area = "Manage" })">Danh sách nhãn</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("CREATE_TAG"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Create", "Tags", new { Area = "Manage" })">Thêm nhãn</a>
+                                    </li>
+                                }
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-                        <li>
+                        <li class="menuDown">
                             <a href="#"><i class="fa fa-user fa-fw"></i> Nhân viên - Loại nhân viên<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="@Url.Action("Index","Employees",new { Area="Manage"})">Danh sách nhân viên</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Create","Employees",new { Area="Manage"})">Thêm nhân viên</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","EmployeeTypes",new { Area="Manage"})">Danh sách loại nhân viên</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Create","EmployeeTypes",new { Area="Manage"})">Thêm loại nhân viên</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","Roles",new { Area="Manage"})">Xem các quyền</a>
-                                </li>
+                                @if (ManageSession.HasRole("VIEW_EMPLOYEE"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Employees", new { Area = "Manage" })">Danh sách nhân viên</a>
+                                    </li>
+
+                                }
+                                @if (ManageSession.HasRole("CREATE_EMPLOYEE"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Create", "Employees", new { Area = "Manage" })">Thêm nhân viên</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("VIEW_EMPLOYEETYPE"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "EmployeeTypes", new { Area = "Manage" })">Danh sách loại nhân viên</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("CREATE_EMPLOYEETYPE"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Create", "EmployeeTypes", new { Area = "Manage" })">Thêm loại nhân viên</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole(null))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Roles", new { Area = "Manage" })">Xem các quyền</a>
+                                    </li>
+                                }
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-
-                        <li>
-                            <a href="@Url.Action("Index","Bills",new { Area="Manage"})"><i class="fa fa-money fa-fw"></i> Quản lý hóa đơn</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Index","Customers",new { Area="Manage"})"><i class="fa fa-users fa-fw"></i> Quản lý khách hàng</a>
-                        </li>
-                        <li>
+                        @if (ManageSession.HasRole("VIEW_BILL"))
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Bills", new { Area = "Manage" })"><i class="fa fa-money fa-fw"></i> Quản lý hóa đơn</a>
+                            </li>
+                        }
+                        @if (ManageSession.HasRole("VIEW_CUSTOMER"))
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Customers", new { Area = "Manage" })"><i class="fa fa-users fa-fw"></i> Quản lý khách hàng</a>
+                            </li>
+                        }
+                        <li class="menuDown">
                             <a href="#"><i class="fa fa-newspaper-o fa-fw"></i> Liên hệ - Bài viết - Sự kiện<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="@Url.Action("Index","News",new { Area="Manage"})">Danh sách Bài viết - Tin tức</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Create","News",new { Area="Manage"})">Thêm Bài viết - Tin tức</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","Contacts",new { Area="Manage"})">Danh sách Liên hệ khách hàng</a>
-                                </li>
+                                @if (ManageSession.HasRole("VIEW_NEWS"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "News", new { Area = "Manage" })">Danh sách Bài viết - Tin tức</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("CREATE_NEWS"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Create", "News", new { Area = "Manage" })">Thêm Bài viết - Tin tức</a>
+                                    </li>
+                                }
+                                @if (ManageSession.HasRole("VIEW_CONTACT"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "Contacts", new { Area = "Manage" })">Danh sách Liên hệ khách hàng</a>
+                                    </li>
+                                }
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-                        <li>
+                        <li class="menuDown">
                             <a href="#"><i class="fa fa-share-alt-square fa-fw"></i> Tương tác của khách hàng<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="@Url.Action("Index","CommentProducts",new { Area="Manage"})">Duyệt bình luận khách hàng</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","RateProducts",new { Area="Manage"})">Thống kê đánh đánh giá sách</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","LikeProducts",new { Area="Manage"})">Thống kê Lượt thích  sách</a>
-                                </li>
+                                @if (ManageSession.HasRole("VIEW_COMMENT"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "CommentProducts", new { Area = "Manage" })">Duyệt bình luận khách hàng</a>
+                                    </li>
+                                }
+                                @*<li>
+                                        <a href="@Url.Action("Index","RateProducts",new { Area="Manage"})">Thống kê đánh đánh giá sách</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index","LikeProducts",new { Area="Manage"})">Thống kê Lượt thích  sách</a>
+                                    </li>*@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-                        <li>
-                            <a href="@Url.Action("Index","BookCategories",new { Area="Manage"})"><i class="fa fa-folder-open fa-fw"></i> Danh mục - Tác giả - NXB,NPH</a>
-                        </li>
+                        @if (ManageSession.HasRole("VIEW_CATEGORY"))
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "BookCategories", new { Area = "Manage" })"><i class="fa fa-folder-open fa-fw"></i> Danh mục - Tác giả - NXB,NPH</a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -274,8 +322,13 @@
     <script src="~/Scripts/select2.min.js"></script>
     <script>
         $(document).ready(function () {
+            let menuDown = $("li.menuDown");
+            $.each(menuDown, function (li, index) {
+                if (($(this).children("ul").children("li").length == 0)) {
+                    $(this).remove();
+                }
+            })
             $(function () {
-
                 $(document).on('scroll', function () {
 
                     if ($(window).scrollTop() > 100) {
@@ -337,10 +390,16 @@
                     }
                 },
                 "pagingType": "full_numbers",
-                "stateSave": true
+                "deferRender": true,
             });
             $('.UseSelect2').select2();
         });
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            document.head.append(script);
+        }
     </script>
     @{
         if (TempData["NotifyLogin"] != null)

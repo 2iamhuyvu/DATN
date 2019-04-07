@@ -22,7 +22,7 @@ namespace VnBookLibrary.Repository.Repositories
             Employee tempEmployee = _context.Employees.FirstOrDefault(nv => nv.LoginName.Equals(loginName) && nv.Password.Equals(PasswordEncryption.GetVnBookLibraryCode(password)));            
             if (tempEmployee != null)
             {
-                if (tempEmployee.IsBlock ?? false == true)
+                if (tempEmployee.IsBlock== true)
                 {
                     return -1;
                 }

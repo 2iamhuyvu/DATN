@@ -33,7 +33,8 @@
 @if (listCart.Count > 0)
 {
     <section class="cart bgwhite p-b-50">
-        <div class="container">
+        <div class="container">            
+            <h4><a style="color:green;font-size:20px;" href="@Url.Action("Index","Home")"><i class="fa fa-arrow-circle-o-left fa-lg"></i> Tiếp tục mua sách</a></h4>
             <!-- Cart item -->
             <div class="container-table-cart pos-relative">
                 <div class="wrap-table-shopping-cart bgwhite">
@@ -55,9 +56,9 @@
                                 total += Convert.ToInt32(item.Quantity * item.Product.Price);
                                 <tr class="table-row" productid="@item.Product.ProductId">
                                     <td class="">
-                                        <img onclick="DetailProduct(@item.Product.ProductId)"  style="cursor:pointer" width="100px" src="@item.Product.AvatarLink" alt="@item.Product.ProductName">
+                                        <img onclick="DetailProduct(@item.Product.ProductId)" style="cursor:pointer" width="100px" src="@item.Product.AvatarLink" alt="@item.Product.ProductName">
                                     </td>
-                                    <td style="width:400px;" class="">                                    
+                                    <td style="width:400px;" class="">
                                         <a href="javascript:void(0)" onclick="DetailProduct(@item.Product.ProductId)"> @item.Product.ProductName</a>
                                     </td>
                                     <td class="">@item.Product.Price.ToString("c", new CultureInfo("vi-VN"))</td>
@@ -156,7 +157,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Số nhà/đường <span style="color:red">*</span></label>
+                                <label>Địa chỉ <span style="color:red">*</span></label>
                                 <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" name="DetailAddress" id="DetailAddress" />
                             </div>
                         </div>
@@ -349,7 +350,7 @@
                         ViewBoxCart();
                         UpdateContentViewCart();
                     },
-                });                
+                });
             }
         }
         function DownQuantity(productId) {
@@ -389,6 +390,9 @@
 }
 else
 {
-    <h4 class="p-b-50" style="color:red">Chưa có sách nào trong giỏ hàng!</h4>
+    <div class="p-b-50">
+        <h4><a  style="color:green;font-size:20px;" href="@Url.Action("Index","Home")"><i class="fa fa-arrow-circle-o-left fa-lg"></i> Quay lại mua sách</a></h4>
+        <i >Chưa có sách nào trong giỏ hàng!</i>
+    </div>
 }
 

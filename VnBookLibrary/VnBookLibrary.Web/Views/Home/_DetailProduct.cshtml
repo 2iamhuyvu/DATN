@@ -62,6 +62,11 @@
         height: 5px;
         margin-bottom: 5px;
     }
+
+    .DivLogin {
+        margin-top: 50px;
+        padding: 10px;
+    }
 </style>
 @if (product == null)
 {
@@ -158,10 +163,11 @@
                                         OnSuccess = "LikeProductSuccess"
                                     }, new { @id = "FormLiked" }))
                                     {
+                                        var strlike = liked ? "Bỏ thích" : "Thích";
                                         @Html.Hidden("StatusLike", liked ? "1" : "0")
                                         <input type="hidden" name="ProductId" value="@product.ProductId" />
                                         <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
-                                        <button type="submit" class="btn btn-default btn-lg" style="background:white!important">
+                                        <button type="submit" title="@strlike" class="btn btn-default btn-lg" style="background:white!important">
                                             @if (liked)
                                             {
                                                 <text><span style="color:#3784ff"><i class="fa fa-thumbs-up fa-lg"></i>&nbsp; Thích</span></text>
@@ -172,6 +178,28 @@
                                             }
                                         </button>
                                     }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="lead"  style="margin-bottom:5px;">
+                                        <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
+                                        <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
+                                        <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
+                                        <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
+                                        <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
+                                    </div>
+                                    <span><a href="javascripi:void(0)" style="color:#0066c0" onclick="OpenLogin()">Đăng nhập</a> để tương tác!</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" title="Đăng nhập để tương tác!" class="btn btn-default btn-lg" style="background:white!important">
+                                        <span style="color:#afb2b7"><i class="fa fa-thumbs-up fa-lg"></i>&nbsp; </span>Thích
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -282,25 +310,48 @@
     <hr />
     <div>
         <div>
-            <div class="col-md-6">
-                <h4 style="color:green;margin-bottom:25px;">Nhận xét,bình luận từ khách hàng</h4>
-                @if (commentProducts != null && commentProducts.Count > 0)
-                {
-                    foreach (var item in commentProducts)
+            @if (customer == null)
+            {
+                <div class="col-md-6">
+                    <h4 style="color:green;margin-bottom:25px;">Nhận xét,bình luận từ khách hàng</h4>
+                    @if (commentProducts != null && commentProducts.Count > 0)
                     {
-                        <div style="border-bottom:1px dashed #ccc;border-top:1px dashed #ccc;padding:10px 0px">
-                            <h5 style="font-weight:bold;font-size:20px;">@item.Customer.CustomerName</h5>
-                            <span style="color:#afb2b7;font-size:12px"><i>@item.CommentDate</i></span>
-                            <p style="color:black;padding-left:15px;"> @item.Comments</p>
-                        </div>
+                        foreach (var item in commentProducts)
+                        {
+                            <div style="border-bottom:1px dashed #ccc;border-top:1px dashed #ccc;padding:10px 0px">
+                                <h5 style="font-weight:bold;font-size:20px;">@item.Customer.CustomerName</h5>
+                                <span style="color:#afb2b7;font-size:12px"><i>@item.CommentDate</i></span>
+                                <p style="color:black;padding-left:15px;"> @item.Comments</p>
+                            </div>
+                        }
                     }
-                }
-                else
-                {
-                    <span>Chưa có nhận xét nào!</span>
-                }
-            </div>
-            <div class="col-md-6">
+                    else
+                    {
+                        <span>Chưa có nhận xét nào!</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="col-md-12">
+                    <h4 style="color:green;margin-bottom:25px;">Nhận xét,bình luận từ khách hàng</h4>
+                    @if (commentProducts != null && commentProducts.Count > 0)
+                    {
+                        foreach (var item in commentProducts)
+                        {
+                            <div style="border-bottom:1px dashed #ccc;border-top:1px dashed #ccc;padding:10px 0px">
+                                <h5 style="font-weight:bold;font-size:20px;">@item.Customer.CustomerName</h5>
+                                <span style="color:#afb2b7;font-size:12px"><i>@item.CommentDate</i></span>
+                                <p style="color:black;padding-left:15px;"> @item.Comments</p>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span>Chưa có nhận xét nào!</span>
+                    }
+                </div>
+            }<div class="col-md-6">
                 @if (customer == null)
                 {
 

@@ -1,5 +1,6 @@
 ﻿<div class="form-group">
-    <label for="CategoryLv1Id" class="control-label">Danh mục cấp 1</label>@if (ViewBag.required)
+    <label for="CategoryLv1Id" class="control-label">Danh mục cấp 1</label>
+    @if (ViewBag.required)
     {
         <span style="color:red"> *</span>
     }
@@ -18,6 +19,10 @@
 </div>
 <div class="form-group">
     <label for="CategoryLv2Id" class="control-label">Danh mục cấp 2</label>
+    @if (ViewBag.required)
+    {
+        <span style="color:red"> *</span>
+    }
     <div class="">
         @if (ViewBag.CategoryLv2Id != null)
         {
@@ -37,7 +42,7 @@
     })
     $("#CategoryLv1Id").change(function () {
         $.ajax({
-            url: '@Url.Action("_DropdownCategory", "BookCategories",new { Area="Manage"})',
+            url: '@Url.Action("_DropdownCategory", "BookCategories",new { Area="Manage", required =ViewBag.required })',
             type: 'POST',
             dataType: 'html',
             data: { categoryLv1: $("#CategoryLv1Id").val() },

@@ -2,7 +2,7 @@
 @using PagedList
 @using VnBookLibrary.Model.Entities;
 @{
-    IPagedList<Product> pagelListProduct = (IPagedList<Product>)ViewBag.PageListProduct;
+    ViewBag.Title = "Trang chủ | VnBook";
 }
 <style>
     .RateYellow {
@@ -13,18 +13,5 @@
 {
     Html.RenderPartial("~/Views/Home/_RecommendProductByCustomer.cshtml", (List<Product>)ViewBag.ReCommendProductByCustomer);
 }
-<div id="ContentIndex">
-    @{
-        Html.RenderAction("_GetProductByPage", "Home", new
-        {
-            Search = ViewBag.Search,
-            CategoryLv1Id = ViewBag.CategoryLv1Id,
-            CategoryLv2Id = ViewBag.CategoryLv2Id,
-            CategoryAuthorId = ViewBag.CategoryAuthorId,
-            CategoryPublisherId = ViewBag.CategoryPublisherId,
-            pageSize = 15
-        });
-    }
-</div>
 @section scripts{
 }

@@ -14,11 +14,11 @@
     @{
         if (alow)
         {
-            <a style="float:right" class="btn btn-sm btn-success" href="@Url.Action("Create","GroupRoles",new { Area="Manage"})">Thêm nhóm quyền</a>
+            <a style="float:right" class="btn btn-success" href="@Url.Action("Create","GroupRoles",new { Area="Manage"})">Thêm nhóm quyền</a>
         }
         else
         {
-            <a style="float:right" class="btn btn-sm btn-success" title="Bạn không có quyền này" href="javascript:void(0)">Thêm nhóm quyền</a>
+            <a style="float:right" class="btn btn-success" title="Bạn không có quyền này" href="javascript:void(0)">Thêm nhóm quyền</a>
         }
     }
 </h3>
@@ -63,9 +63,9 @@
                                         if (alow)
                                         {
                                             <text>
-                                                @using (Html.BeginForm("Delete", "Roles", new { id = role.RoleCode, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType", style = "display:inline-block" }))
+                                                @using (Html.BeginForm("Delete", "Roles", new { id = role.RoleCode, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteEmployeeType", style = "display:inline-block",onsubmit="return confirm('Bạn có thực sự muốn xóa')" }))
                                                 {
-                                                    <a href="javascript:void(0)" onclick="SubmitFormDeleteEmployeeType()" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                    <button type="submit" style="padding: 0px;border: none;background: transparent;" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></button>
                                                 }
                                             </text>
                                         }

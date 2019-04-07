@@ -41,7 +41,7 @@ namespace VnBookLibrary.Model.Entities
         [Compare("Password", ErrorMessage = "Xác nhận mật khẩu không đúng!")]        
         public string RePassword { get; set; }        
         [DefaultValue(false)]
-        public bool? IsBlock { get; set; }
+        public bool IsBlock { get; set; }
         public virtual ICollection<Bill> Bills { get; set; }
         public virtual ICollection<LikeProduct> LikeProducts { get; set; }
         public virtual ICollection<CommentProduct> CommentProducts { get; set; }

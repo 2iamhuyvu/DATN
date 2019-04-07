@@ -52,7 +52,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 {
                     return Redirect(returnURL);
                 }                
-                return RedirectToAction("Index", "Employees", new { area = "Manage" });
+                return RedirectToAction("Index", "ManageHome", new { area = "Manage" });
             }
             else if(check==-1)
             {

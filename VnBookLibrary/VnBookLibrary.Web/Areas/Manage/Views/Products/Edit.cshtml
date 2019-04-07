@@ -1,14 +1,31 @@
 ﻿@model VnBookLibrary.Model.Entities.Product
-
+@using VnBookLibrary.Model.Entities;
 @{
     ViewBag.Title = "Sửa thông tin sách | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
+    List<Tag> Tags = (List<Tag>)ViewBag.ListTag;
+    List<Tag_Product> Tag_Products = (List<Tag_Product>)ViewBag.Tag_Products;
 }
 <style>
     label.error {
         color: red;
         font-weight: normal;
         font-size: 12px;
+    }
+
+    .select2-container {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .select2-selection__choice {
+        background: #bcffbb !important;
+    }
+
+    .select2-selection__choice__remove {
+        width: 20px;
+        text-align: center;
+        font-size: 20px;
     }
 </style>
 <h3>Sửa thông tin sách</h3>
@@ -57,33 +74,22 @@
                             <select class="form-control UseSelect2" name="Status" id="Status">
                                 @if (Model.Status == 1)
                                 {
-                                    <option value="1" selected>Sách mới</option>
-                                    <option value="2">Còn hàng</option>
+                                    <option value="1" selected>Còn hàng</option>
+                                    <option value="2">Sắp hết hàng</option>
                                     <option value="3">Hết hàng</option>
-                                    <option value="4">Sắp hết hàng</option>
                                 }
                                 @if (Model.Status == 2)
                                 {
-                                    <option value="1">Sách mới</option>
-                                    <option value="2" selected>Còn hàng</option>
+                                    <option value="1" >Còn hàng</option>
+                                    <option selected value="2">Sắp hết hàng</option>
                                     <option value="3">Hết hàng</option>
-                                    <option value="4">Sắp hết hàng</option>
                                 }
                                 @if (Model.Status == 3)
                                 {
-                                    <option value="1">Sách mới</option>
-                                    <option value="2">Còn hàng</option>
-                                    <option value="3" selected>Hết hàng</option>
-                                    <option value="4">Sắp hết hàng</option>
-                                }
-                                @if (Model.Status == 4)
-                                {
-                                    <option value="1">Sách mới</option>
-                                    <option value="2">Còn hàng</option>
-                                    <option value="3">Hết hàng</option>
-                                    <option value="4" selected>Sắp hết hàng</option>
-                                }
-
+                                    <option value="1" >Còn hàng</option>
+                                    <option value="2">Sắp hết hàng</option>
+                                    <option selected value="3">Hết hàng</option>
+                                }                               
                             </select>
                         </div>
                     </div>
@@ -105,7 +111,7 @@
 
                     <div id="DropdownCategory">
                         @{
-                            Html.RenderAction("_DropdownCategory", "BookCategories", new { Area = "Manage", categoryLv1 = Model.CategoryLv1Id, categoryLv2 = Model.CategoryLv2Id, required=true });
+                            Html.RenderAction("_DropdownCategory", "BookCategories", new { Area = "Manage", categoryLv1 = Model.CategoryLv1Id, categoryLv2 = Model.CategoryLv2Id, required = true });
                         }
                     </div>
                     <div class="form-group">
@@ -129,6 +135,27 @@
                         <div class="clearfix"></div>
                         <div class="">
                             @Html.DropDownList("CategoryByPublisherId", null, "---Chọn nhà xuất bản - nhà phát hành---", htmlAttributes: new { @class = "form-control UseSelect2" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ListTagId">Thuộc nhãn </label>
+                        <div>
+                            <select id="ListTagId" name="" class="UseSelect2" multiple="multiple">
+                                @foreach (var tag in Tags)
+                                {
+                                    if (Tag_Products != null && Tag_Products.Count > 0 && Tag_Products.FirstOrDefault(x => x.TagId == tag.TagId) != null)
+                                    {
+                                        <option selected value="@tag.TagId">@tag.TagName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@tag.TagId">@tag.TagName</option>
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -181,6 +208,9 @@
                     },
                     CategoryLv1Id: {
                         notNull: true,
+                    },
+                    CategoryLv2Id: {
+                        notNull:true,
                     }
                 },
                 messages: {
@@ -207,6 +237,8 @@
                     },
                     CategoryLv1Id: {
                         notNull: "Chưa chọn danh mục cấp 1",
+                    }, CategoryLv2Id: {
+                        notNull: "Chưa chọn danh mục cấp 2",
                     }
                 }
             });
@@ -224,8 +256,12 @@
             if ($("#formEditProduct").valid()) {
                 var data = {};
                 $("#formEditProduct").serializeArray().map(function (x) { data[x.name] = x.value; });
-                console.log(data);
                 data.Description = CKEDITOR.instances['Description'].getData();
+                let ListTagId = []
+                $.each($("#ListTagId option:selected"), function (e, index) {
+                    ListTagId.push(parseInt($(this).val()));
+                })
+                data.ListTagId = ListTagId;
                 $.ajax({
                     url: '@Url.Action("Edit","Products",new { Area="Manage"})',
                     type: 'POST',

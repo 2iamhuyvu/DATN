@@ -19,6 +19,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);            
         }
+        [HasRole(RoleCode ="VIEW_CATEGORY")]
         // GET: Manage/BookCategories
         public ActionResult Index(int? displayCategory)
         {

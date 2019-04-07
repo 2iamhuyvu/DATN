@@ -1,0 +1,24 @@
+﻿@using PagedList.Mvc
+@using PagedList
+@using VnBookLibrary.Model.Entities;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .RateYellow {
+        color: yellow !important;
+    }
+</style>
+<div id="ContentBooks">
+    @{
+        Html.RenderAction("_GetProductByPage", "Home", new
+        {
+            Search = ViewBag.Search,
+            CategoryLv1Id = ViewBag.CategoryLv1Id,
+            CategoryLv2Id = ViewBag.CategoryLv2Id,
+            CategoryAuthorId = ViewBag.CategoryAuthorId,
+            CategoryPublisherId = ViewBag.CategoryPublisherId,
+            pageSize = 15
+        });
+    }
+</div>

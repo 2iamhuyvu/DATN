@@ -26,6 +26,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
+        [HasRole(RoleCode ="VIEW_PRODUCT")]
         public ActionResult Index(int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
         {
             ViewBag.CategoryLv1Id = CategoryLv1Id;
@@ -54,18 +55,32 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         {
             ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
             ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");
+            ViewBag.ListTag = UoW.TagRepository.GetAll();
             return View();
         }
 
         [HasRole(RoleCode = "CREATE_PRODUCT")]
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Create(Product product, List<int> ListTagId)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     UoW.ProductRepository.Insert(product);
+                    if (ListTagId != null && ListTagId.Count > 0)
+                    {
+                        foreach (var item in ListTagId)
+                        {
+                            Tag_Product tag_Product = new Tag_Product()
+                            {
+                                ProductId = product.ProductId,
+                                TagId = item,
+                            };
+                            db.Tag_Products.Add(tag_Product);
+                        }
+                        db.SaveChanges();
+                    }
                     TempData["Notify"] = new JsonResultBO()
                     {
                         Status = true,
@@ -85,6 +100,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             else
             {
+                ViewBag.ListTag = UoW.TagRepository.GetAll();
                 ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName");
                 ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName");
                 return View(product);
@@ -102,6 +118,8 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 return View("~/Areas/Manage/Views/Shared/_BadRequest.cshtml");
             }
+            ViewBag.Tag_Products = db.Tag_Products.Where(x => x.ProductId == id).ToList();
+            ViewBag.ListTag = UoW.TagRepository.GetAll();
             ViewBag.CategoryByAuthorId = new SelectList(UoW.CategoryByAuthorRepository.GetAll(), "CategoryAuthorId", "CategoryAuthorName", product.CategoryByAuthorId);
             ViewBag.CategoryByPublisherId = new SelectList(UoW.CategoryByPublisherRepository.GetAll(), "CategoryByPublisherId", "CategoryByPublisherName", product.CategoryByPublisherId);
             return View(product);
@@ -109,11 +127,27 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
 
         [HasRole(RoleCode = "EDIT_PRODUCT")]
         [HttpPost]
-        public ActionResult Edit(Product product)
+        public ActionResult Edit(Product product, List<int> ListTagId)
         {
             try
             {
                 UoW.ProductRepository.Update(product);
+                var temp = UoW.Tag_ProductRepository.GetAll().ToList();
+                db.Tag_Products.RemoveRange(temp);
+                db.SaveChanges();
+                if (ListTagId != null && ListTagId.Count > 0)
+                {
+                    foreach (var item in ListTagId)
+                    {
+                        Tag_Product tag_Product = new Tag_Product()
+                        {
+                            ProductId = product.ProductId,
+                            TagId = item,
+                        };
+                        db.Tag_Products.Add(tag_Product);
+                    }
+                }
+                db.SaveChanges();
                 TempData["Notify"] = new JsonResultBO()
                 {
                     Status = true,

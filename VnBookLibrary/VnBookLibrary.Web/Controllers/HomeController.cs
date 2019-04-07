@@ -73,13 +73,17 @@ namespace VnBookLibrary.Web.Controllers
             }
             return Json(new JsonResultBO(true));
         }
-        public ActionResult Index(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
+        public ActionResult Index()
         {
             if (Session[Constants.CUSTOMER_SESSION] != null)
             {
                 var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
                 ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
             }
+            return View();
+        }
+        public ActionResult Books(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
+        {            
             var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
             var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
             var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
@@ -149,17 +153,17 @@ namespace VnBookLibrary.Web.Controllers
             if (cate1 != null)
             {
                 href = "";
-                href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>" + "<a href='/?CategoryLv1Id=" + cate1.CategoryLv1Id + "'>" + cate1.CategoryLv1Name + "</a>";
+                href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>" + "<a href='/Home/Books?CategoryLv1Id=" + cate1.CategoryLv1Id + "'>" + cate1.CategoryLv1Name + "</a>";
             }
             if (cate2 != null)
             {
                 href = "";
                 cate1 = cate2.CategoryLv1;
                 href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
-                    + "<a href='/?CategoryLv1Id="
+                    + "<a href='/Home/Books?CategoryLv1Id="
                     + cate1.CategoryLv1Id + "'>"
                     + cate1.CategoryLv1Name + "</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
-                    + "<a href='/?CategoryLv2Id="
+                    + "<a href='/Home/Books?CategoryLv2Id="
                     + cate2.CategoryLv2Id + "'>"
                     + cate2.CategoryLv2Name + "</a>";
             }
@@ -167,7 +171,7 @@ namespace VnBookLibrary.Web.Controllers
             {
                 href = "";
                 href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
-                    + "<a href='/?CategoryAuthorId="
+                    + "<a href='/Home/Books?CategoryAuthorId="
                     + cateAuthor.CategoryAuthorId + "'>"
                     + cateAuthor.CategoryAuthorName + "</a>";
             }
@@ -175,7 +179,7 @@ namespace VnBookLibrary.Web.Controllers
             {
                 href = "";
                 href += "<a href='/'>Trang chủ</a><i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>"
-                    + "<a href='/?CategoryAuthorId="
+                    + "<a href='/Home/Books?CategoryAuthorId="
                     + catePublisher.CategoryByPublisherId + "'>"
                     + catePublisher.CategoryByPublisherName + "</a>";
             }
@@ -201,7 +205,7 @@ namespace VnBookLibrary.Web.Controllers
             if (product == null)
             {
                 return View("~/Views/Shared/BadRequest.cshtml");
-            }            
+            }
             ViewBag.Title = product.ProductName + " | VnBook";
             ViewBag.ProductId = id;
             ViewBag.Product = product;
@@ -376,72 +380,7 @@ namespace VnBookLibrary.Web.Controllers
         public ActionResult GetWardByDistrict(int districtId)
         {
             return Json(UoW.WardRepository.GetAll().Where(x => x.DidtrictId == districtId).Select(x => new { x.WardName, x.WardId }).ToList());
-        }
-        #region Get Province_Distric_Ward with API
-        //[HttpPost]
-        //public ActionResult GetProvince()
-        //{
-        //    string ListProvince = "";
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri("https://thongtindoanhnghiep.co/api/city");
-        //        //HTTP GET
-        //        var responseTask = client.GetAsync("city");
-
-        //        var result = responseTask.Result;
-        //        if (result.IsSuccessStatusCode)
-        //        {
-        //            var readTask = result.Content.ReadAsStringAsync();
-        //            readTask.Wait();
-
-        //            ListProvince = readTask.Result;
-        //        }
-        //    }
-        //    return Json(ListProvince);
-        //}
-        //[HttpPost]
-        //public ActionResult GetDistrictByProvince(int provinceId)
-        //{
-        //    string ListDistrictByProvince = "";
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri("https://thongtindoanhnghiep.co/api/city/" + provinceId + "/district");
-        //        //HTTP GET
-        //        var responseTask = client.GetAsync("district");
-
-        //        var result = responseTask.Result;
-        //        if (result.IsSuccessStatusCode)
-        //        {
-        //            var readTask = result.Content.ReadAsStringAsync();
-        //            readTask.Wait();
-
-        //            ListDistrictByProvince = readTask.Result;
-        //        }
-        //    }
-        //    return Json(ListDistrictByProvince);
-        //}
-        //[HttpPost]
-        //public ActionResult GetWardByDistrict(int districtId)
-        //{
-        //    string ListWardByDistrict = "";
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri("https://thongtindoanhnghiep.co/api/district/" + districtId + "/ward");
-        //        //HTTP GET
-        //        var responseTask = client.GetAsync("ward");
-
-        //        var result = responseTask.Result;
-        //        if (result.IsSuccessStatusCode)
-        //        {
-        //            var readTask = result.Content.ReadAsStringAsync();
-        //            readTask.Wait();
-
-        //            ListWardByDistrict = readTask.Result;
-        //        }
-        //    }
-        //    return Json(ListWardByDistrict);
-        //}
-        #endregion
+        }        
         public ActionResult _ViewCart()
         {
             return PartialView();
@@ -480,7 +419,7 @@ namespace VnBookLibrary.Web.Controllers
             return PartialView();
         }
         [HttpPost]
-        public ActionResult Login(string loginname, string password,string returnUrl)
+        public ActionResult Login(string loginname, string password, string returnUrl)
         {
             Customer customer = db.Customers.FirstOrDefault(x => x.LoginName.Equals(loginname) && x.Password.Equals(password));
             if (customer != null)

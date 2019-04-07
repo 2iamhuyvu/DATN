@@ -93,21 +93,16 @@
 
         .block2-overlay > a {
             display: none;
+        }        
+        
+        a.carousel-control{
+            width:5%!important;
         }
-
-        .DivLogin {
-            margin-top: 50px;
-            padding: 10px;
-            background: #f0f0f0;
+        a.carousel-control>span{
+            
         }
-
-        .DivLoginFixed {
-            padding: 10px;
-            border-radius: 5px;
-            background: #ffffff;
-            bottom: 20px;
-            border: 1px solid black;
-            position: fixed;
+        .block2-labelnew::before{
+            display:none!important;
         }
     </style>
 </head>
@@ -192,7 +187,7 @@
                             }
                         </ul>
                     </nav>
-                    @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @id = "FormSearch", style = "display:inline-block" }))
+                    @using (Html.BeginForm("Books", "Home", FormMethod.Get, new { @id = "FormSearch", style = "display:inline-block" }))
                     {
                         <div class="" style="border:1px solid #808080;margin-right:30px;padding:3px 3px 3px 10px;border-radius:15px;">
                             <i class="fa fa-search fa-lg" style="margin-right:5px;"></i>
@@ -294,7 +289,7 @@
                 </a>
 
                 <div class="t-center s-text8 p-t-20">
-                    Copyright © 2019 All rights reserved. | This is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="#" target="_blank">Vu Dinh Huy</a>
+                    Copyright © 2019 All rights reserved. | This is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="javascript:void(0)">Vu Dinh Huy</a>
                 </div>
             </div>
         </div>
@@ -310,13 +305,13 @@
     </div>
 
     <div class="modal fade" id="ModalLogin" role="dialog">
-        <div class="modal-dialog" style="width:500px;">
+        <div class="modal-dialog" style="width:500px;margin-top:100px">
             @using (Html.BeginForm("Login", "Home", FormMethod.Post))
             {
                 <div class="modal-content">
-                    <div class="modal-header" style="background:#337ab7;border-radius:5px 5px 0px 0px">
+                    <div class="modal-header alert btn-danger btn-dropbox" style="border-radius:5px 5px 0px 0px">
                         <button type="button" class="close" onclick="CancelLogin()">&times;</button>
-                        <h4 class="modal-title" style="font-weight:bold">Đăng nhập khách hàng</h4>
+                        <h4 class="modal-title" style="color:white">Đăng nhập khách hàng</h4>
                     </div>
                     <div class="modal-body">
                         @Html.Hidden("returnUrl", Context.Request.Url.AbsolutePath)
@@ -330,7 +325,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger"> <i class="fa fa-sign-in fa-lg"></i> Đăng nhâp</button>
+                        <button type="submit" class="btn btn-primary btn-dropbox"> <i class="fa fa-sign-in fa-lg"></i> Đăng nhâp</button>
                     </div>
                 </div>
             }
@@ -373,11 +368,17 @@
         </script>
     }
     <script>
-        $(document).ready(function () {
+        $(document).ready(function () {            
             Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
                 soundPath: '../../PluginFrontend/lobibox-master/sounds/',
             });            
         });
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            document.head.append(script);
+        }
         $('.UseSelect2').select2();
          function AddToCart(productid) {
             $.ajax({

@@ -11,7 +11,7 @@ namespace VnBookLibrary.Model.Entities
     public class Tag_Product
     {
         [Key, Column(Order = 0)]
-        public string TagId { get; set; }
+        public int TagId { get; set; }
 
         [Key, Column(Order = 1)]
         public int ProductId { get; set; }

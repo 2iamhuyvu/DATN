@@ -4,19 +4,21 @@
     ViewBag.Title = "Danh sách nhãn | VnBook";
     Layout = "~/Areas/Manage/Views/Shared/_LayoutManage.cshtml";
 }
-
+<style>
+    th{
+        text-align:center;
+    }
+</style>
 <h3>Danh sách các nhãn,thẻ <a style="float:right" class="btn btn-success" href="@Url.Action("Create","Tags",new { Area="Manage"})">Thêm nhãn,thẻ</a></h3>
 <div class="clearfix"></div>
 <hr />
 <table class="table table-bordered table-striped UseDataTables">
     <thead>
-        <tr>
-            <th>
-                Mã nhãn
-            </th>
+        <tr>          
             <th>
                 Tên nhãn
             </th>
+            <th>Số sách trong nhãn</th>
             <th>
                 Mô tả nhãn
             </th>
@@ -26,18 +28,21 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @item.TagId
-                </td>
+            <tr>                
                 <td>
                     @item.TagName
                 </td>
+                <td style="text-align:center">@item.Tag_Products.Count</td>
                 <td>
                     @item.Description
                 </td>
-                <td>
+                <td style="width:170px">
                     @Html.ActionLink("Xem | Sửa", "Edit", new { id = item.TagId }, new { @class = "btn btn-primary" })
+                    @using(Html.BeginForm("Delete","Tags",new {Area="Manage" },FormMethod.Post,new { style="display:inline-block", onsubmit = "return confirm('Bạn có thực sự muốn xóa không?')" }))
+                    {
+                        <input type="hidden" name="TagId" value="@item.TagId"/>
+                        <button type="submit" class="btn btn-warning">Xóa</button>
+                    }
                 </td>
             </tr>
         }

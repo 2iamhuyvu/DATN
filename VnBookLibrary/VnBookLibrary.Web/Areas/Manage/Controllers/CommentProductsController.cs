@@ -38,10 +38,9 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 var cmt = Uow.CommentProductRepository.Find(id);
                 if (cmt != null)
                     cmt.AlowDisplay = isDisplay;
-                Uow.CommentProductRepository.Update(cmt);
-                return Json(new JsonResultBO(true) { Message = isDisplay ? "Đã hiện bình luận" : "Đã ẩn bình luận" });
+                Uow.CommentProductRepository.Update(cmt);                
             }
-            return Json(new JsonResultBO(false) { Message="Bạn không có quyền này" });
+            return RedirectToAction("Index");
         }
         [HasRole(RoleCode = "DELETE_COMMENT")]
         [HttpPost]
@@ -51,11 +50,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             {
                 if (Uow.CommentProductRepository.Delete(id) > 0)
                 {
-                    return Json(new JsonResultBO(true) { Message = "Đã xóa bình luận!" });
+                    TempData["Notify"]=new JsonResultBO(true) { Message = "Đã xóa bình luận!" };
+                    return RedirectToAction("Index");
                 }
-                return Json(new JsonResultBO(false) { Message = "Không tồn tại bình luận này" });
+                TempData["Notify"] = new JsonResultBO(false) { Message = "Không tồn tại bình luận này" };
+                return RedirectToAction("Index");
             }
-            return Json(new JsonResultBO(false) { Message = "Bạn không có quyền này" });
+            TempData["Notify"]= new JsonResultBO(false) { Message = "Bạn không có quyền này" };
+            return RedirectToAction("Index");
         }
         [HasRole(RoleCode = "VIEW_COMMENT")]
         [HttpGet]

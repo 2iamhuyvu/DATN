@@ -23,7 +23,7 @@
         <td style="text-align:center">
             @if (item.EmployeeType.IsAdministrator == false || item.EmployeeType.IsAdministrator == null)
             {
-                if (item.IsBlock == false || item.IsBlock == null)
+                if (item.IsBlock == false)
                 {
                     using (Ajax.BeginForm("BlockEmployee", "Employees", new { id = item.EmployeeId,IsBlock=true, Area = "Manage" }, new AjaxOptions()
                     {

@@ -24,6 +24,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
+        [HasRole(RoleCode ="VIEW_NEWS")]
         public ActionResult Index()
         {
             return View(UoW.NewsRepository.GetAll());
@@ -61,7 +62,6 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             }
             return View(news);
         }
-
 
         [HasRole(RoleCode = "EDIT_NEWS")]
         [HttpPost]

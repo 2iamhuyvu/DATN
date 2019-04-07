@@ -7,7 +7,7 @@
 
 <h3>Danh sách các bình luận</h3>
 <hr />
-<table class="table table-bordered UseDataTables" id="TableComment">
+<table class="table table-bordered" id="TableComment">
     <thead>
         <tr>
             <th>
@@ -29,65 +29,78 @@
         </tr>
     </thead>
     <tbody>
-        @{Html.RenderAction("_TableComment", "CommentProducts",new { Area="Manage"});}
+        @foreach (var item in Model)
+        {
+            <tr id_Comment="@item.CommentProductId">
+                <td>
+                    @(item.Customer.CustomerName + " (" + item.Customer.CustomerName + ")")
+
+                </td>
+                <td>
+                    @item.Product.ProductName
+                </td>
+                <td>
+                    @item.Comments
+                </td>
+                <td data-order="@(Html.Raw(Json.Encode(item.CommentDate)).ToString())">@item.CommentDate</td>
+                @if (item.AlowDisplay == true)
+                {
+                    <td id_Comment="@item.CommentProductId" data-order="1">
+                        Hiển thị
+                    </td>
+                }
+                else
+                {
+                    <td id_Comment="@item.CommentProductId" data-order="0">
+                        Không hiển thị
+                    </td>
+                }
+                <td style="text-align:center">
+                    @if (item.AlowDisplay == true)
+                    {
+                        using (Html.BeginForm("DisplayComment", "CommentProducts", new { id = item.CommentProductId, isDisplay = false, Area = "Manage" }, FormMethod.Post, new { style = "display:inline-block" }))
+                        {
+                            <button type="submit" style="padding:0px;border: none;color:black;background: transparent;" href="javascript:void(0)" class=" glyphicon glyphicon-eye-close fa-lg" title="Ẩn bình luận"></button>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("DisplayComment", "CommentProducts", new { id = item.CommentProductId, isDisplay = true, Area = "Manage" },FormMethod.Post,new { style = "display:inline-block" }))
+                        {
+                            <button type="submit" class=" glyphicon glyphicon-eye-open fa-lg" style="padding:0px;color:green;border: none;background: transparent;" title="Hiện bình luận"></button>
+                        }
+                    }
+                    @using (Html.BeginForm("Delete", "CommentProducts", new { id = item.CommentProductId, Area = "Manage" },FormMethod.Post,new { style = "display:inline-block", @id = "FormDelete" + item.CommentProductId, onsubmit = "return confirm('Bạn có thực sự muồn xóa')" }))
+                    {
+                        <button type="submit" style="padding:0px;color:red;border: none;background: transparent;" class=" glyphicon glyphicon-trash fa-lg" title="Xóa bình luận"></button>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <script>
-    function LoadTableComment() {
-        $.ajax({
-            url: '@Url.Action("_TableComment", "CommentProducts", new { Area = "Manage" })',
-            type: 'GET',
-            dataType: 'html',            
-            success: function (html) {
-                $("#TableComment tbody").html(html)
-            },            
+    $(document).ready(function () {
+        $("#TableComment").DataTable({
+            "language": {
+                "sProcessing": "Đang xử lý...",
+                "sLengthMenu": "Số bản ghi _MENU_",
+                "sZeroRecords": "Không có bản ghi nào",
+                "sInfo": "Từ bản ghi _START_ đến bản gi _END_ trong tổng số _TOTAL_ bản ghi",
+                "sInfoEmpty": "Không có bản ghi nào",
+                "sInfoFiltered": "(được lọc từ _MAX_ bản ghi)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm kiếm: ",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "<i class='fa fa-angle-double-left fa-lg'></i>",
+                    "sPrevious": "<i class='fa fa-angle-left fa-lg'></i>",
+                    "sNext": "<i class='fa fa-angle-right fa-lg'></i>",
+                    "sLast": "<i class='fa fa-angle-double-right fa-lg'></i>"
+                }
+            },
+            "pagingType": "full_numbers",
+            "deferRender": true,
         });
-    }
-    function SuccessDelete(rs) {
-        LoadTableComment();
-        if (rs.Status == true) {
-            Lobibox.notify('success', {
-                size: 'mini',
-                rounded: true,
-                delayIndicator: false,
-                msg: rs.Message,
-                sound: false,
-            });
-        }
-        else {
-            Lobibox.notify('warning', {
-                size: 'mini',
-                rounded: true,
-                delayIndicator: false,
-                msg: rs.Message,
-                sound: false,
-            });
-        }
-    }
-    function SuccessDisplayComment(rs) {
-        LoadTableComment();
-        //if (rs.Status == true) {            
-        //    Lobibox.notify('success', {
-        //        size: 'mini',
-        //        rounded: true,
-        //        delayIndicator: false,
-        //        msg: rs.Message,
-        //        sound: false,
-        //    });
-        //}
-        //else {
-        //    Lobibox.notify('warning', {
-        //        size: 'mini',
-        //        rounded: true,
-        //        delayIndicator: false,
-        //        msg: rs.Message,
-        //        sound: false,
-        //    });
-        //}
-    }
-    function SubmitDelete(id) {
-        if (confirm("Bạn có thực sự xóa bình luận này không!")) {
-            $("#FormDelete" + id).submit();
-        }
-    }
+    })   
 </script>

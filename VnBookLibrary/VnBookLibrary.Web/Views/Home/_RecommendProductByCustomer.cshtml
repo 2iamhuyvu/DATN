@@ -16,84 +16,65 @@
         align-items: center;
     }
 </style>
-<div class="container" id="RecomendByCustomer">
-    <div style="">
-        <div class="row">
-            <div class="row">
-                <div class="col-md-9">
-                    <h4 style="color:red">
-                        Có thể bạn quan tâm!
-                    </h4>
-                </div>
-            </div>
-
-            <div class="owl-carousel owl-theme" style="margin-top:20px;">
-                @for (int j = 0; j < Model.Count() && j < 15; j++)
+<div id="RecomendByCustomer">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Có thể phù hợp với bạn</h3>
+        </div>
+        <div class="panel-body">
+            <div id="carousel-main" class="carousel carouselRecomendByCustomer slide " data-ride="carousel" data-interval="5000" style="">                
+                @if (Model.Count >4)
                 {
-                    <div class="item">
-                        <div class="block2" style="box-shadow:#ccc 0px 0px 10px 3px;border-radius:5px;">
-                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
-                                <div style="height:150px;border-radius:3px 0px 0px 0px">
-                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@Model[j].AvatarLink" alt="@Model[j].ProductName">
-                                </div>                               
-                            </div>
-
-                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
-                                <div style="height:50px;overflow:hidden">
-                                    <a href='@Url.Action("DetailProduct","Home",new {id=Model[j].ProductId })' style="font-size:14px;font-weight:normal;color:#337ab7;font-weight:bold" title="@Model[j].ProductName">
-                                        @Model[j].ProductName
-                                    </a>
-                                </div>
-                                <div style="height:40px;">
-                                    <span style="display:block;color:green;font-weight:normal">@Model[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
-                                    @if (Model[j].CoverPrice > 0)
-                                    {
-                                        <span style="display:block;color:red;font-weight:normal;text-decoration:line-through">@((Model[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
-                                    }
-                                </div>
-                                <div style="margin-top:10px;">
-                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct","Home",new {id=Model[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
-                                    <button style="float:right" onclick="AddToCart(@Model[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div style="height:30px;padding:0px 15px">
+                        <a class="left  fa fa-arrow-circle-left fa-lg" href=".carouselRecomendByCustomer" style="position:absolute;left:0px;text-decoration:none;font-size:30px;color:green" role="button" data-slide="prev">                    </a>
+                        <a class="right  fa fa-arrow-circle-right fa-lg" href=".carouselRecomendByCustomer" style="position:absolute;right:0px;text-decoration:none;font-size:30px;color:green" role="button" data-slide="next">                    </a>
                     </div>
                 }
+                <div class="carousel-inner">
+                    @for (int i = 0; i <Model.Count && (i + 2) < 20; i = i + 2)
+                    {
+                        var str = i == 0 ? "active" : "";
+                        <div class="item @str">
+                            <div class="row" style="margin:0px -5px!important;">                                
+                                @for (int j = i;j<Model.Count&& j < i + 2; j++)
+                                {
+                                    var product = Model[j];
+                                    <div class="col-md-6" style="margin-bottom:15px;padding:5px!important">
+                                        <div class="block2" style="box-shadow:#ccc 0px 0px 20px -5px;border:1px solid black;border-radius:5px">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:5px 5px 0px 0px">
+                                                    <img title="@product.ProductName" height="100%" style="border-radius:5px 5px 0px 0px" src="@product.AvatarLink" alt="@product.ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 5px;overflow:auto">
+                                                <div style="height:40px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' style="font-size:11px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
+                                                        @product.ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:block;font-size:13px;color:green;font-weight:normal">@product.Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (product.CoverPrice > 0)
+                                                    {
+                                                        <span style="display:block;font-size:11px;color:red;font-weight:normal;text-decoration:line-through">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' class="btn btn-default btn-sm"><i style="color:black" class="glyphicon glyphicon-eye-open"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-danger btn-sm" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus " style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
-<div class="clearfix"></div>
-<hr />
-<script>
-    $(document).ready(function () {
-        $('.owl-carousel').owlCarousel({
-            loop: true,
-            margin: 20,
-            nav: true,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                320: {
-                    items: 2
-                },
-                768: {
-                    items: 3
-                },
-                890: {
-                    items: 4
-                },
-                1024: {
-                    items: 6
-                }
-            },
-            autoplay: true,
-            autoplayTimeout: 2500,
-            autoplayHoverPause: true,
-        })
-        $(".owl-nav").addClass("centercss");
-        $(".owl-nav button span").addClass("btn btn-success fa-lg").css("margin", "10px");
-    })
-</script>

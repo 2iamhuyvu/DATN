@@ -31,7 +31,7 @@
 {
     if (Model.Count > 0)
     {
-        <h4 style="">@Html.Raw(ViewBag.Href)</h4>
+        <h3 style="">@Html.Raw(ViewBag.Href)</h3>
         <div style="float:right;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
                 new {                    
@@ -57,9 +57,9 @@
     }
     else
     {
-        <h4 style="">
+        <h3 style="">
             @Html.Raw(ViewBag.Href)
-        </h4>
+        </h3>
         <div style="float:right;">
             @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
                 new {
@@ -100,28 +100,29 @@
             <div class="col-md-3 col-lg-2 col-sm-4 col-xs-6" style="margin-bottom:25px;padding:0px 10px">
                 <!-- Product -->
                 <!-- Block2 -->
-                <div class="block2" style="box-shadow:#ccc 0px 0px 15px 5px;border-radius:5px;">
+                <div class="block2" style="border:1px solid black;border-radius:5px;">
                     <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
                         <div style="height:200px;border-radius:5px 5px 0px 0px">
-                            <img height="100%" style="border-radius:5px 5px 0px 0px" src="@product.AvatarLink" alt="@product.ProductName">
+                            <img title="@product.ProductName" height="100%" style="border-radius:5px 5px 0px 0px" src="@product.AvatarLink" alt="@product.ProductName">
                         </div>                        
                     </div>
 
                     <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
                         <div style="height:50px;overflow:hidden">
-                            <a href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' style="font-size:14px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
+                            <a href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
                                 @product.ProductName
                             </a>
                         </div>
-                        <div style="height:40px;">
-                            <span style="display:block;color:green;font-weight:normal">@product.Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                        <div style="height:35px;">
+                            <span style="display:block;font-size:13px;color:green;font-weight:normal">@product.Price.ToString("c", new CultureInfo("vi-VN")) </span>
                             @if (product.CoverPrice > 0)
                             {
-                                <span style="display:block;color:red;font-weight:normal;text-decoration:line-through">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                <span style="display:block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
                             }
+                            <div class="clearfix"></div>
                         </div>
-                        <div style="margin-top:10px;">
-                            <a style="color:black" title="Xem chi tiết"  href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                        <div style="margin-top:15px;">
+                            <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
                             <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
                             <div class="clearfix"></div>
                         </div>

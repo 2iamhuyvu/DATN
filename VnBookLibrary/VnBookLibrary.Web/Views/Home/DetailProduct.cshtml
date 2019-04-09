@@ -13,6 +13,12 @@
     .block2-overlay {
         display: none !important;
     }
+    a.carousel-control {
+        width: 5% !important;
+    }
+
+        a.carousel-control > span {
+        }
 </style>
 <div class="row" style="margin-bottom:30px;">
     <div class="col-md-9" style="border-right:1px solid #333">
@@ -29,7 +35,7 @@
                         <h3 style="font-weight:bold" class="panel-title">Có thể bạn quan tâm!</h3>
                     </div>
                     <div class="panel-body">
-                        <div id="carousel-main2" class="carousel slide " data-ride="carousel" data-interval="2600">
+                        <div id="carousel-main2" class="carousel slide carouselRecomendByCustommer" data-ride="carousel" data-interval="2600">
                             <!-- Carousel items -->
                             <div class="carousel-inner">
                                 @for (int j = 0; j < RecomendByCustommer.Count && j < 10; j++)
@@ -46,16 +52,17 @@
 
                                                 <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
                                                     <div style="height:50px;overflow:hidden">
-                                                        <a href='@Url.Action("DetailProduct", "Home", new { id = RecomendByCustommer[j].ProductId })' style="font-size:16px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByCustommer[j].ProductName">
+                                                        <a href='@Url.Action("DetailProduct","Home",new {id=RecomendByCustommer[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByCustommer[j].ProductName">
                                                             @RecomendByCustommer[j].ProductName
                                                         </a>
                                                     </div>
-                                                    <div style="height:40px;">
-                                                        <span style="display:block;color:green;font-weight:normal">@RecomendByCustommer[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    <div style="height:25px;">
+                                                        <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@RecomendByCustommer[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
                                                         @if (RecomendByCustommer[j].CoverPrice > 0)
                                                         {
-                                                            <span style="display:block;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByCustommer[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                            <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByCustommer[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
                                                         }
+                                                        <div class="clearfix"></div>
                                                     </div>
                                                     <div style="margin-top:10px;">
                                                         <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = RecomendByCustommer[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
@@ -78,16 +85,17 @@
 
                                                 <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
                                                     <div style="height:50px;overflow:hidden">
-                                                        <a href='@Url.Action("DetailProduct", "Home", new { id = RecomendByCustommer[j].ProductId })' style="font-size:16px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByCustommer[j].ProductName">
+                                                        <a href='@Url.Action("DetailProduct","Home",new {id=RecomendByCustommer[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByCustommer[j].ProductName">
                                                             @RecomendByCustommer[j].ProductName
                                                         </a>
                                                     </div>
-                                                    <div style="height:40px;">
-                                                        <span style="display:block;color:green;font-weight:normal">@RecomendByCustommer[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    <div style="height:25px;">
+                                                        <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@RecomendByCustommer[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
                                                         @if (RecomendByCustommer[j].CoverPrice > 0)
                                                         {
-                                                            <span style="display:block;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByCustommer[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                            <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByCustommer[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
                                                         }
+                                                        <div class="clearfix"></div>
                                                     </div>
                                                     <div style="margin-top:10px;">
                                                         <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = RecomendByCustommer[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
@@ -102,11 +110,11 @@
                             </div>
 
                             <!-- Controls -->
-                            <a class="left carousel-control" href=".carousel" role="button" data-slide="prev">
+                            <a class="left carousel-control" href=".carouselRecomendByCustommer" role="button" data-slide="prev">
                                 <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
                             </a>
-                            <a class="right carousel-control" href=".carousel" role="button" data-slide="next">
+                            <a class="right carousel-control" href=".carouselRecomendByCustommer" role="button" data-slide="next">
                                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -122,7 +130,7 @@
                         <h3 style="font-weight:bold" class="panel-title">Sách mua cùng nhiều nhất!</h3>
                     </div>
                     <div class="panel-body">
-                        <div id="carousel-main1" class="carousel slide " data-ride="carousel" data-interval="2400">
+                        <div id="carousel-main1" class="carousel slide carouselRecomendByProduct" data-ride="carousel" data-interval="2400">
                             <!-- Carousel items -->
                             <div class="carousel-inner">
                                 @for (int j = 0; j < RecomendByProduct.Count && j < 10; j++)
@@ -195,11 +203,11 @@
                             </div>
 
                             <!-- Controls -->
-                            <a class="left carousel-control" href=".carousel" role="button" data-slide="prev">
+                            <a class="left carousel-control" href=".carouselRecomendByProduct" role="button" data-slide="prev">
                                 <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
                             </a>
-                            <a class="right carousel-control" href=".carousel" role="button" data-slide="next">
+                            <a class="right carousel-control" href=".carouselRecomendByProduct" role="button" data-slide="next">
                                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>

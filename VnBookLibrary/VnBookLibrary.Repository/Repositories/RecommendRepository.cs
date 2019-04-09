@@ -15,7 +15,7 @@ namespace VnBookLibrary.Repository.Repositories
         }
         public RecommendRepository() : base()
         {
-        }                
+        }
         public async Task InsertOrUpdateAsync(Recommend recommend)
         {
             recommend.Count = 1;
@@ -47,7 +47,7 @@ namespace VnBookLibrary.Repository.Repositories
                     }
                 }
             }
-        }        
+        }
         private List<Recommend> GetRecommendByProduct(int productId)
         {
             var p = _context.Products.Find(productId);
@@ -77,33 +77,35 @@ namespace VnBookLibrary.Repository.Repositories
             }
             return rs;
         }
-        private List<Product> GetRecommendProductByListProduct(List<Product> products)
+        public List<Product> GetRecommendProductByListProduct(List<Product> products)
         {
             List<Product> result = new List<Product>();
             List<Recommend> rs = new List<Recommend>();
-
-            foreach (var product in products)
+            if (products.Count > 0)
             {
-                List<Recommend> recommends = GetRecommendByProduct(product.ProductId);
-                rs.AddRange(recommends);
+                foreach (var product in products)
+                {
+                    List<Recommend> recommends = GetRecommendByProduct(product.ProductId);
+                    rs.AddRange(recommends);
+                }
             }
-
-            if (rs!=null&&rs.Count>0){
-                rs = rs.OrderByDescending(x=>x.Count).ToList();
+            if (rs != null && rs.Count > 0)
+            {
+                rs = rs.OrderByDescending(x => x.Count).ToList();
                 List<Recommend> temp = new List<Recommend>();
                 for (int i = 0; i < rs.Count; i++)
                 {
-                    if(!(CheckExist1(temp,rs[i].ProductId2??0)|| CheckExist2(products, rs[i].ProductId2 ?? 0)))
+                    if (!(CheckExist1(temp, rs[i].ProductId2 ?? 0) || CheckExist2(products, rs[i].ProductId2 ?? 0)))
                     {
                         temp.Add(rs[i]);
                         result.Add(rs[i].Product2);
                     }
-                }                
+                }
             }
             return result;
         }
 
-        private bool CheckExist1(List<Recommend> recommends,int productid)
+        private bool CheckExist1(List<Recommend> recommends, int productid)
         {
             if (recommends != null && recommends.Count > 0)
             {
@@ -111,7 +113,7 @@ namespace VnBookLibrary.Repository.Repositories
                 {
                     if (item.ProductId2 == productid)
                         return true;
-                }                
+                }
             }
             return false;
         }
@@ -123,7 +125,7 @@ namespace VnBookLibrary.Repository.Repositories
                 {
                     if (item.ProductId == productid)
                         return true;
-                }                
+                }
             }
             return false;
         }
@@ -159,7 +161,7 @@ namespace VnBookLibrary.Repository.Repositories
         }
         public List<Product> GetRecommendProductByCustomer(int customerId)
         {
-            List<Product>products= GetPurchasedProducts(customerId);
+            List<Product> products = GetPurchasedProducts(customerId);
             return GetRecommendProductByListProduct(products);
         }
     }

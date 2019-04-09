@@ -27,6 +27,31 @@ namespace VnBookLibrary.Web.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
+
+
+        public ActionResult Index()
+        {
+            if (Session[Constants.CUSTOMER_SESSION] != null)
+            {
+                var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
+            }
+            ViewBag.AllTag = UoW.TagRepository.GetAll().OrderBy(x=>x.OrderDisplay).ToList();
+            ViewBag.HomeTag = UoW.TagRepository.GetAll().OrderBy(x => x.OrderDisplay).ToList().Where(x => x.IsDisplay).ToList();            
+            return View();
+        }
+
+        public ActionResult _RecommenproductByCart()
+        {
+            List<Product> listProductCart = new List<Product>();
+            if (Session[Constants.CART_SESSION] != null)
+            {
+                listProductCart = ((List<CartVM>)Session[Constants.CART_SESSION]).Select(x => x.Product).ToList();
+            }
+            List<Product>  model = UoW.RecommendRepository.GetRecommendProductByListProduct(listProductCart);
+            return PartialView(model);
+        }
+
         [HttpPost]
         public ActionResult CommentProduct(string Comments, int ProductId, int CustomerId)
         {
@@ -73,17 +98,9 @@ namespace VnBookLibrary.Web.Controllers
             }
             return Json(new JsonResultBO(true));
         }
-        public ActionResult Index()
-        {
-            if (Session[Constants.CUSTOMER_SESSION] != null)
-            {
-                var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
-                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
-            }
-            return View();
-        }
+
         public ActionResult Books(string Search, int? CategoryLv1Id, int? CategoryLv2Id, int? CategoryAuthorId, int? CategoryPublisherId)
-        {            
+        {
             var cate1 = UoW.CategoryLv1Repository.Find(CategoryLv1Id ?? 0);
             var cate2 = UoW.CategoryLv2Repository.Find(CategoryLv2Id ?? 0);
             var cateAuthor = UoW.CategoryByAuthorRepository.Find(CategoryAuthorId ?? 0);
@@ -380,7 +397,7 @@ namespace VnBookLibrary.Web.Controllers
         public ActionResult GetWardByDistrict(int districtId)
         {
             return Json(UoW.WardRepository.GetAll().Where(x => x.DidtrictId == districtId).Select(x => new { x.WardName, x.WardId }).ToList());
-        }        
+        }
         public ActionResult _ViewCart()
         {
             return PartialView();

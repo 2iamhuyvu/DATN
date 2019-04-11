@@ -10,6 +10,11 @@ namespace VnBookLibrary.Web.Areas.Manage.Customizes
 {
     public class ManageSession
     {
+        public static Employee GetSessionEmployee()
+        {
+            HttpContext context = HttpContext.Current;
+            return ((ManageSessionModel)context.Session[Constants.MANAGE_SESSION]).SessionEmployee;
+        }
         public static void SetSession(string Key, object Value)
         {
             HttpContext context = HttpContext.Current;

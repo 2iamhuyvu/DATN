@@ -1,0 +1,22 @@
+﻿@using PagedList.Mvc
+@using PagedList
+@using VnBookLibrary.Model.Entities;
+@{
+    Tag tag = ViewBag.Tag;
+    ViewBag.Title = tag.TagName + " | VnBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-9">
+        <div id="ContentTag">
+            @{
+                Html.RenderAction("_GetProductByTag", "Home", new
+                {
+                    tagId = tag.TagId,
+                    pageSize = 12
+                });
+            }
+        </div>
+    </div>
+</div>
+

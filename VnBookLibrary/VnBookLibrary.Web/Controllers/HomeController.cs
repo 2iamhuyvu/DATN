@@ -40,6 +40,17 @@ namespace VnBookLibrary.Web.Controllers
             ViewBag.HomeTag = UoW.TagRepository.GetAll().OrderBy(x => x.OrderDisplay).ToList().Where(x => x.IsDisplay).ToList();            
             return View();
         }
+        public ActionResult Tag(int id)
+        {
+            ViewBag.Tag =db.Tags.Find(id);            
+            return View();
+        }
+        public ActionResult _GetProductByTag(int tagId,int page = 1, int pageSize = 10)
+        {            
+            var model = UoW.Tag_ProductRepository.GetPageListProductByTag(tagId, page, pageSize);
+            ViewBag.Tag = db.Tags.Find(tagId);
+            return PartialView(model);
+        }
 
         public ActionResult _RecommenproductByCart()
         {
@@ -49,6 +60,16 @@ namespace VnBookLibrary.Web.Controllers
                 listProductCart = ((List<CartVM>)Session[Constants.CART_SESSION]).Select(x => x.Product).ToList();
             }
             List<Product>  model = UoW.RecommendRepository.GetRecommendProductByListProduct(listProductCart);
+            return PartialView(model);
+        }
+        public ActionResult _RecommenproductByCart2()
+        {
+            List<Product> listProductCart = new List<Product>();
+            if (Session[Constants.CART_SESSION] != null)
+            {
+                listProductCart = ((List<CartVM>)Session[Constants.CART_SESSION]).Select(x => x.Product).ToList();
+            }
+            List<Product> model = UoW.RecommendRepository.GetRecommendProductByListProduct(listProductCart);
             return PartialView(model);
         }
 
@@ -232,6 +253,7 @@ namespace VnBookLibrary.Web.Controllers
                 var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
                 ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
             }
+            ViewBag.AllTag = UoW.TagRepository.GetAll().OrderBy(x => x.OrderDisplay).ToList();
             return View();
         }
         public ActionResult _DetailProduct(int productId)

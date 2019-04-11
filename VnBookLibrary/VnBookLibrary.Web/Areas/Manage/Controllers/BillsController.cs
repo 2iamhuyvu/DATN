@@ -13,6 +13,10 @@ using PagedList.Mvc;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 using VnBookLibrary.Repository.Commons;
 using VnBookLibrary.Repository.Repositories;
+using System.Windows.Forms;
+using System.Drawing.Printing;
+using System.Drawing;
+using VnBookLibrary.Web.Areas.Manage.Models;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
 {
@@ -44,24 +48,17 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         }
         [HasRole(RoleCode = "VIEW_BILL")]
         public ActionResult _modalDetail(int id)
-        {
+        {            
             ViewBag.Bill = UoW.BillRepository.Find(id);
             ViewBag.ListBillDetail = UoW.BillDetailRepository.GetAll().Where(x => x.BillId == id).ToList();
             return PartialView();
-        }
-        [HasRole(RoleCode = "VIEW_BILL")]
-        public ActionResult Details(int? id)
+        } 
+        [HttpPost]
+        public void PrintBill(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Bill bill = UoW.BillRepository.Find(id);
-            if (bill == null)
-            {
-                return HttpNotFound();
-            }
-            return View(bill);
+            PrintBillModel printBillModel = new PrintBillModel(bill);
+            printBillModel.PrintBill();                        
         }
         [HasRole(RoleCode = "EDIT_BILL")]
         [HttpPost]
@@ -80,6 +77,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                     bill.Status = Constants.STATTUS_BILL_DELIVERING;
                     UoW.BillRepository.Update(bill);
                     TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái thành đang giao hàng" };
+                    return RedirectToAction("Index", "Bills", new { Area = "Manage" });
                 }
             }
             TempData["Notify"] = new JsonResultBO(false)
@@ -102,9 +100,11 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 }
                 else
                 {
+                    bill.PaymentEmployeeId = ManageSession.GetSessionEmployee().EmployeeId;
                     bill.Status = Constants.STATTUS_BILL_PAID;
                     UoW.BillRepository.Update(bill);
                     TempData["Notify"] = new JsonResultBO(true) { Message = "Đã chuyển đổi trạng thái đã thanh toán" };
+                    return RedirectToAction("Index", "Bills", new { Area = "Manage" });
                 }
             }
             TempData["Notify"] = new JsonResultBO(false)
@@ -115,7 +115,7 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
         }
         [HasRole(RoleCode = "EDIT_BILL")]
         [HttpPost]
-        public ActionResult ConfirmReturned(int billId)
+        public ActionResult ConfirmReturned(int billId, string reasonForReturn)
         {
             if (ManageSession.HasRole("EDIT_BILL"))
             {
@@ -127,9 +127,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
                 }
                 else
                 {
+                    if (reasonForReturn.Trim() != "")
+                    {
+                        bill.ReasonForReturn = reasonForReturn;
+                    }
                     bill.Status = Constants.STATTUS_BILL_RETURNED;
                     UoW.BillRepository.Update(bill);
                     TempData["Notify"] = new JsonResultBO(false) { Message = "Đã chuyển đổi trạng thái bị trả về" };
+                    return RedirectToAction("Index", "Bills", new { Area = "Manage" });
                 }
             }
             TempData["Notify"] = new JsonResultBO(false)
@@ -138,7 +143,36 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
             };
             return RedirectToAction("Index", "Bills", new { Area = "Manage" });
         }
-
+        [HasRole(RoleCode = "EDIT_BILL")]
+        [HttpPost]
+        public ActionResult ConfirmCancel(int billId, string reasonForCancel)
+        {
+            if (ManageSession.HasRole("EDIT_BILL"))
+            {
+                Bill bill = new Bill();
+                bill = UoW.BillRepository.Find(billId);
+                if (bill == null)
+                {
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Có lỗi, hãy thử lại" };
+                }
+                else
+                {
+                    if (reasonForCancel.Trim() != "")
+                    {
+                        bill.ReasonForCancel = reasonForCancel;
+                    }
+                    bill.Status = Constants.STATTUS_BILL_CANCEL;
+                    UoW.BillRepository.Update(bill);
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Đã hủy hóa đơn" };
+                    return RedirectToAction("Index", "Bills", new { Area = "Manage" });
+                }
+            }
+            TempData["Notify"] = new JsonResultBO(false)
+            {
+                Message = "Bạn không có quyền này"
+            };
+            return RedirectToAction("Index", "Bills", new { Area = "Manage" });
+        }              
         protected override void Dispose(bool disposing)
         {
             if (disposing)

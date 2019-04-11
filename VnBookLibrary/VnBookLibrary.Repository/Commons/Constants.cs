@@ -15,5 +15,6 @@ namespace VnBookLibrary.Repository.Commons
         public static int STATTUS_BILL_DELIVERING = 2;
         public static int STATTUS_BILL_PAID = 3;
         public static int STATTUS_BILL_RETURNED = 4;
+        public static int STATTUS_BILL_CANCEL = 5;
     }
 }

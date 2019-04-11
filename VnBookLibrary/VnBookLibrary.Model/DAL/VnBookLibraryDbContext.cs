@@ -22,7 +22,7 @@ namespace VnBookLibrary.Model.DAL
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Bill> Bills { get; set; }
-        public DbSet<SaleEvent> SaleEvents { get; set; }
+        //public DbSet<SaleEvent> SaleEvents { get; set; }
         public DbSet<BillDetail> BillDetails { get; set; }
         public DbSet<CategoryLv1> CategoryLv1s { get; set; }
         public DbSet<CategoryLv2> CategoryLv2s { get; set; }
@@ -33,7 +33,7 @@ namespace VnBookLibrary.Model.DAL
         public DbSet<CommentProduct> CommentProducts { get; set; }
         public DbSet<RateProduct> RateProducts { get; set; }
         public DbSet<Role_EmployeeType> Role_EmployeeTypes { get; set; }
-        public DbSet<SaleEvent_Product> SaleEvent_Products { get; set; }
+        //public DbSet<SaleEvent_Product> SaleEvent_Products { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<Tag> Tags { get; set; }

@@ -22,17 +22,20 @@ namespace VnBookLibrary.Model.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? BuyDate { get; set; }
         public decimal? TotalNotSale { get; set; }
-        public decimal? IntoMoney { get; set; }
-        [DefaultValue(0)]
-        public decimal? FeeShip { get; set; }
+        public decimal? IntoMoney { get; set; }       
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? PayDate { get; set; }
         [DefaultValue(0)]
         public int? Status { get; set; }
         public string Description { get; set; }
-        public int? SaleEventId { get; set; }
-        [ForeignKey("SaleEventId")]
-        public  virtual SaleEvent SaleEvent { get; set; }
+        public string ReasonForReturn { get; set; }
+        public string ReasonForCancel { get; set; }
+        //public int? SaleEventId { get; set; }
+        public int? PaymentEmployeeId { get; set; }
+        [ForeignKey("PaymentEmployeeId ")]
+        public virtual Employee PaymentEmployee { get; set; }
+        //[ForeignKey("SaleEventId")]
+        //public  virtual SaleEvent SaleEvent { get; set; }
         public virtual ICollection<BillDetail> BillDetails { get; set; }
     }
 }

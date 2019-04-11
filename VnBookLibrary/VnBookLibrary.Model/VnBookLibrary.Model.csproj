@@ -92,8 +92,6 @@
     <Compile Include="Entities\Recommend.cs" />
     <Compile Include="Entities\Role.cs" />
     <Compile Include="Entities\Role_EmployeeType.cs" />
-    <Compile Include="Entities\SaleEvent.cs" />
-    <Compile Include="Entities\SaleEvent_Product.cs" />
     <Compile Include="Entities\Tag.cs" />
     <Compile Include="Entities\Tag_Product.cs" />
     <Compile Include="Entities\Ward.cs" />

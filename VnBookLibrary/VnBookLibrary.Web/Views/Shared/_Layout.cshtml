@@ -368,13 +368,27 @@
                 soundPath: '../../PluginFrontend/lobibox-master/sounds/',
             });            
         });
-        function loadScript(src, callback) {
-            const script = document.createElement('script');
-            script.src = src;
-            script.onload = callback;
-            document.head.append(script);
-        }
-        $('.UseSelect2').select2();
+        function LoadRecomendByCart() {
+            $.ajax({
+                url: '@Url.Action("_RecommenproductByCart", "Home")',
+                type: 'POST',
+                dataType: 'html',                
+                success: function (html) {
+                    $("#RECOMENDBYCART").html(html);
+                },
+            });            
+        } 
+         function LoadRecomendByCartViewDetail() {
+            $.ajax({
+                url: '@Url.Action("_RecommenproductByCart2", "Home")',
+                type: 'POST',
+                dataType: 'html',                
+                success: function (html) {
+                    $("#divDetail #recomendByCart").html(html);
+                },
+            });            
+        }  
+        $('.UseSelect2').select2();      
          function AddToCart(productid) {
             $.ajax({
                 url: '@Url.Action("AddToCart","Home")',
@@ -394,6 +408,8 @@
                         $("span#listCartCount").text(rs.Param);
                         ViewBoxCart();
                         UpdateContentViewCart();
+                        LoadRecomendByCart();
+                        LoadRecomendByCartViewDetail();
                     }
                     else {
                         Lobibox.notify('warning', {
@@ -469,6 +485,8 @@
                         $("#dropdownCart").removeClass("show-header-dropdown");
                     }
                     UpdateContentViewCart();
+                    LoadRecomendByCart();
+                    LoadRecomendByCartViewDetail();
                 }
             });
         }

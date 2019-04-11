@@ -38,8 +38,8 @@ namespace VnBookLibrary.Repository.Repositories
             RateProductRepository = new RateProductRepository(_context);
             Role_EmployeeTypeRepository = new Role_EmployeeTypeRepository(_context);
             RoleRepository = new RoleRepository(_context);
-            SaleEventRepository = new SaleEventRepository(_context);
-            SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
+            //SaleEventRepository = new SaleEventRepository(_context);
+            //SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
             WardRepository = new WardRepository(_context);
         }
         public UnitOfWork(VnBookLibraryDbContext context)
@@ -65,8 +65,8 @@ namespace VnBookLibrary.Repository.Repositories
             RateProductRepository = new RateProductRepository(_context);
             Role_EmployeeTypeRepository = new Role_EmployeeTypeRepository(_context);
             RoleRepository = new RoleRepository(_context);
-            SaleEventRepository = new SaleEventRepository(_context);
-            SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
+            //SaleEventRepository = new SaleEventRepository(_context);
+            //SaleEvent_ProductRepository = new SaleEvent_ProductRepository(_context);
             WardRepository = new WardRepository(_context);
             RecommendRepository = new RecommendRepository(_context);
             TagRepository = new TagRepository(_context);
@@ -96,8 +96,8 @@ namespace VnBookLibrary.Repository.Repositories
         public RateProductRepository RateProductRepository { get; set; }
         public Role_EmployeeTypeRepository Role_EmployeeTypeRepository { get; set; }
         public RoleRepository RoleRepository { get; set; }
-        public SaleEventRepository SaleEventRepository { get; set; }
-        public SaleEvent_ProductRepository SaleEvent_ProductRepository { get; set; }
+        //public SaleEventRepository SaleEventRepository { get; set; }
+        //public SaleEvent_ProductRepository SaleEvent_ProductRepository { get; set; }
         public WardRepository WardRepository { get; set; }
         public int SaveChanges()
         {

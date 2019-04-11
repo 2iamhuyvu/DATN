@@ -66,6 +66,6 @@ namespace VnBookLibrary.Model.Entities
         public virtual ICollection<LikeProduct> LikeProducts { get; set; }
         public virtual ICollection<CommentProduct> CommentProducts { get; set; }
         public virtual ICollection<RateProduct> RateProducts { get; set; }
-        public virtual ICollection<SaleEvent_Product> SaleEvent_Products { get; set; }
+        //public virtual ICollection<SaleEvent_Product> SaleEvent_Products { get; set; }
     }
 }

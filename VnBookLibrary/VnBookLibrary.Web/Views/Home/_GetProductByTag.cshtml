@@ -2,7 +2,9 @@
 @using PagedList.Mvc;
 @using System.Globalization;
 @model PagedList.IPagedList<Product>
-
+@{ 
+    Tag tag = ViewBag.Tag;
+}
 <style>
     .col20 {
         width: 20%;
@@ -27,41 +29,28 @@
         margin: 5px 0px;
     }
 </style>
-@if (ViewBag.Href != null && ViewBag.Href != "")
+
+@if (Model.Count > 0)
 {
-    if (Model.Count > 0)
-    {
-        <h3 style="">@Html.Raw(ViewBag.Href)</h3>
-        <div style="float:right;">
-            @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
-                new {
-                    Search = ViewBag.Search,
-                    page = page,
-                    pageSize = Model.PageSize ,
-                    CategoryLv1Id = ViewBag.CategoryLv1Id,
-                    CategoryLv2Id = ViewBag.CategoryLv2Id,
-                    CategoryAuthorId=ViewBag.CategoryAuthorId,
-                    CategoryPublisherId=ViewBag.CategoryPublisherId,
-                }),
-               PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
-               new PagedListRenderOptions()
-               {
-                   MaximumPageNumbersToDisplay = 15,
-               },
-               new AjaxOptions()
-               { HttpMethod = "POST",
-                   UpdateTargetId = "ContentBooks"
-               }))
-        </div>
-        <div class="clearfix"></div>
-    }
-}
-@if (ViewBag.Search != null && ViewBag.Search != "")
-{
-    if (Model.Count > 0)
-    {
-        <p style="color:green;margin-bottom:30px;">Có @Model.TotalItemCount sách cho từ khóa "@ViewBag.Search" !</p>
-    }
+    <h4 style="">Tags<i class='fa fa-lg' style='font-weight:normal'>&nbsp;&#xf0da;&nbsp;</i>@tag.TagName</h4>
+    <div style="float:right;">
+        @Html.PagedListPager(Model, page => Url.Action("_GetProductByTag", "Home",
+             new {
+                 tagId = tag.TagId,
+                 page = page,
+                 pageSize = Model.PageSize,
+             }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+            new PagedListRenderOptions()
+            {
+                MaximumPageNumbersToDisplay = 15,
+            },
+            new AjaxOptions()
+            { HttpMethod = "POST",
+                UpdateTargetId = "ContentTag"
+            }))
+    </div>
+    <div class="clearfix"></div>
 }
 <div class="row" style="margin-left:-10px;margin-right:-10px;">
     @if (Model.Count > 0)
@@ -69,7 +58,7 @@
 
         foreach (var product in Model)
         {
-            <div class="col-md-3 col-lg-2 col-sm-4 col-xs-6" style="margin-bottom:25px;padding:0px 10px">
+            <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12" style="margin-bottom:25px;padding:0px 10px">
                 <!-- Product -->
                 <!-- Block2 -->
                 <div class="block2" style="border:1px solid black;border-radius:5px;">
@@ -104,15 +93,11 @@
         }
         <div class="clearfix"></div>
         <div style="float:right;margin-right:15px;">
-            @Html.PagedListPager(Model, page => Url.Action("_GetProductByPage", "Home",
+            @Html.PagedListPager(Model, page => Url.Action("_GetProductByTag", "Home",
                 new {
-                    Search = ViewBag.Search,
+                    tagId = tag.TagId,
                     page = page,
                     pageSize = Model.PageSize,
-                    CategoryLv1Id = ViewBag.CategoryLv1Id,
-                    CategoryLv2Id = ViewBag.CategoryLv2Id,
-                    CategoryAuthorId=ViewBag.CategoryAuthorId,
-                    CategoryPublisherId=ViewBag.CategoryPublisherId,
                 }),
                PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
                new PagedListRenderOptions()
@@ -121,20 +106,13 @@
                },
                new AjaxOptions()
                { HttpMethod = "POST",
-                   UpdateTargetId = "ContentBooks"
+                   UpdateTargetId = "ContentTag"
                }))
         </div>
         <div class="clearfix"></div>
     }
     else
     {
-        if (ViewBag.Search != null && ViewBag.Search != "")
-        {
-            <p style="margin-left:15px;color:red;margin-bottom:30px;"> Không có sách nào cho từ khóa "@ViewBag.Search"!</p>
-        }
-        else
-        {
-            <p style="margin-left:15px;color:red;margin-bottom:30px;"> Không có sách nào!</p>
-        }
+        <p style="margin-left:15px;color:red;margin-bottom:30px;"> Không có sách nào trong tag này!</p>
     }
 </div>

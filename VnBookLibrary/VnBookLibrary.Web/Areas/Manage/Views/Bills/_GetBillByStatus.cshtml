@@ -54,6 +54,14 @@
                 {
                     <option value="@Constants.STATTUS_BILL_RETURNED">Hóa đơn bị trả lại</option>
                 }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_CANCEL)
+                {
+                    <option selected value="@Constants.STATTUS_BILL_CANCEL">Hóa đơn bị hủy</option>
+                }
+                else
+                {
+                    <option value="@Constants.STATTUS_BILL_CANCEL">Hóa đơn bị hủy</option>
+                }
             </select>
         </div>
     </div>
@@ -74,6 +82,14 @@
                 @if (ViewBag.StatusBill == -1)
                 {
                     <th>Tình trạng</th>
+                }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_CANCEL)
+                {
+                    <th>Lý do hủy</th>
+                }
+                @if (ViewBag.StatusBill == Constants.STATTUS_BILL_RETURNED)
+                {
+                    <th>Lý do trả về</th>
                 }
                 <th data-orderable="false"></th>
             </tr>
@@ -105,35 +121,94 @@
                             {
                                 <text>Hóa đơn bị trả về</text>
                             }
+                            else if (bill.Status == Constants.STATTUS_BILL_CANCEL)
+                            {
+                                <text>Hóa đơn bị hủy</text>
+                            }
                         </td>
                     }
-                    <td style="">
-                        <a class="btn btn-default btn-sm" onclick="ViewDetail(@bill.BillId)" href="javascript:void(0)" title="Xem chi tiết hóa đơn"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                        @if (bill.Status == Constants.STATTUS_BILL_NEW)
-                        {
-                            using (Html.BeginForm("ConfirmDeliver", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                    @if (ViewBag.StatusBill == Constants.STATTUS_BILL_CANCEL)
+                    {
+                        <td>@bill.ReasonForCancel</td>
+                    }
+                    @if (ViewBag.StatusBill == Constants.STATTUS_BILL_RETURNED)
+                    {
+                        <td>@bill.ReasonForReturn</td>
+                    }
+                        <td style="">
+                            @using (Ajax.BeginForm("PrintBill", "Bills", new { id = bill.BillId },new AjaxOptions() {
+                                OnBegin="BeginPrint()",
+                            }, new { style = "display:inline-block" }))
                             {
-                                <button type="submit" class="btn btn-sm btn-danger">Giao hàng</button>
-                            }
-                        }
-                        else if (bill.Status == Constants.STATTUS_BILL_DELIVERING)
-                        {
-                            using (Html.BeginForm("ConfirmPaid", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                                <button style="margin:5px 3px" type="submit" class="btn btn-sm btn-info" title="In hóa đơn"><i class="fa fa-print fa-lg"></i> In hóa đơn</button>
+                            }                            
+                            <a style="margin:5px 3px" class="btn btn-default btn-sm" onclick="ViewDetail(@bill.BillId)" href="javascript:void(0)" title="Xem chi tiết hóa đơn"><i class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                            @if (bill.Status == Constants.STATTUS_BILL_NEW)
                             {
-                                <button type="submit" class="btn btn-sm btn-success">Xác nhận đã thanh toán</button>
+                                using (Html.BeginForm("ConfirmDeliver", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                                {
+                                    <button style="margin:5px 3px" type="submit" class="btn btn-sm btn-primary">Giao hàng</button>
+                                }
                             }
-                            using (Html.BeginForm("ConfirmReturned", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                            else if (bill.Status == Constants.STATTUS_BILL_DELIVERING)
                             {
-                                <text>&nbsp;</text><button type="submit" class="btn btn-sm btn-warning">Bị trả về</button>
+                                using (Html.BeginForm("ConfirmPaid", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { style = "display:inline-block" }))
+                                {
+                                    <button style="margin:5px 3px" type="submit" class="btn btn-sm btn-success">Xác nhận đã thanh toán</button>
+                                }
+                                using (Html.BeginForm("ConfirmReturned", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { @id = "FormReturn" + bill.BillId, style = "display:inline-block" }))
+                                {
+                                    <input type="hidden" id="reasonForReturn" name="reasonForReturn" value="" />
+                                    <button style="margin:5px 3px" type="button" onclick="ConfirmReturnBill(@bill.BillId)" class="btn btn-sm btn-warning">Bị trả về</button>
+                                }
                             }
-                        }
-                    </td>
+                            @if (bill.Status != Constants.STATTUS_BILL_PAID && bill.Status != Constants.STATTUS_BILL_CANCEL && bill.Status != Constants.STATTUS_BILL_RETURNED)
+                            {
+                                using (Html.BeginForm("ConfirmCancel", "Bills", new { billId = bill.BillId }, FormMethod.Post, new { @id = "FormCancel" + bill.BillId, style = "display:inline-block" }))
+                                {
+                                    <input type="hidden" id="reasonForCancel" name="reasonForCancel" value="" />
+                                    <button type="button" style="margin:5px 3px" class="btn btn-sm btn-danger" onclick="ConfirmCancelBill(@bill.BillId)">Hủy hóa đơn</button>
+                                }
+                            }
+                        </td>
                 </tr>
             }
         </tbody>
     </table>
-    <div class="clearfix"></div>   
+    <div class="clearfix"></div>
     <script>
+        function ConfirmReturnBill(billId) {
+            var reasonForReturn = prompt("Lý do trả về hóa đơn?");
+            if (reasonForReturn.trim() == "") {
+                Lobibox.notify('warning', {
+                    size: 'mini',
+                    rounded: true,
+                    delayIndicator: false,
+                    msg: "Không được để trống lý do trả về!",
+                    sound: false,
+                });
+            }
+            else {
+                $("#reasonForReturn").val(reasonForReturn);
+                $("#FormReturn" + billId).submit();
+            }
+        }
+        function ConfirmCancelBill(billId) {
+            var reasonForCancel = prompt("Lý do hủy hóa đơn?");
+            if (reasonForCancel.trim() == "") {
+                Lobibox.notify('warning', {
+                    size: 'mini',
+                    rounded: true,
+                    delayIndicator: false,
+                    msg: "Không được để trống lý do hủy!",
+                    sound: false,
+                });
+            }
+            else {
+                $("#reasonForCancel").val(reasonForCancel);
+                $("#FormCancel" + billId).submit();
+            }
+        }
         $(document).ready(function () {
             $('#TableBills').DataTable({
                 "order": [[3, "desc"]],
@@ -180,6 +255,15 @@
                     $("#modalDetail .modal-body").html(html);
                     $("#modalDetail").modal("show");
                 },
+            });
+        }
+        function BeginPrint() {
+            Lobibox.notify('info', {
+                size: 'mini',
+                rounded: true,
+                delayIndicator: false,
+                msg: "Nhấn Alt+Tab để chuyển sang Tab In hóa đơn",
+                sound: false,
             });
         }
     </script>

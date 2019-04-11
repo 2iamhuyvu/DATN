@@ -89,6 +89,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -187,7 +188,6 @@
     <Compile Include="Areas\Manage\Controllers\GroupRolesController.cs" />
     <Compile Include="Areas\Manage\Controllers\NewsController.cs" />
     <Compile Include="Areas\Manage\Controllers\RolesController.cs" />
-    <Compile Include="Areas\Manage\Controllers\SaleEventsController.cs" />
     <Compile Include="Areas\Manage\Controllers\TagsController.cs" />
     <Compile Include="Areas\Manage\Customizes\BaseController.cs" />
     <Compile Include="Areas\Manage\Controllers\BillsController.cs" />
@@ -210,6 +210,7 @@
     <Compile Include="Areas\Manage\ManageAreaRegistration.cs" />
     <Compile Include="Areas\Manage\Models\ChangePasswordVM.cs" />
     <Compile Include="Areas\Manage\Models\ManageSessionModel.cs" />
+    <Compile Include="Areas\Manage\Models\PrintBillModel.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -4265,6 +4266,9 @@
     <Content Include="Views\Home\DetailProduct.cshtml" />
     <Content Include="Views\Home\Books.cshtml" />
     <Content Include="Views\Home\_RecommenproductByCart.cshtml" />
+    <Content Include="Views\Home\_RecommenproductByCart2.cshtml" />
+    <Content Include="Views\Home\_GetProductByTag.cshtml" />
+    <Content Include="Views\Home\Tag.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

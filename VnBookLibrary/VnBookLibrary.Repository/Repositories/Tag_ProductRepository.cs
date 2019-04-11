@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,11 @@ namespace VnBookLibrary.Repository.Repositories
         }
         public Tag_ProductRepository() : base()
         {
-        }       
+        }     
+        public IPagedList<Product> GetPageListProductByTag(int tagId,int page, int pageSize)
+        {
+            var temp= _context.Tag_Products.Where(x => x.TagId == tagId).Select(x => x.Product).ToList();
+            return temp.OrderBy(x => x.ProductName).ToPagedList(page, pageSize);
+        }
     }
 }

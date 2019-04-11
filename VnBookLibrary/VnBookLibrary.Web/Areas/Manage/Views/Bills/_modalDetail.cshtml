@@ -6,7 +6,7 @@
     var a = ViewBag.ListBillDetail;
     List<BillDetail> billDetails = ViewBag.ListBillDetail;
 }
-<style>    
+<style>
     table {
         margin-bottom: -1px !important;
     }
@@ -19,47 +19,63 @@
         <div class="panel-body">
             <table class="table table-bordered table-striped">
                 <tr>
-                    <th>Tên khách hàng</th>
-                    <td>@bill.CustomerName</td>
-                </tr>
-                <tr>
-                    <th>Điện thoại </th>
-                    <td>@bill.CustomerPhone</td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td>@bill.CustomerEmail</td>
-                </tr>
-                <tr>
-                    <th>Ngày mua</th>
+                    <th style="width:200px">Tên khách hàng:</th>
+                    <td style="width:300px">@bill.CustomerName</td>
+                    <th>Ngày mua:</th>
                     <td>@bill.BuyDate</td>
                 </tr>
                 <tr>
-                    <th>Địa chỉ giao hàng</th>
-                    <td>@bill.Address</td>
+                    <th>Điện thoại:</th>
+                    <td>@bill.CustomerPhone</td>
+                    <th>Email:</th>
+                    <td>@bill.CustomerEmail</td>
                 </tr>
                 <tr>
-                    <th>Tổng tiền</th>
-                    <td>@((bill.IntoMoney ?? 0).ToString("c", new CultureInfo("vi-VN")))</td>
+                    <th>Địa chỉ giao hàng:</th>
+                    <td colspan="3">@bill.Address</td>
                 </tr>
                 <tr>
-                    <th>Tình trạng</th>
+                    <th>Tình trạng:</th>
                     @if (bill.Status == Constants.STATTUS_BILL_NEW)
                     {
-                        <td>Hoa đơn mới, chưa giao hàng</td>
+                        <td colspan="3">Hóa đơn mới, chưa giao hàng</td>
                     }
                     else if (bill.Status == Constants.STATTUS_BILL_DELIVERING)
                     {
-                        <td>Hóa đơn đang giao - Chưa thanh toán</td>
+                        <td colspan="3">Hóa đơn đang giao - Chưa thanh toán</td>
                     }
                     else if (bill.Status == Constants.STATTUS_BILL_PAID)
                     {
-                        <td>Hóa đơn đã thanh toán</td>
+                        <td colspan="3">
+                            Hóa đơn đã thanh toán - Nhân viên xác nhận:
+                            <span style="color:red">
+                                @bill.PaymentEmployee.EmployeeName (@bill.PaymentEmployee.LoginName)
+                            </span>
+                        </td>
+                    }
+                    else if (bill.Status == Constants.STATTUS_BILL_RETURNED)
+                    {
+                        <td colspan="3">
+                            Hóa đơn bị trả lại - Lý do trả về:
+                            <span style="color:red">
+                                @bill.ReasonForReturn
+                            </span>
+                        </td>
                     }
                     else
                     {
-                        <td>Hóa đơn bị trả lại</td>
+                        <td colspan="3">
+                            Hóa đơn bị hủy - Lý do hủy:
+                            <span style="color:red">
+                                @bill.ReasonForCancel
+                            </span>
+                        </td>
                     }
+
+                </tr>
+                <tr>
+                    <th>Tổng tiền</th>
+                    <th colspan="3" style="color:red">@((bill.IntoMoney ?? 0).ToString("c", new CultureInfo("vi-VN")))</th>
                 </tr>
             </table>
         </div>
@@ -98,7 +114,7 @@
                 </tbody>
             </table>
         </div>
-    </div>        
+    </div>
 </div>
 <script>
     $(document).ready(function () {

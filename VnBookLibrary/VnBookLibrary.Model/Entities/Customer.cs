@@ -31,6 +31,8 @@ namespace VnBookLibrary.Model.Entities
         [Required(ErrorMessage ="Không được để trống tên đăng nhập!")]        
         public string LoginName { get; set; }
 
+        public string FacebookId { get; set; }
+
         [Display(Name ="Mật khẩu")]
         [Required(ErrorMessage = "Không được để trống mật khẩu!")]
         [MinLength(5, ErrorMessage = "Mật khẩu tối thiểu là 5 ký tự")]

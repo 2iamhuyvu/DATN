@@ -15,20 +15,82 @@ using Newtonsoft.Json;
 using System.Net;
 using VnBookLibrary.Web.Areas.Manage.Customizes;
 using System.Threading.Tasks;
-
+using Facebook;
+using System.Configuration;
 namespace VnBookLibrary.Web.Controllers
 {
     public class HomeController : Controller
     {
         private VnBookLibraryDbContext db;
         private UnitOfWork UoW;
+        private Uri RedirectUri
+        {
+            get
+            {
+                var uriBuilder = new UriBuilder(Request.Url);
+                uriBuilder.Query = null;
+                uriBuilder.Fragment = null;
+                uriBuilder.Path = Url.Action("FacebookCallback");
+                return uriBuilder.Uri;
+            }
+        }
         public HomeController()
         {
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
 
-
+        public ActionResult LoginFacebook()
+        {
+            var fb = new FacebookClient();
+            var loginUrl = fb.GetLoginUrl(new
+            {
+                client_id = ConfigurationManager.AppSettings["FBAppId"],
+                client_secret = ConfigurationManager.AppSettings["FBAppSecret"],
+                redirect_uri= RedirectUri.AbsoluteUri,
+                response_type="code",
+                scope="email"
+            });
+            return Redirect(loginUrl.AbsoluteUri);
+        }
+        public ActionResult FacebookCallback(string code)
+        {
+            var fb = new FacebookClient();
+            dynamic result = fb.Post("oauth/access_token", new
+            {
+                client_id = ConfigurationManager.AppSettings["FBAppId"],
+                client_secret = ConfigurationManager.AppSettings["FBAppSecret"],
+                redirect_uri = RedirectUri.AbsoluteUri,
+                code = code,
+            });
+            var accessToken = result.access_token;
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                fb.AccessToken = accessToken;
+                dynamic me = fb.Get("me?fields=first_name,last_name,id");
+                string email = me.email;
+                string firstName = me.first_name;                
+                string lastName = me.last_name;
+                string fbid=me.id;
+                Customer c = new Customer()
+                {
+                    CustomerName = firstName + " " + lastName,
+                    Email="emailCustomer@gmail.com",
+                    IsBlock=false,
+                    Phone="0987654321",
+                    Password="vnbook",
+                    LoginName= firstName + lastName,
+                    RePassword="vnbook",
+                    FacebookId= fbid,                   
+                };
+                var thisCustomer = UoW.CustomerRepository.LoginFacebook(c);
+                Session[Constants.CUSTOMER_SESSION] = thisCustomer;
+                TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng nhập thành công!" };
+                return RedirectToAction("Index");
+            }
+            TempData["Notify"] = new JsonResultBO(true) { Message = "Lỗi! Không đăng nhập được bằng!" };
+            return RedirectToAction("Index");
+        }
         public ActionResult Index()
         {
             if (Session[Constants.CUSTOMER_SESSION] != null)
@@ -460,7 +522,7 @@ namespace VnBookLibrary.Web.Controllers
         [HttpPost]
         public ActionResult Login(string loginname, string password, string returnUrl)
         {
-            Customer customer = db.Customers.FirstOrDefault(x => x.LoginName.Equals(loginname) && x.Password.Equals(password));
+            Customer customer = db.Customers.FirstOrDefault(x => x.LoginName.Equals(loginname) && x.Password.Equals(password)&&string.IsNullOrEmpty(x.FacebookId));
             if (customer != null)
             {
                 if (customer.IsBlock == true)

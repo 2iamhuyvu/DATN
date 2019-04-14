@@ -118,7 +118,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Điện thoại <span style="color:red">*</span></label>
-                                @if (customer != null)
+                                @if (customer != null&&string.IsNullOrEmpty(customer.FacebookId))
                                 {
                                     <input style="max-width:100%!important;border:1px solid #ccc!important" class="form-control" value="@customer.Phone" name="CustomerPhone" id="CustomerPhone" />
                                 }
@@ -129,7 +129,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Email </label>
-                                @if (customer != null)
+                                @if (customer != null&& string.IsNullOrEmpty(customer.FacebookId))
                                 {
                                     <input style="max-width:100%!important;border:1px solid #ccc!important" type="text" class="form-control" value="@customer.Email" name="CustomerEmail" id="CustomerEmail" />
                                 }

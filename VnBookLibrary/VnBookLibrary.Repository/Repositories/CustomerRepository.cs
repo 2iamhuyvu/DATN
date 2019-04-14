@@ -32,6 +32,16 @@ namespace VnBookLibrary.Repository.Repositories
                 }
             }
             return rs;
-        }       
+        } 
+        public Customer LoginFacebook(Customer customer)
+        {
+            var c = _context.Customers.FirstOrDefault(x => x.FacebookId.Equals(customer.FacebookId));
+            if (c == null)
+            {
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+            }
+            return customer;
+        }
     }
 }

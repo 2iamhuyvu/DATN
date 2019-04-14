@@ -93,11 +93,11 @@
 
         .block2-overlay > a {
             display: none;
-        }        
-        
-       
-        .block2-labelnew::before{
-            display:none!important;
+        }
+
+
+        .block2-labelnew::before {
+            display: none !important;
         }
     </style>
 </head>
@@ -119,10 +119,10 @@
                     <span class="topbar-email" style="font-size:13px;color: white">
                         @if (customer != null)
                         {
-                            <a style="color:#fff;" href="javascript:void(0)">@customer.LoginName &nbsp;|&nbsp;</a>
+                            <a style="color:#fff;" href="javascript:void(0)">@customer.CustomerName &nbsp;|&nbsp;</a>
                             using (Html.BeginForm("LogOut", "Home", FormMethod.Post, new { style = "display:inline-block", id = "FLogOut" }))
                             {
-                                <span onclick="LogOut()" style="cursor:pointer"><i class="fa fa-sign-out fa-lg"></i>Đăng xuất</span>
+                                <a style="color:#fff;cursor:pointer" href="javascript:void(0)" onclick="LogOut()"><i class="fa fa-sign-out fa-lg"></i>Đăng xuất</a>
                             }
                         }
                         else
@@ -217,7 +217,7 @@
     <!-- Footer -->
     <footer class="bg6 p-t-45 p-b-43 p-l-45 p-r-45">
         <div class="container">
-            <div class="row p-b-90">                
+            <div class="row p-b-90">
                 <div class="col-md-4">
                     <h4 class="s-text12 p-b-30">
                         Thông tin liên hệ
@@ -290,6 +290,8 @@
         </div>
     </footer>
 
+    @*FACEBOOK*@
+
 
 
     <!-- Back to top -->
@@ -300,7 +302,7 @@
     </div>
 
     <div class="modal fade" id="ModalLogin" role="dialog">
-        <div class="modal-dialog" style="width:500px;margin-top:100px">
+        <div class="modal-dialog" style="width:650px;margin-top:100px">
             @using (Html.BeginForm("Login", "Home", FormMethod.Post))
             {
                 <div class="modal-content">
@@ -309,18 +311,26 @@
                         <h4 class="modal-title" style="color:white">Đăng nhập khách hàng</h4>
                     </div>
                     <div class="modal-body">
-                        @Html.Hidden("returnUrl", Context.Request.Url.AbsolutePath)
-                        <div class="form-group">
-                            <label for="loginName" class="">Tên đăng nhập</label>
-                            <input class="form-control" id="loginName" name="loginName" />
-                        </div>
-                        <div class="form-group">
-                            <label for="password" class="">Mật khẩu</label>
-                            <input class="form-control" id="pasword" type="password" name="password" />
+                        <div class="row">
+                            <div class="col-md-7" style="border-right:1px solid #ccc">
+                                @Html.Hidden("returnUrl", Context.Request.Url.AbsolutePath)
+                                <div class="form-group">
+                                    <label for="loginName" class="">Tên đăng nhập</label>
+                                    <input class="form-control" id="loginName" name="loginName" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="">Mật khẩu</label>
+                                    <input class="form-control" id="pasword" type="password" name="password" />
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <a style="margin-top:60px;" class="btn btn-default" href="@Url.Action("LoginFacebook","Home")"><i class="fa fa-facebook fa-lg" style="color:#337ab7"></i> Đăng nhập bằng Facebook</a>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary btn-dropbox"> <i class="fa fa-sign-in fa-lg"></i> Đăng nhâp</button>
+                        <button style="float:left" type="submit" class="btn btn-success btn-dropbox"> <i class="fa fa-sign-in fa-lg"></i> Đăng nhâp</button>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
             }
@@ -363,32 +373,32 @@
         </script>
     }
     <script>
-        $(document).ready(function () {            
+        $(document).ready(function () {
             Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
                 soundPath: '../../PluginFrontend/lobibox-master/sounds/',
-            });            
+            });
         });
         function LoadRecomendByCart() {
             $.ajax({
                 url: '@Url.Action("_RecommenproductByCart", "Home")',
                 type: 'POST',
-                dataType: 'html',                
+                dataType: 'html',
                 success: function (html) {
                     $("#RECOMENDBYCART").html(html);
                 },
-            });            
-        } 
+            });
+        }
          function LoadRecomendByCartViewDetail() {
             $.ajax({
                 url: '@Url.Action("_RecommenproductByCart2", "Home")',
                 type: 'POST',
-                dataType: 'html',                
+                dataType: 'html',
                 success: function (html) {
                     $("#divDetail #recomendByCart").html(html);
                 },
-            });            
-        }  
-        $('.UseSelect2').select2();      
+            });
+        }
+        $('.UseSelect2').select2();
          function AddToCart(productid) {
             $.ajax({
                 url: '@Url.Action("AddToCart","Home")',

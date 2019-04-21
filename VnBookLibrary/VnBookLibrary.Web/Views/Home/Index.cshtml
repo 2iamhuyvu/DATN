@@ -98,8 +98,7 @@
             @if ((List<Product>)ViewBag.ReCommendProductByCustomer != null && ((List<Product>)ViewBag.ReCommendProductByCustomer).Count() > 0)
             {
                 Html.RenderPartial("~/Views/Home/_RecommendProductByCustomer.cshtml", (List<Product>)ViewBag.ReCommendProductByCustomer);
-            }
-            <div class="clearfix"></div>
+            }            
             @if ((List<Product>)ViewBag.ReCommendProductByRate != null && ((List<Product>)ViewBag.ReCommendProductByRate).Count() > 0)
             {
                 Html.RenderPartial("~/Views/Home/_RecommendProductByRateCustomer.cshtml", (List<Product>)ViewBag.ReCommendProductByRate);
@@ -107,6 +106,10 @@
             <div id="RECOMENDBYCART">
 
             </div>
+            @if ((List<Product>)ViewBag.ProductsBeRatedLiked != null && ((List<Product>)ViewBag.ProductsBeRatedLiked).Count() > 0)
+            {
+                Html.RenderPartial("~/Views/Home/_ProductsBeRatedLiked.cshtml", (List<Product>)ViewBag.ProductsBeRatedLiked);
+            }
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Các thẻ sách</h3>
@@ -118,10 +121,7 @@
                     }
                 </div>
             </div>
-            @if ((List<Product>)ViewBag.ProductsBeRatedLiked != null && ((List<Product>)ViewBag.ProductsBeRatedLiked).Count() > 0)
-            {
-                Html.RenderPartial("~/Views/Home/_ProductsBeRatedLiked.cshtml", (List<Product>)ViewBag.ProductsBeRatedLiked);
-            }
+
         </div>
     </div>
 </div>

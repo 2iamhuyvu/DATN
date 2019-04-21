@@ -9,7 +9,7 @@ namespace VnBookLibrary.Model.DAL
 {
     public class VnBookLibraryDbContext:DbContext
     {
-        public VnBookLibraryDbContext() : base("VnBookLibraryConnectionString")
+        public VnBookLibraryDbContext() : base("ConnectionString")
         {
             Database.SetInitializer<VnBookLibraryDbContext>(new VnBookLibraryInitial());
         }

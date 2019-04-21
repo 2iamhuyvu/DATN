@@ -97,6 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\PagedList.css" />
+    <Content Include="dll\CKFinder.dll" />
+    <Content Include="dll\CKFinder_FileEditor.dll" />
+    <Content Include="dll\CKFinder_ImageResize.dll" />
+    <Content Include="dll\CKFinder_Watermark.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

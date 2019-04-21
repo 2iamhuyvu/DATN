@@ -53,7 +53,7 @@ namespace VnBookLibrary.Web.Controllers
             });
             return Redirect(loginUrl.AbsoluteUri);
         }
-        public ActionResult FacebookCallback(string code)
+        public async Task<ActionResult> FacebookCallback(string code)
         {
             var fb = new FacebookClient();
             dynamic result = fb.Post("oauth/access_token", new
@@ -83,7 +83,12 @@ namespace VnBookLibrary.Web.Controllers
                     RePassword="vnbook",
                     FacebookId= fbid,                   
                 };
-                var thisCustomer = UoW.CustomerRepository.LoginFacebook(c);
+                bool isAdd = false;
+                var thisCustomer = UoW.CustomerRepository.LoginFacebook(c,ref isAdd);
+                if (isAdd)
+                {
+                     await UoW.RateProductRepository.InsertByNewCustomer(c.CustomerId);
+                }
                 Session[Constants.CUSTOMER_SESSION] = thisCustomer;
                 TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng nhập thành công!" };
                 return RedirectToAction("Index");
@@ -96,6 +101,11 @@ namespace VnBookLibrary.Web.Controllers
             if (Session[Constants.CUSTOMER_SESSION] != null)
             {
                 var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                var temp1 = UoW.RateProductRepository.GetProductsBeRated(customer.CustomerId);
+                var temp2 = UoW.LikeProductRepository.GetProductsBeLiked(customer.CustomerId);
+                temp1.AddRange(temp2);
+                ViewBag.ProductsBeRatedLiked = temp1.Distinct().ToList();
+                ViewBag.ReCommendProductByRate = UoW.RateProductRepository.GetSuggestions(customer.CustomerId,20);
                 ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
             }
             ViewBag.AllTag = UoW.TagRepository.GetAll().OrderBy(x=>x.OrderDisplay).ToList();
@@ -159,6 +169,14 @@ namespace VnBookLibrary.Web.Controllers
                     CustomerId = CustomerId,
                     ProductId = ProductId,
                     Point = Point,
+                });
+            }
+            else
+            {
+                UoW.RateProductRepository.Insert(new RateProduct()
+                {
+                    CustomerId = CustomerId,
+                    ProductId = ProductId,                    
                 });
             }
             return Json(new JsonResultBO(true));
@@ -313,6 +331,11 @@ namespace VnBookLibrary.Web.Controllers
             if (Session[Constants.CUSTOMER_SESSION] != null)
             {
                 var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                var temp1 = UoW.RateProductRepository.GetProductsBeRated(customer.CustomerId);
+                var temp2 = UoW.LikeProductRepository.GetProductsBeLiked(customer.CustomerId);
+                temp1.AddRange(temp2);
+                ViewBag.ProductsBeRatedLiked = temp1.Distinct().ToList();
+                ViewBag.ReCommendProductByRate = UoW.RateProductRepository.GetSuggestions(customer.CustomerId, 20);
                 ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
             }
             ViewBag.AllTag = UoW.TagRepository.GetAll().OrderBy(x => x.OrderDisplay).ToList();
@@ -552,7 +575,7 @@ namespace VnBookLibrary.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SignUp(Customer customer)
+        public async Task<ActionResult> SignUp(Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -565,6 +588,7 @@ namespace VnBookLibrary.Web.Controllers
                 {
                     customer.IsBlock = false;
                     UoW.CustomerRepository.Insert(customer);
+                    await UoW.RateProductRepository.InsertByNewCustomer(customer.CustomerId);
                     Session[Constants.CUSTOMER_SESSION] = customer;
                     TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng ký thành công!" };
                     return RedirectToAction("Index");

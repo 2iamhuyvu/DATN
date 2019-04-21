@@ -14,8 +14,8 @@
     int numberLikes = ViewBag.NumberLike ?? 0;
     bool liked = ViewBag.Liked;
     double average = 0.0;
-    int rate1 = 0, rate2 = 0, rate3 = 0, rate4 = 0, rate5 = 0;
-    if (rateProducts != null && rateProducts.Count > 0)
+    int rate1 = 0, rate2 = 0, rate3 = 0, rate4 = 0, rate5 = 0;    
+    if (rateProducts != null && rateProducts.Where(x=>x.Point!=null).ToList().Count > 0)
     {
         foreach (var item in rateProducts)
         {

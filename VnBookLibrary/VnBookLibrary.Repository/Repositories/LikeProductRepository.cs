@@ -23,5 +23,9 @@ namespace VnBookLibrary.Repository.Repositories
                 _context.LikeProducts.Remove(likeProduct);
             return _context.SaveChanges();
         }
+        public List<Product>GetProductsBeLiked(int customerId)
+        {
+            return _context.LikeProducts.Where(x => x.CustomerId == customerId).ToList().Select(x => x.Product).ToList();
+        }
     }
 }

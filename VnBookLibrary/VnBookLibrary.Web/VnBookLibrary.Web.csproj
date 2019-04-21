@@ -4272,6 +4272,8 @@
     <Content Include="Views\Home\_RecommenproductByCart2.cshtml" />
     <Content Include="Views\Home\_GetProductByTag.cshtml" />
     <Content Include="Views\Home\Tag.cshtml" />
+    <Content Include="Views\Home\_RecommendProductByRateCustomer.cshtml" />
+    <Content Include="Views\Home\_ProductsBeRatedLiked.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

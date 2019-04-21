@@ -13,6 +13,7 @@ using PagedList.Mvc;
 using PagedList;
 using VnBookLibrary.Repository.Repositories;
 using VnBookLibrary.Repository.Commons;
+using System.Threading.Tasks;
 
 namespace VnBookLibrary.Web.Areas.Manage.Controllers
 {
@@ -61,13 +62,14 @@ namespace VnBookLibrary.Web.Areas.Manage.Controllers
 
         [HasRole(RoleCode = "CREATE_PRODUCT")]
         [HttpPost]
-        public ActionResult Create(Product product, List<int> ListTagId)
+        public async Task<ActionResult> Create(Product product, List<int> ListTagId)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     UoW.ProductRepository.Insert(product);
+                    await UoW.RateProductRepository.InsertByNewProduct(product.ProductId);
                     if (ListTagId != null && ListTagId.Count > 0)
                     {
                         foreach (var item in ListTagId)

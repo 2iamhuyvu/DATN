@@ -33,13 +33,14 @@ namespace VnBookLibrary.Repository.Repositories
             }
             return rs;
         } 
-        public Customer LoginFacebook(Customer customer)
+        public Customer LoginFacebook(Customer customer,ref bool isAdd)
         {
             var c = _context.Customers.FirstOrDefault(x => x.FacebookId.Equals(customer.FacebookId));
             if (c == null)
             {
                 _context.Customers.Add(customer);
                 _context.SaveChanges();
+                isAdd = true;
             }
             return customer;
         }

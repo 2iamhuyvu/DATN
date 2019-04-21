@@ -1,0 +1,80 @@
+﻿@model List<VnBookLibrary.Model.Entities.Product>
+@using System.Globalization;
+<style>
+
+    [data-slide="prev"] {
+        margin-right: 10px;
+    }
+
+    #RecomendByRateCustomer .block2-overlay {
+        display: none;
+    }
+
+    .centercss {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<div id="RecomendByRateCustomer">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Gợi ý từ những đánh giá của bạn</h3>
+        </div>
+        <div class="panel-body">
+            <div id="carousel-main" class="carousel carouselRecomendByRateCustomer slide " data-ride="carousel" data-interval="5000" style="">                
+                @if (Model.Count >4)
+                {
+                    <div style="height:30px;padding:0px 15px">
+                        <a class="left  fa fa-arrow-circle-left fa-lg" href=".carouselRecomendByRateCustomer" style="position:absolute;left:0px;text-decoration:none;font-size:30px;color:green" role="button" data-slide="prev">                    </a>
+                        <a class="right  fa fa-arrow-circle-right fa-lg" href=".carouselRecomendByRateCustomer" style="position:absolute;right:0px;text-decoration:none;font-size:30px;color:green" role="button" data-slide="next">                    </a>
+                    </div>
+                }
+                <div class="carousel-inner">
+                    @for (int i = 0; i <Model.Count && (i + 2) < 20; i = i + 2)
+                    {
+                        var str = i == 0 ? "active" : "";
+                        <div class="item @str">
+                            <div class="row" style="margin:0px -5px!important;">                                
+                                @for (int j = i;j<Model.Count&& j < i + 2; j++)
+                                {
+                                    var product = Model[j];
+                                    <div class="col-md-6" style="margin-bottom:15px;padding:5px!important">
+                                        <div class="block2" style="box-shadow:#ccc 0px 0px 20px -5px;border:1px solid black;border-radius:5px">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:5px 5px 0px 0px">
+                                                    <img title="@product.ProductName" height="100%" style="border-radius:5px 5px 0px 0px" src="@product.AvatarLink" alt="@product.ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 5px;overflow:auto">
+                                                <div style="height:40px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' style="font-size:11px;font-weight:normal;color:#337ab7;font-weight:bold" title="@product.ProductName">
+                                                        @product.ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:block;font-size:13px;color:green;font-weight:normal">@product.Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (product.CoverPrice > 0)
+                                                    {
+                                                        <span style="display:block;font-size:11px;color:red;font-weight:normal;text-decoration:line-through">@((product.CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct","Home",new {id=product.ProductId })' class="btn btn-default btn-sm"><i style="color:black" class="glyphicon glyphicon-eye-open"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@product.ProductId)" class="btn btn-danger btn-sm" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus " style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

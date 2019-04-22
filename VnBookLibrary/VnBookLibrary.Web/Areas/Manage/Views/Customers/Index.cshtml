@@ -29,45 +29,63 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerName)
+            </td>
+            @if (item.FacebookId != null)
+            {
                 <td>
-                    @Html.DisplayFor(modelItem => item.CustomerName)
+                    Đăng nhập bằng Facebook
                 </td>
+            }
+            else
+            {
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            @if (item.FacebookId != null)
+            {
                 <td>
-                    @Html.DisplayFor(modelItem => item.Phone)
+                    Đăng nhập bằng Facebook
                 </td>
+            }
+            else
+            {
                 <td>
                     @Html.DisplayFor(modelItem => item.LoginName)
                 </td>
-                <td>@(item.IsBlock==true?"Bị khóa":"Hoạt động")</td>
-                <td style="text-align:center">
-                    @if (item.IsBlock == false || item.IsBlock == null)
+            }
+            <td>@(item.IsBlock == true ? "Bị khóa" : "Hoạt động")</td>
+            <td style="text-align:center">
+                @if (item.IsBlock == false)
+                {
+                    using (Ajax.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = true, Area = "Manage" }, new AjaxOptions()
                     {
-                        using (Ajax.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId,IsBlock=true, Area = "Manage" }, new AjaxOptions()
-                        {
-                            OnSuccess = "SuccessBlockCustomer",
-                            HttpMethod = "POST"
-                        }, new { @id = "BlockCtm"+item.CustomerId, style = "display:inline-block" }))
-                        {
-                            <button type="submit"  style="padding:0px;color:black;border:none;background: transparent" class=" fa fa-lock fa-lg" title="Khóa tài khoản"> Khóa</button>
-                        }
+                        OnSuccess = "SuccessBlockCustomer",
+                        HttpMethod = "POST"
+                    }, new { @id = "BlockCtm" + item.CustomerId, style = "display:inline-block" }))
+                    {
+                        <button type="submit" style="padding:0px;color:black;border:none;background: transparent" class=" fa fa-lock fa-lg" title="Khóa tài khoản"> Khóa</button>
                     }
-                    else
+                }
+                else
+                {
+                    using (Ajax.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = false, Area = "Manage" }, new AjaxOptions()
                     {
-                        using (Ajax.BeginForm("BlockCustomer", "Customers", new { id = item.CustomerId, IsBlock = false, Area = "Manage" }, new AjaxOptions()
-                        {
-                            OnSuccess = "SuccessBlockCustomer",
-                            HttpMethod = "POST"
-                        }, new { @id = "UnBlockCtm"+item.CustomerId, style = "display:inline-block" }))
-                        {
-                            <button style="padding:0px;color:black;border:none;background: transparent" type="submit" class=" fa fa-unlock fa-lg"  title="Mở khóa tài khoản"> Mở khóa</button>
-                        }
-                    }                       
-                </td>
-            </tr>
+                        OnSuccess = "SuccessBlockCustomer",
+                        HttpMethod = "POST"
+                    }, new { @id = "UnBlockCtm" + item.CustomerId, style = "display:inline-block" }))
+                    {
+                        <button style="padding:0px;color:black;border:none;background: transparent" type="submit" class=" fa fa-unlock fa-lg" title="Mở khóa tài khoản"> Mở khóa</button>
+                    }
+                }
+            </td>
+        </tr>
         }
     </tbody>
 </table>

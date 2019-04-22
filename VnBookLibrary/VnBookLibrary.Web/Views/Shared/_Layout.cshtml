@@ -99,6 +99,111 @@
         .block2-labelnew::before {
             display: none !important;
         }
+
+        /* Full-width input fields */
+        #DivLogin input[type=text], input[type=password] {
+            border-radius: 5px;
+            width: 100%;
+            padding: 5px 10px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        /* Set a style for all buttons */
+
+        #DivLogin button:hover {
+            opacity: 0.8;
+        }       
+
+        /* Center the image and position the close button */
+        #DivLogin .imgcontainer {
+            text-align: center;
+            margin: 24px 0 12px 0;
+            position: relative;
+        }
+
+        #DivLogin img.avatar {
+            width: 40%;
+            border-radius: 50%;
+        }
+
+        #DivLogin .container {
+            padding: 16px;
+        }
+
+
+        /* The Modal (background) */
+        #DivLogin .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 9999; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow:auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */            
+        }
+
+        /* Modal Content/Box */
+        #DivLogin .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button (x) */
+        #DivLogin .close {
+            position: absolute;
+            right: 25px;
+            top: 0;
+            color: #000;
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+            #DivLogin .close:hover,
+            .close:focus {
+                color: red;
+                cursor: pointer;
+            }
+
+        /* Add Zoom Animation */
+        .animate {
+            -webkit-animation: animatezoom 0.6s;
+            animation: animatezoom 0.6s
+        }
+
+        @@-webkit-keyframes animatezoom {
+            from {
+                -webkit-transform: scale(0)
+            }
+
+            to {
+                -webkit-transform: scale(1)
+            }
+        }
+
+        @@keyframes animatezoom {
+            from {
+                transform: scale(0)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        /* Change styles for span and cancel button on extra small screens */
+        @@media screen and (max-width: 300px) {
+            #DivLogin span.psw {
+                display: block;
+                float: none;
+            }            
+        }
     </style>
 </head>
 <body class="animsition">
@@ -128,7 +233,7 @@
                         else
                         {
                             <a style="color:#fff;" href="@Url.Action("SignUp","Home")">Đăng ký</a><span>&nbsp;|&nbsp;</span>
-                            <a style="color:#fff;" href="javascript:void(0)" onclick="OpenLogin()">Đăng nhập</a>
+                            <a style="color:#fff;" href="javascript:void(0)" onclick="document.getElementById('ModalLogin').style.display='block'">Đăng nhập</a>
                         }
                     </span>
                 </div>
@@ -213,7 +318,6 @@
             </div>
         </div>
     </section>
-
     <!-- Footer -->
     <footer class="bg6 p-t-45 p-b-43 p-l-45 p-r-45">
         <div class="container">
@@ -263,25 +367,6 @@
             </div>
 
             <div class="t-center p-l-15 p-r-15">
-                <a href="#">
-                    <img class="h-size2" src="~/Assets/Template/images/icons/paypal.png" alt="IMG-PAYPAL">
-                </a>
-
-                <a href="#">
-                    <img class="h-size2" src="~/Assets/Template/images/icons/visa.png" alt="IMG-VISA">
-                </a>
-
-                <a href="#">
-                    <img class="h-size2" src="~/Assets/Template/images/icons/mastercard.png" alt="IMG-MASTERCARD">
-                </a>
-
-                <a href="#">
-                    <img class="h-size2" src="~/Assets/Template/images/icons/express.png" alt="IMG-EXPRESS">
-                </a>
-
-                <a href="#">
-                    <img class="h-size2" src="~/Assets/Template/images/icons/discover.png" alt="IMG-DISCOVER">
-                </a>
 
                 <div class="t-center s-text8 p-t-20">
                     Copyright © 2019 All rights reserved. | This is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="javascript:void(0)">Vu Dinh Huy</a>
@@ -289,54 +374,48 @@
             </div>
         </div>
     </footer>
-
-    @*FACEBOOK*@
-
-
-
     <!-- Back to top -->
     <div class="btn-back-to-top bg0-hov" id="myBtn">
         <span class="symbol-btn-back-to-top" title="Đầu trang">
             <i class="fa fa-angle-double-up" aria-hidden="true"></i>
         </span>
     </div>
-
-    <div class="modal fade" id="ModalLogin" role="dialog">
-        <div class="modal-dialog" style="width:650px;margin-top:100px">
-            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+    <div id="DivLogin">        
+        <div id="ModalLogin" class="modal">
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "modal-content animate", style = "padding:10px; max-width:650px!important" }))
             {
-                <div class="modal-content">
-                    <div class="modal-header alert btn-danger btn-dropbox" style="border-radius:5px 5px 0px 0px">
-                        <button type="button" class="close" onclick="CancelLogin()">&times;</button>
-                        <h4 class="modal-title" style="color:white">Đăng nhập khách hàng</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-7" style="border-right:1px solid #ccc">
-                                @Html.Hidden("returnUrl", Context.Request.Url.AbsolutePath)
-                                <div class="form-group">
-                                    <label for="loginName" class="">Tên đăng nhập</label>
-                                    <input class="form-control" id="loginName" name="loginName" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="password" class="">Mật khẩu</label>
-                                    <input class="form-control" id="pasword" type="password" name="password" />
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <a style="margin-top:60px;" class="btn btn-default" href="@Url.Action("LoginFacebook","Home")"><i class="fa fa-facebook fa-lg" style="color:#337ab7"></i> Đăng nhập bằng Facebook</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button style="float:left" type="submit" class="btn btn-success btn-dropbox"> <i class="fa fa-sign-in fa-lg"></i> Đăng nhâp</button>
-                        <div class="clearfix"></div>
-                    </div>
+                @Html.Hidden("returnUrl", Context.Request.Url.AbsolutePath)
+
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('ModalLogin').style.display='none'" class="close" title="Close Modal">&times;</span>
+                    <img style="height:250px" src="~/Assets/Pic/Huy (98).jpg" alt="Avatar" class="avatar">
                 </div>
+                <div class="form-group">
+                    <label for="loginName"><b>Tên đăng nhập</b></label>
+                    <input type="text" placeholder="Tên đăng nhập" id="loginName" name="loginName" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"><b>Mật khẩu</b></label>
+                    <input type="password" placeholder="Mật khẩu" id="password" name="password" required>
+                </div>
+                <button style="width:100%" class="btn btn-success" type="submit">Đăng nhập</button>
+                <p style="text-align:center;color:black;margin:5px">hoặc</p> <a class="btn btn-primary" style="width:100%;color:#fff;" href="@Url.Action("LoginFacebook","Home")"><i class="fa fa-facebook fa-lg" style="color:#fff"></i> Đăng nhập bằng Facebook</a>
+                <button style="margin-top:15px;float:right" type="button" onclick="document.getElementById('ModalLogin').style.display='none'" class="btn btn-danger">Đóng</button>
+                <div class="clearfix"></div>
             }
         </div>
-    </div>
 
+        <script>
+            // Get the modal
+            var modal = document.getElementById('ModalLogin');
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
+    </div>
     <!--===============================================================================================-->
     <script type="text/javascript" src="~/Assets/Template/vendor/animsition/js/animsition.min.js"></script>
     <!--===============================================================================================-->
@@ -447,13 +526,7 @@
         }
         function LogOut() {
             $("#FLogOut").submit();
-        }
-        function CancelLogin() {
-            $("#ModalLogin").modal("hide");
-        }
-        function OpenLogin() {
-            $("#ModalLogin").modal("show");
-        }
+        }       
         $(document).ready(function () {
             Lobibox.notify.DEFAULTS = $.extend({}, Lobibox.notify.DEFAULTS, {
                 soundPath: '../../PluginFrontend/lobibox-master/sounds/',

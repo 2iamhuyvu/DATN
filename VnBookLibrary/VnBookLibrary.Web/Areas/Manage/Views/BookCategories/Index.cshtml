@@ -19,24 +19,33 @@
     .align-center {
         text-align: center
     }
+
+    li.active > a {
+        background: #337ab7 !important;
+        color: #fff !important;
+        font-size: 14px !important;
+    }
 </style>
 @section scripts{
     <script>
         $(document).ready(function () {
             if ('@ViewBag.displayCategory' == '1') {
-                TogglePanel("panelCategoryLv");
+                ActiveTab("CategoryLevel");
             }
             if ('@ViewBag.displayCategory' == '2') {
-                TogglePanel("panelCategoryAuthor");
+                ActiveTab("CategoryAuthor");
             }
             if ('@ViewBag.displayCategory' == '3') {
-                TogglePanel("panelCategoryPublisher");
+                ActiveTab("CategoryPublisher");
             }
         })
-        function TogglePanel(idPanel) {
-            $("#" + idPanel + " .panel-body").slideToggle();
-            $("#" + idPanel + " .panel-heading>h4>i").toggleClass("glyphicon-menu-left");
-            $("#" + idPanel + " .panel-heading>h4>i").toggleClass("glyphicon-menu-down");
+        function ActiveTab(idTab) {
+            $(".tab-pane").removeClass("in");
+            $(".tab-pane").removeClass("active");
+            $(".nav-tabs li ").removeClass("active");
+            $(".nav-tabs li a[href='#" + idTab + "'] ").parent("li").addClass("active");
+            $("#" + idTab).addClass("in");
+            $("#" + idTab).addClass("active");            
         }
         function SubmitFormDeleteLv1(id) {
             var x = Lobibox.confirm({
@@ -114,264 +123,192 @@
 }
 <h3>Các danh mục sách</h3>
 <hr />
-<div class="panel panel-primary" id="panelCategoryLv">
-    <div class="panel-heading">
-        <h4 style="cursor:pointer" title="Click để xem hoặc ẩn" onclick="TogglePanel('panelCategoryLv')" class="panel-title">Danh mục theo cấp<i class="glyphicon glyphicon-menu-left fa-lg" style="float:right"></i></h4>
-        <div class="clearfix"></div>
-    </div>
-    <div class="panel-body" style="display:none">
-        <div style="">
-            @if (alowCreateCategory)
-            {
-                <a class="btn btn-sm btn-success" href="@Url.Action("Create", "CategoryLv1")">Thêm danh mục cấp 1</a>
-                <a class="btn btn-sm btn-success" style="margin-left:15px;" href="@Url.Action("Create", "CategoryLv2")">Thêm danh mục cấp 2</a>
-            }
-            else
-            {
-                <a class="btn btn-sm btn-success" href="javascript:void(0)" style="cursor:not-allowed" title="Bạn không có quyền này !">Thêm danh mục cấp 1</a>
-                <a class="btn btn-sm btn-success" style="margin-left:15px; cursor:not-allowed" href="javascript:void(0)" title="Bạn không có quyền này !">Thêm danh mục cấp 2</a>
-            }
-        </div>
-        <div>
-            @if (listCategoryLv1.Count > 0)
-            {
-                <table class="table table-bordered table-striped " style="margin-bottom:0px;">
-                    <thead>
-                        <tr>
-                            <th>Tên danh mục cấp 1</th>
-                            <th>Sửa | Xóa | Xem sách</th>
-                            <th>Tên danh mục cấp 2</th>
-                            <th>Sửa | Xóa | Xem Sách</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (listCategoryLv2.Count > 0)
-                        {
-                            var groupLv2ByLv1 = listCategoryLv2.GroupBy(x => x.CategoryLv1Id).ToList();
-                            foreach (var group in groupLv2ByLv1)
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#CategoryLevel">Danh mục sách</a></li>
+    <li><a data-toggle="tab" href="#CategoryAuthor">Danh mục Tác giả</a></li>
+    <li><a data-toggle="tab" href="#CategoryPublisher">Danh mục Nhà xuất bản, Nhà phát hành</a></li>
+</ul>
+<div class="tab-content">
+    <div id="CategoryLevel" class="tab-pane fade in active">
+        <div style="margin:15px 0px;">
+            <div style="">
+                @if (alowCreateCategory)
+                {
+                    <a class="btn btn-sm btn-success" href="@Url.Action("Create", "CategoryLv1")">Thêm danh mục cấp 1</a>
+                    <a class="btn btn-sm btn-success" style="margin-left:15px;" href="@Url.Action("Create", "CategoryLv2")">Thêm danh mục cấp 2</a>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-success" href="javascript:void(0)" style="cursor:not-allowed" title="Bạn không có quyền này !">Thêm danh mục cấp 1</a>
+                    <a class="btn btn-sm btn-success" style="margin-left:15px; cursor:not-allowed" href="javascript:void(0)" title="Bạn không có quyền này !">Thêm danh mục cấp 2</a>
+                }
+            </div>
+            <div>
+                @if (listCategoryLv1.Count > 0)
+                {
+                    <table class="table table-bordered table-striped " style="margin-bottom:0px;">
+                        <thead>
+                            <tr>
+                                <th>Tên danh mục cấp 1</th>
+                                <th>Sửa | Xóa | Xem sách</th>
+                                <th>Tên danh mục cấp 2</th>
+                                <th>Sửa | Xóa | Xem Sách</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (listCategoryLv2.Count > 0)
                             {
-                                var list = group.ToList();
-                                var first = list.First();
-                                <tr>
-                                    <td class="center-parent" rowspan="@list.Count">
-                                        @first.CategoryLv1.CategoryLv1Name
-                                    </td>
-                                    <td class="align-center" rowspan="@list.Count">
-                                        @{
-                                            if (alowEditCategory)
-                                            {
-                                                <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv1", new { Area = "Manage", id = first.CategoryLv1Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-                                            else
-                                            {
-                                                <text><a title="Bạn không có quyền này !" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-
-                                            if (alowDeleteCategory)
-                                            {
-                                                <text>
-                                                    @using (Html.BeginForm("Delete", "CategoryLv1", new { id = first.CategoryLv1Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv1_" + first.CategoryLv1Id, style = "display:inline-block" }))
-                                                    {
-                                                        <a href="javascript:void(0)" onclick="SubmitFormDeleteLv1(@first.CategoryLv1Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                    }
-                                                </text>
-                                            }
-                                            else
-                                            {
-                                                <text>
-                                                    <a href="javascript:void(0)" title="Bạn không có quyền này !" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                </text>
-                                            }
-                                        }
-                                        &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv1Id=list.First().CategoryLv1Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                                    </td>
-                                    <td>@list.First().CategoryLv2Name</td>
-                                    <td class="align-center">
-                                        @{
-                                            if (alowEditCategory)
-                                            {
-                                                <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv2", new { Area = "Manage", id = first.CategoryLv2Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-                                            else
-                                            {
-                                                <text><a title="Bạn không có quyền này ! sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-
-                                            if (alowDeleteCategory)
-                                            {
-                                                <text>
-                                                    @using (Html.BeginForm("Delete", "CategoryLv2", new { id = first.CategoryLv2Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv2_" + first.CategoryLv2Id, style = "display:inline-block" }))
-                                                    {
-                                                        <a href="javascript:void(0)" onclick="SubmitFormDeleteLv2(@first.CategoryLv2Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                    }
-                                                </text>
-                                            }
-                                            else
-                                            {
-                                                <text>
-                                                    <a href="javascript:void(0)" title="Bạn không có quyền này ! xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                </text>
-                                            }
-                                        }
-                                        &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv2Id=list.First().CategoryLv2Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                                if (list.Count > 1)
+                                var groupLv2ByLv1 = listCategoryLv2.GroupBy(x => x.CategoryLv1Id).ToList();
+                                foreach (var group in groupLv2ByLv1)
                                 {
-                                    for (int i = 1; i < list.Count; i++)
-                                    {
-                                        <tr>
-                                            <td>@list[i].CategoryLv2Name</td>
-                                            <td class="align-center">
-                                                @{
-                                                    if (alowEditCategory)
-                                                    {
-                                                        <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv2", new { Area = "Manage", id = list[i].CategoryLv2Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                                    }
-                                                    else
-                                                    {
-                                                        <text><a title="Bạn không có quyền này ! sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                                    }
-
-                                                    if (alowDeleteCategory)
-                                                    {
-                                                        <text>
-                                                            @using (Html.BeginForm("Delete", "CategoryLv2", new { id = list[i].CategoryLv2Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv2_" + list[i].CategoryLv2Id, style = "display:inline-block" }))
-                                                            {
-                                                                <a href="javascript:void(0)" onclick="SubmitFormDeleteLv2(@list[i].CategoryLv2Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                            }
-                                                        </text>
-                                                    }
-                                                    else
-                                                    {
-                                                        <text>
-                                                            <a href="javascript:void(0)" title="Bạn không có quyền này ! xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                        </text>
-                                                    }
+                                    var list = group.ToList();
+                                    var first = list.First();
+                                    <tr>
+                                        <td class="center-parent" rowspan="@list.Count">
+                                            @first.CategoryLv1.CategoryLv1Name
+                                        </td>
+                                        <td class="align-center" rowspan="@list.Count">
+                                            @{
+                                                if (alowEditCategory)
+                                                {
+                                                    <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv1", new { Area = "Manage", id = first.CategoryLv1Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
                                                 }
-                                                &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv2Id=list[i].CategoryLv2Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                                            </td>
-                                        </tr>
+                                                else
+                                                {
+                                                    <text><a title="Bạn không có quyền này !" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
+
+                                                if (alowDeleteCategory)
+                                                {
+                                                    <text>
+                                                        @using (Html.BeginForm("Delete", "CategoryLv1", new { id = first.CategoryLv1Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv1_" + first.CategoryLv1Id, style = "display:inline-block" }))
+                                                        {
+                                                            <a href="javascript:void(0)" onclick="SubmitFormDeleteLv1(@first.CategoryLv1Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                        }
+                                                    </text>
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <a href="javascript:void(0)" title="Bạn không có quyền này !" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                    </text>
+                                                }
+                                            }
+                                            &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv1Id=list.First().CategoryLv1Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                                        </td>
+                                        <td>@list.First().CategoryLv2Name</td>
+                                        <td class="align-center">
+                                            @{
+                                                if (alowEditCategory)
+                                                {
+                                                    <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv2", new { Area = "Manage", id = first.CategoryLv2Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
+                                                else
+                                                {
+                                                    <text><a title="Bạn không có quyền này ! sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
+
+                                                if (alowDeleteCategory)
+                                                {
+                                                    <text>
+                                                        @using (Html.BeginForm("Delete", "CategoryLv2", new { id = first.CategoryLv2Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv2_" + first.CategoryLv2Id, style = "display:inline-block" }))
+                                                        {
+                                                            <a href="javascript:void(0)" onclick="SubmitFormDeleteLv2(@first.CategoryLv2Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                        }
+                                                    </text>
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <a href="javascript:void(0)" title="Bạn không có quyền này ! xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                    </text>
+                                                }
+                                            }
+                                            &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv2Id=list.First().CategoryLv2Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                                        </td>
+                                    </tr>
+                                    if (list.Count > 1)
+                                    {
+                                        for (int i = 1; i < list.Count; i++)
+                                        {
+                                            <tr>
+                                                <td>@list[i].CategoryLv2Name</td>
+                                                <td class="align-center">
+                                                    @{
+                                                        if (alowEditCategory)
+                                                        {
+                                                            <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv2", new { Area = "Manage", id = list[i].CategoryLv2Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text><a title="Bạn không có quyền này ! sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                        }
+
+                                                        if (alowDeleteCategory)
+                                                        {
+                                                            <text>
+                                                                @using (Html.BeginForm("Delete", "CategoryLv2", new { id = list[i].CategoryLv2Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv2_" + list[i].CategoryLv2Id, style = "display:inline-block" }))
+                                                                {
+                                                                    <a href="javascript:void(0)" onclick="SubmitFormDeleteLv2(@list[i].CategoryLv2Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                                }
+                                                            </text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>
+                                                                <a href="javascript:void(0)" title="Bạn không có quyền này ! xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                            </text>
+                                                        }
+                                                    }
+                                                    &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv2Id=list[i].CategoryLv2Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
                                     }
                                 }
                             }
-                        }
-                        @{
-                            //Các danh muc lv1 không có danh mục lv2
+                            @{
+                                //Các danh muc lv1 không có danh mục lv2
 
-                            var list1 = listCategoryLv1.Where(x => x.CategoryLv2s == null || x.CategoryLv2s.Count == 0).ToList();
-                            foreach (var item in list1)
-                            {
-                                <tr>
-                                    <td>
-                                        @item.CategoryLv1Name
-                                    </td>
-                                    <td class="align-center">
-                                        @{
-                                            if (alowEditCategory)
-                                            {
-                                                <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv1", new { Area = "Manage", id = item.CategoryLv1Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-                                            else
-                                            {
-                                                <text><a title="Bạn không có quyền này ! sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
+                                var list1 = listCategoryLv1.Where(x => x.CategoryLv2s == null || x.CategoryLv2s.Count == 0).ToList();
+                                foreach (var item in list1)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.CategoryLv1Name
+                                        </td>
+                                        <td class="align-center">
+                                            @{
+                                                if (alowEditCategory)
+                                                {
+                                                    <text><a title="Sửa" href="@Url.Action("Edit", "CategoryLv1", new { Area = "Manage", id = item.CategoryLv1Id })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
+                                                else
+                                                {
+                                                    <text><a title="Bạn không có quyền này ! sửa" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
 
-                                            if (alowDeleteCategory)
-                                            {
-                                                <text>
-                                                    @using (Html.BeginForm("Delete", "CategoryLv1", new { id = item.CategoryLv1Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv1_" + item.CategoryLv1Id, style = "display:inline-block" }))
-                                                    {
-                                                        <a href="javascript:void(0)" onclick="SubmitFormDeleteLv1(@item.CategoryLv1Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                    }
-                                                </text>
+                                                if (alowDeleteCategory)
+                                                {
+                                                    <text>
+                                                        @using (Html.BeginForm("Delete", "CategoryLv1", new { id = item.CategoryLv1Id, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteLv1_" + item.CategoryLv1Id, style = "display:inline-block" }))
+                                                        {
+                                                            <a href="javascript:void(0)" onclick="SubmitFormDeleteLv1(@item.CategoryLv1Id)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                        }
+                                                    </text>
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <a href="javascript:void(0)" title="Bạn không có quyền này ! xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                    </text>
+                                                }
                                             }
-                                            else
-                                            {
-                                                <text>
-                                                    <a href="javascript:void(0)" title="Bạn không có quyền này ! xóa" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                </text>
-                                            }
-                                        }
-                                        &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv1Id=item.CategoryLv1Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                                    </td>
-                                    <td colspan="2" style="color:red">Chưa có danh mục cấp 2!</td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p style="color:red"><i>Chưa có danh mục nào</i></p>
-            }
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-primary" id="panelCategoryAuthor">
-    <div class="panel-heading">
-        <h4 style="cursor:pointer" title="Click để xem hoặc ẩn" onclick="TogglePanel('panelCategoryAuthor')" class="panel-title">Danh mục Tác giả <i class="glyphicon glyphicon-menu-left fa-lg" style="float:right"></i></h4>
-    </div>
-    <div class="panel-body" style="display:none">
-        <div>
-            @if (alowCreateCategory)
-            {
-                <a class="btn btn-sm btn-success" href="@Url.Action("Create", "CategoryByAuthors")">Thêm danh mục tác giả</a>
-            }
-            else
-            {
-                <a class="btn btn-sm btn-success" href="javascript:void(0)" style="cursor:not-allowed" title="Bạn không có quyền này !">Thêm danh mục tác giả</a>
-            }
-            <div>
-                @if (listCategoryByAuthor.Count > 0)
-                {
-                    <table class="table table-bordered table-striped UseDataTables">
-                        <thead>
-                            <tr>
-                                <th>Tên danh mục tác giả</th>
-                                <th data-orderable="false">Sửa | Xóa | Xem sách</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in listCategoryByAuthor)
-                            {
-                                <tr>
-                                    <td>
-                                        @item.CategoryAuthorName
-                                    </td>
-                                    <td style="text-align:center">
-                                        @*<a title="Xem tác giả" href="@Url.Action("Details", "CategoryByAuthors", new { Area = "Manage", id = item.CategoryAuthorId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>&nbsp;&nbsp;*@
-                                        @{
-                                            if (alowEditCategory)
-                                            {
-                                                <text><a title="Sửa" href="@Url.Action("Edit", "CategoryByAuthors", new { Area = "Manage", id = item.CategoryAuthorId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-                                            else
-                                            {
-                                                <text><a title="Bạn không có quyền này !" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
-                                            }
-
-                                            if (alowDeleteCategory)
-                                            {
-                                                <text>
-                                                    @using (Html.BeginForm("Delete", "CategoryByAuthors", new { id = item.CategoryAuthorId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteAuthor_" + item.CategoryAuthorId, style = "display:inline-block" }))
-                                                    {
-                                                        <a href="javascript:void(0)" onclick="SubmitFormDeleteAuthor(@item.CategoryAuthorId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                    }
-                                                </text>
-                                            }
-                                            else
-                                            {
-                                                <text>
-                                                    <a href="javascript:void(0)" title="Bạn không có quyền này !" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                </text>
-                                            }
-                                        }
-                                        &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryAuthorId=item.CategoryAuthorId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                                    </td>
-                                </tr>
+                                            &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryLv1Id=item.CategoryLv1Id })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                                        </td>
+                                        <td colspan="2" style="color:red">Chưa có danh mục cấp 2!</td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -383,79 +320,148 @@
             </div>
         </div>
     </div>
-</div>
-<div class="panel panel-primary" id="panelCategoryPublisher">
-    <div class="panel-heading">
-        <h4 style="cursor:pointer" title="Click để xem hoặc ẩn" onclick="TogglePanel('panelCategoryPublisher')" class="panel-title">Danh mục Nhà xuất bản - Nhà phát hành <i class="glyphicon glyphicon-menu-left fa-lg" style="float:right"></i></h4>
-    </div>
-    <div class="panel-body" style="display:none">
-        <div>
-            @if (alowCreateCategory)
-            {
-                <a class="btn btn-sm btn-success" href="@Url.Action("Create", "CategoryByPublishers")">Thêm danh mục NXB - NPH</a>
-            }
-            else
-            {
-                <a class="btn btn-sm btn-success" href="javascript:void(0)" style="cursor:not-allowed" title="Bạn không có quyền này !">Thêm danh mục tác giả</a>
-            }
+    <div id="CategoryAuthor" class="tab-pane fade">
+        <div style="margin:15px 0px;">
             <div>
-                @if (listCategoryByPublisher.Count > 0)
+                @if (alowCreateCategory)
                 {
-                    <table class="table table-bordered table-striped UseDataTables">
-                        <thead>
-                            <tr>
-                                <th>Tên danh mục NXB - NPH</th>
-                                <th data-orderable="false">Sửa | Xóa | Xem sách</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in listCategoryByPublisher)
-                            {
-                                <tr>
-                                    <td>
-                                        @item.CategoryByPublisherName
-                                    </td>
-                                    <td style="text-align:center">
-                                        @*<a title="Xem NXB - NPH" href="@Url.Action("Details", "CategoryByPublishers", new { Area = "Manage", id = item.CategoryByPublisherId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>&nbsp;&nbsp;*@
-                                        @{
-                                            if (alowEditCategory)
-                                            {
-                                                <text><a title="Sửa" href="@Url.Action("Edit", "CategoryByPublishers", new { Area = "Manage", id = item.CategoryByPublisherId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp;&nbsp;</text>
-                                            }
-                                            else
-                                            {
-                                                <text><a title="Bạn không có quyền này !" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp;&nbsp;</text>
-                                            }
-
-                                            if (alowDeleteCategory)
-                                            {
-                                                <text>
-                                                    @using (Html.BeginForm("Delete", "CategoryByPublishers", new { id = item.CategoryByPublisherId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeletePublisher_" + item.CategoryByPublisherId, style = "display:inline-block" }))
-                                                    {
-                                                        <text><a href="javascript:void(0)" onclick="SubmitFormDeletePublisher(@item.CategoryByPublisherId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a></text>
-                                                    }
-                                                </text>
-                                            }
-                                            else
-                                            {
-                                                <text>
-                                                    <a href="javascript:void(0)" title="Bạn không có quyền này !" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
-                                                </text>
-                                            }
-                                        }
-                                        &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryPublisherId=item.CategoryByPublisherId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <a class="btn btn-sm btn-success" href="@Url.Action("Create", "CategoryByAuthors")">Thêm danh mục tác giả</a>
                 }
                 else
                 {
-                    <p style="color:red"><i>Chưa có danh mục nào</i></p>
+                    <a class="btn btn-sm btn-success" href="javascript:void(0)" style="cursor:not-allowed" title="Bạn không có quyền này !">Thêm danh mục tác giả</a>
                 }
+                <div>
+                    @if (listCategoryByAuthor.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped UseDataTables">
+                            <thead>
+                                <tr>
+                                    <th>Tên danh mục tác giả</th>
+                                    <th data-orderable="false">Sửa | Xóa | Xem sách</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in listCategoryByAuthor)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.CategoryAuthorName
+                                        </td>
+                                        <td style="text-align:center">
+                                            @*<a title="Xem tác giả" href="@Url.Action("Details", "CategoryByAuthors", new { Area = "Manage", id = item.CategoryAuthorId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>&nbsp;&nbsp;*@
+                                            @{
+                                                if (alowEditCategory)
+                                                {
+                                                    <text><a title="Sửa" href="@Url.Action("Edit", "CategoryByAuthors", new { Area = "Manage", id = item.CategoryAuthorId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
+                                                else
+                                                {
+                                                    <text><a title="Bạn không có quyền này !" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp; &nbsp;</text>
+                                                }
+
+                                                if (alowDeleteCategory)
+                                                {
+                                                    <text>
+                                                        @using (Html.BeginForm("Delete", "CategoryByAuthors", new { id = item.CategoryAuthorId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeleteAuthor_" + item.CategoryAuthorId, style = "display:inline-block" }))
+                                                        {
+                                                            <a href="javascript:void(0)" onclick="SubmitFormDeleteAuthor(@item.CategoryAuthorId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                        }
+                                                    </text>
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <a href="javascript:void(0)" title="Bạn không có quyền này !" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                    </text>
+                                                }
+                                            }
+                                            &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryAuthorId=item.CategoryAuthorId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p style="color:red"><i>Chưa có danh mục nào</i></p>
+                    }
+                </div>
             </div>
         </div>
     </div>
+    <div id="CategoryPublisher" class="tab-pane fade">
+        <div style="margin:15px 0px;">
+            <div>
+                @if (alowCreateCategory)
+                {
+                    <a class="btn btn-sm btn-success" href="@Url.Action("Create", "CategoryByPublishers")">Thêm danh mục NXB - NPH</a>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-success" href="javascript:void(0)" style="cursor:not-allowed" title="Bạn không có quyền này !">Thêm danh mục tác giả</a>
+                }
+                <div>
+                    @if (listCategoryByPublisher.Count > 0)
+                    {
+                        <table class="table table-bordered table-striped UseDataTables">
+                            <thead>
+                                <tr>
+                                    <th>Tên danh mục NXB - NPH</th>
+                                    <th data-orderable="false">Sửa | Xóa | Xem sách</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in listCategoryByPublisher)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.CategoryByPublisherName
+                                        </td>
+                                        <td style="text-align:center">
+                                            @*<a title="Xem NXB - NPH" href="@Url.Action("Details", "CategoryByPublishers", new { Area = "Manage", id = item.CategoryByPublisherId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>&nbsp;&nbsp;*@
+                                            @{
+                                                if (alowEditCategory)
+                                                {
+                                                    <text><a title="Sửa" href="@Url.Action("Edit", "CategoryByPublishers", new { Area = "Manage", id = item.CategoryByPublisherId })"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp;&nbsp;</text>
+                                                }
+                                                else
+                                                {
+                                                    <text><a title="Bạn không có quyền này !" href="javascript:void(0)" style="cursor:not-allowed"><i class="glyphicon glyphicon-edit fa-lg"></i></a>&nbsp;&nbsp;</text>
+                                                }
+
+                                                if (alowDeleteCategory)
+                                                {
+                                                    <text>
+                                                        @using (Html.BeginForm("Delete", "CategoryByPublishers", new { id = item.CategoryByPublisherId, Area = "Manage" }, FormMethod.Post, new { @id = "FormDeletePublisher_" + item.CategoryByPublisherId, style = "display:inline-block" }))
+                                                        {
+                                                            <text><a href="javascript:void(0)" onclick="SubmitFormDeletePublisher(@item.CategoryByPublisherId)" title="Xóa"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a></text>
+                                                        }
+                                                    </text>
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <a href="javascript:void(0)" title="Bạn không có quyền này !" style="cursor:not-allowed"><i class="glyphicon glyphicon glyphicon-trash fa-lg" style="color:red"></i></a>
+                                                    </text>
+                                                }
+                                            }
+                                            &nbsp; &nbsp;<a title="Xem sách" href="@Url.Action("Index","Products",new {CategoryPublisherId=item.CategoryByPublisherId })"><i class="glyphicon glyphicon-eye-open fa-lg"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p style="color:red"><i>Chưa có danh mục nào</i></p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>    
 </div>
+
 

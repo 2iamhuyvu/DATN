@@ -265,6 +265,7 @@
     <Content Include="Assets\DataTables\js\dataTables.semanticui.min.js" />
     <Content Include="Assets\DataTables\js\jquery.dataTables.js" />
     <Content Include="Assets\DataTables\js\jquery.dataTables.min.js" />
+    <Content Include="Assets\Pic\Huy %2898%29.jpg" />
     <Content Include="Assets\Manage\dist\css\sb-admin-2.css" />
     <Content Include="Assets\Manage\dist\css\sb-admin-2.min.css" />
     <Content Include="Assets\Manage\dist\js\sb-admin-2.js" />

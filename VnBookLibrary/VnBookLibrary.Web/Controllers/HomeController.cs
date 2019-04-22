@@ -89,9 +89,17 @@ namespace VnBookLibrary.Web.Controllers
                 {
                      await UoW.RateProductRepository.InsertByNewCustomer(c.CustomerId);
                 }
-                Session[Constants.CUSTOMER_SESSION] = thisCustomer;
-                TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng nhập thành công!" };
-                return RedirectToAction("Index");
+                if (!thisCustomer.IsBlock)
+                {
+                    Session[Constants.CUSTOMER_SESSION] = thisCustomer;
+                    TempData["Notify"] = new JsonResultBO(true) { Message = "Đăng nhập thành công!" };
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Notify"] = new JsonResultBO(false) { Message = "Tài khoản bị khóa!" };
+                    return RedirectToAction("Index");
+                }
             }
             TempData["Notify"] = new JsonResultBO(true) { Message = "Lỗi! Không đăng nhập được bằng!" };
             return RedirectToAction("Index");

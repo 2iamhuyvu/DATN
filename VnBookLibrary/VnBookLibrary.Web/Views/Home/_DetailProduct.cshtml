@@ -194,7 +194,7 @@
                                         <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
                                         <i title="Đăng nhập để tương tác!" style="cursor:pointer" class='fa fa-star-o'></i>
                                     </div>
-                                    <span><a href="javascripi:void(0)" style="color:#0066c0" onclick="OpenLogin()">Đăng nhập</a> để tương tác!</span>
+                                    <span><a href="javascripi:void(0)" style="color:#0066c0" onclick="document.getElementById('ModalLogin').style.display='block'">Đăng nhập</a> để tương tác!</span>
                                 </div>
                                 <div class="col-md-6">
                                     <button type="button" title="Đăng nhập để tương tác!" class="btn btn-default btn-lg" style="background:white!important">
@@ -238,8 +238,8 @@
                             <p class="number-start"><span>5</span> <i class="fa fa-star RateYellow"></i> <span style="float:right">@rate5</span></p>
                             <div class="clearfix"></div>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-warning" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:@((rate5>0?rate5*1.0/rateProducts.Count:0)*100)%">
+                                <div style="background-color:yellow;width:@((rate5>0?rate5*1.0/rateProducts.Count:0)*100)%;" class="progress-bar" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" >
                                 </div>
                             </div>
                         </li>
@@ -247,8 +247,8 @@
                             <p class="number-start"><span>4</span> <i class="fa fa-star RateYellow"></i> <span style="float:right">@rate4</span></p>
                             <div class="clearfix"></div>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-warning" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:@((rate4>0?rate4*1.0/rateProducts.Count:0)*100)%">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" style="background-color:yellow;width:@((rate4>0?rate4*1.0/rateProducts.Count:0)*100)%">
                                 </div>
                             </div>
                         </li>
@@ -256,8 +256,8 @@
                             <p class="number-start"><span>3</span> <i class="fa fa-star RateYellow"></i> <span style="float:right">@rate3</span></p>
                             <div class="clearfix"></div>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-warning" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:@((rate3>0?rate3*1.0/rateProducts.Count:0)*100)%">
+                                <div class="" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" style="background-color:yellow;width:@((rate3>0?rate3*1.0/rateProducts.Count:0)*100)%">
                                 </div>
                             </div>
                         </li>
@@ -265,8 +265,8 @@
                             <p class="number-start"><span>2</span> <i class="fa fa-star RateYellow"></i> <span style="float:right">@rate2</span></p>
                             <div class="clearfix"></div>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-warning" role="progressbar"
-                                     aria-valuemin="0" aria-valuemax="100" style="width:@((rate2>0?rate2*1.0/rateProducts.Count:0)*100)%">
+                                <div class="" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100" style="background-color:yellow;width:@((rate2>0?rate2*1.0/rateProducts.Count:0)*100)%">
                                 </div>
                             </div>
                         </li>
@@ -358,7 +358,7 @@
                     <div id="loginSpecial" class="loginSpecial DivLogin" style="width:420px">
                         <p style="color:black;" class="note">Đăng nhập để tương tác với chúng tôi!</p>
                         <p style="margin-top:10px;">
-                            <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="OpenLogin()">Đăng nhập</a>
+                            <a href="javasxript:void(0)" class="btn btn-primary" id="loginSpecial" onclick="document.getElementById('ModalLogin').style.display='block'">Đăng nhập</a>
                             <span class="not-have-account">
                                 Bạn chưa có tài khoản?
                                 Hãy

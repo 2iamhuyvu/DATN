@@ -265,6 +265,7 @@
     <Content Include="Assets\DataTables\js\dataTables.semanticui.min.js" />
     <Content Include="Assets\DataTables\js\jquery.dataTables.js" />
     <Content Include="Assets\DataTables\js\jquery.dataTables.min.js" />
+    <Content Include="Assets\Pic\haui.jpg" />
     <Content Include="Assets\Pic\Huy %2898%29.jpg" />
     <Content Include="Assets\Manage\dist\css\sb-admin-2.css" />
     <Content Include="Assets\Manage\dist\css\sb-admin-2.min.css" />
@@ -359,6 +360,7 @@
     <Content Include="Assets\Manage\vendor\morrisjs\morris.min.js" />
     <Content Include="Assets\Manage\vendor\raphael\raphael.js" />
     <Content Include="Assets\Manage\vendor\raphael\raphael.min.js" />
+    <Content Include="Assets\Pic\img_avatar.png" />
     <Content Include="Assets\Template\css\main.css" />
     <Content Include="Assets\Template\css\main.min.css" />
     <Content Include="Assets\Template\css\util.css" />
@@ -4275,6 +4277,7 @@
     <Content Include="Views\Home\Tag.cshtml" />
     <Content Include="Views\Home\_RecommendProductByRateCustomer.cshtml" />
     <Content Include="Views\Home\_ProductsBeRatedLiked.cshtml" />
+    <Content Include="Views\Home\AboutUs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

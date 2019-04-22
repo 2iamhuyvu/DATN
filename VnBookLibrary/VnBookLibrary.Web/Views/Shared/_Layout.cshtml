@@ -203,11 +203,10 @@
                 display: block;
                 float: none;
             }            
-        }
+        }        
     </style>
 </head>
 <body class="animsition">
-
     <!-- Header -->
     <header class="header1">
         <!-- Header desktop -->
@@ -225,6 +224,7 @@
                         @if (customer != null)
                         {
                             <a style="color:#fff;" href="javascript:void(0)">@customer.CustomerName &nbsp;|&nbsp;</a>
+
                             using (Html.BeginForm("LogOut", "Home", FormMethod.Post, new { style = "display:inline-block", id = "FLogOut" }))
                             {
                                 <a style="color:#fff;cursor:pointer" href="javascript:void(0)" onclick="LogOut()"><i class="fa fa-sign-out fa-lg"></i>Đăng xuất</a>
@@ -273,7 +273,7 @@
                                     <a href='@Url.Action("AboutUs", "Home")'>Giới thiệu</a>
                                 </li>
                             }
-                            @if (Request.Url.AbsolutePath == @Url.Action("AboutUs", "Home"))
+                            @if (Request.Url.AbsolutePath == @Url.Action("Contact", "Home"))
                             {
                                 <li class="sale-noti">
                                     <a href='@Url.Action("Contact", "Home")'>Liên hệ</a>
@@ -319,57 +319,11 @@
         </div>
     </section>
     <!-- Footer -->
-    <footer class="bg6 p-t-45 p-b-43 p-l-45 p-r-45">
-        <div class="container">
-            <div class="row p-b-90">
-                <div class="col-md-4">
-                    <h4 class="s-text12 p-b-30">
-                        Thông tin liên hệ
-                    </h4>
-
-                    <div>
-                        <p class="s-text7 w-size27">
-                            Bất cứ thắc mắc nào? Hãy cho chúng tôi biết tại cửa hàng số ..., đường ..., quận ..., Hà nội - Việt Nam hoặc liên hệ chúng tôi theo số điện thoại (+84) 987654321 hoặc email email@gmail.com
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <h4 class="s-text12 p-b-30">
-                        Danh mục
-                    </h4>
-
-                    <ul>
-                        <li class="p-b-9">
-                            <a href="#" class="s-text7">
-                                1
-                            </a>
-                        </li>
-
-                        <li class="p-b-9">
-                            <a href="#" class="s-text7">
-                                2
-                            </a>
-                        </li>
-
-                        <li class="p-b-9">
-                            <a href="#" class="s-text7">
-                                3
-                            </a>
-                        </li>
-
-                        <li class="p-b-9">
-                            <a href="#" class="s-text7">
-                                4
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
+    <footer class="bg6 p-t-30 p-b-30 p-l-45 p-r-45">
+        <div class="container">           
             <div class="t-center p-l-15 p-r-15">
-
-                <div class="t-center s-text8 p-t-20">
-                    Copyright © 2019 All rights reserved. | This is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="javascript:void(0)">Vu Dinh Huy</a>
+                <div style="color:black;font-size:16px" class="t-center s-text8 p-t-15">
+                    Copyright © 2019 All rights reserved. | This is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by Vũ Đình Huy</a>
                 </div>
             </div>
         </div>
@@ -388,7 +342,7 @@
 
                 <div class="imgcontainer">
                     <span onclick="document.getElementById('ModalLogin').style.display='none'" class="close" title="Close Modal">&times;</span>
-                    <img style="height:250px" src="~/Assets/Pic/Huy (98).jpg" alt="Avatar" class="avatar">
+                    <img style="height:250px" src="~/Assets/Pic/img_avatar.png" alt="Avatar" class="avatar">
                 </div>
                 <div class="form-group">
                     <label for="loginName"><b>Tên đăng nhập</b></label>
@@ -473,7 +427,7 @@
                 type: 'POST',
                 dataType: 'html',
                 success: function (html) {
-                    $("#divDetail #recomendByCart").html(html);
+                    $("#recomendByCart").html(html);
                 },
             });
         }

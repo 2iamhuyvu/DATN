@@ -39,7 +39,11 @@ namespace VnBookLibrary.Web.Controllers
             db = new VnBookLibraryDbContext();
             UoW = new UnitOfWork(db);
         }
-
+        [Route("gioi-thieu")]
+        public ActionResult AboutUs()
+        {
+            return View();
+        }
         public ActionResult LoginFacebook()
         {
             var fb = new FacebookClient();
@@ -122,7 +126,18 @@ namespace VnBookLibrary.Web.Controllers
         }
         public ActionResult Tag(int id)
         {
-            ViewBag.Tag =db.Tags.Find(id);            
+            ViewBag.Tag =db.Tags.Find(id);
+            if (Session[Constants.CUSTOMER_SESSION] != null)
+            {
+                var customer = (Customer)Session[Constants.CUSTOMER_SESSION];
+                var temp1 = UoW.RateProductRepository.GetProductsBeRated(customer.CustomerId);
+                var temp2 = UoW.LikeProductRepository.GetProductsBeLiked(customer.CustomerId);
+                temp1.AddRange(temp2);
+                ViewBag.ProductsBeRatedLiked = temp1.Distinct().ToList();
+                ViewBag.ReCommendProductByRate = UoW.RateProductRepository.GetSuggestions(customer.CustomerId, 20);
+                ViewBag.ReCommendProductByCustomer = UoW.RecommendRepository.GetRecommendProductByCustomer(customer.CustomerId);
+            }
+            ViewBag.AllTag = UoW.TagRepository.GetAll().OrderBy(x => x.OrderDisplay).ToList();
             return View();
         }
         public ActionResult _GetProductByTag(int tagId,int page = 1, int pageSize = 10)

@@ -1,11 +1,32 @@
-﻿@using PagedList.Mvc
+﻿@using System.Globalization;
+@using PagedList.Mvc
 @using PagedList
 @using VnBookLibrary.Model.Entities;
 @{
     Tag tag = ViewBag.Tag;
     ViewBag.Title = tag.TagName + " | VnBook";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Product> RecomendByCustommer = ViewBag.ReCommendProductByCustomer;
+    List<Product> RecomendByRate = ViewBag.ReCommendProductByRate;
+    List<Product> ProductsBeRatedLiked = ViewBag.ProductsBeRatedLiked;
+    List<Tag> AllTag = ViewBag.AllTag;
 }
+<style>
+    .block2-labelnew::before {
+        display: none !important;
+    }
+
+    .block2-overlay {
+        display: none !important;
+    }
+
+    a.carousel-control {
+        width: 5% !important;
+    }
+
+        a.carousel-control > span {
+        }
+</style>
 <div class="row">
     <div class="col-md-9">
         <div id="ContentTag">
@@ -18,5 +39,314 @@
             }
         </div>
     </div>
+    <div class="col-md-3" style="padding-top:70px;">
+        @if (RecomendByCustommer != null && RecomendByCustommer.Count > 0)
+        {
+            <div class="panel panel-primary">
+                <div class="panel-heading label-primary">
+                    <h3 style="font-weight:bold" class="panel-title">Có thể bạn quan tâm!</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="carousel-main2" class="carousel slide carouselRecomendByCustommer" data-ride="carousel" data-interval="2600">
+                        <!-- Carousel items -->
+                        <div class="carousel-inner">
+                            @for (int j = 0; j < RecomendByCustommer.Count && j < 10; j++)
+                            {
+                                if (j == 0)
+                                {
+                                    <div class="active item">
+                                        <div class="block2" style="border-radius:5px;">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:3px 5px 0px 0px">
+                                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@RecomendByCustommer[j].AvatarLink" alt="@RecomendByCustommer[j].ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                                                <div style="height:50px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=RecomendByCustommer[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByCustommer[j].ProductName">
+                                                        @RecomendByCustommer[j].ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@RecomendByCustommer[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (RecomendByCustommer[j].CoverPrice > 0)
+                                                    {
+                                                        <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByCustommer[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = RecomendByCustommer[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@RecomendByCustommer[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="item">
+                                        <div class="block2" style="border-radius:5px;">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:3px 0px 0px 0px">
+                                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@RecomendByCustommer[j].AvatarLink" alt="@RecomendByCustommer[j].ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                                                <div style="height:50px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=RecomendByCustommer[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByCustommer[j].ProductName">
+                                                        @RecomendByCustommer[j].ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@RecomendByCustommer[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (RecomendByCustommer[j].CoverPrice > 0)
+                                                    {
+                                                        <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByCustommer[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = RecomendByCustommer[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@RecomendByCustommer[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <!-- Controls -->
+                        <a class="left carousel-control" href=".carouselRecomendByCustommer" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href=".carouselRecomendByCustommer" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (RecomendByRate != null && RecomendByRate.Count > 0)
+        {
+            <div class="panel panel-primary">
+                <div class="panel-heading label-primary">
+                    <h3 style="font-weight:bold" class="panel-title">Gợi ý từ những đánh giá của bạn</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="carousel-main2" class="carousel slide carouselRecomendByRate" data-ride="carousel" data-interval="2600">
+                        <!-- Carousel items -->
+                        <div class="carousel-inner">
+                            @for (int j = 0; j < RecomendByRate.Count && j < 10; j++)
+                            {
+                                if (j == 0)
+                                {
+                                    <div class="active item">
+                                        <div class="block2" style="border-radius:5px;">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:3px 5px 0px 0px">
+                                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@RecomendByRate[j].AvatarLink" alt="@RecomendByRate[j].ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                                                <div style="height:50px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=RecomendByRate[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByRate[j].ProductName">
+                                                        @RecomendByRate[j].ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@RecomendByRate[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (RecomendByRate[j].CoverPrice > 0)
+                                                    {
+                                                        <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByRate[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = RecomendByRate[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@RecomendByRate[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="item">
+                                        <div class="block2" style="border-radius:5px;">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:3px 0px 0px 0px">
+                                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@RecomendByRate[j].AvatarLink" alt="@RecomendByRate[j].ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                                                <div style="height:50px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=RecomendByRate[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@RecomendByRate[j].ProductName">
+                                                        @RecomendByRate[j].ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@RecomendByRate[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (RecomendByRate[j].CoverPrice > 0)
+                                                    {
+                                                        <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((RecomendByRate[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = RecomendByRate[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@RecomendByRate[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <!-- Controls -->
+                        <a class="left carousel-control" href=".carouselRecomendByRate" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href=".carouselRecomendByRate" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        <div id="recomendByCart" style="">
+
+        </div>
+        @if (ProductsBeRatedLiked != null && ProductsBeRatedLiked.Count > 0)
+        {
+            <div class="panel panel-primary">
+                <div class="panel-heading label-primary">
+                    <h3 style="font-weight:bold" class="panel-title">Sách bạn đã thích, đánh giá</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="carousel-main2" class="carousel slide carouselProductsBeRatedLiked" data-ride="carousel" data-interval="2600">
+                        <!-- Carousel items -->
+                        <div class="carousel-inner">
+                            @for (int j = 0; j < ProductsBeRatedLiked.Count && j < 10; j++)
+                            {
+                                if (j == 0)
+                                {
+                                    <div class="active item">
+                                        <div class="block2" style="border-radius:5px;">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:3px 5px 0px 0px">
+                                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@ProductsBeRatedLiked[j].AvatarLink" alt="@ProductsBeRatedLiked[j].ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                                                <div style="height:50px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=ProductsBeRatedLiked[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@ProductsBeRatedLiked[j].ProductName">
+                                                        @ProductsBeRatedLiked[j].ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@ProductsBeRatedLiked[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (ProductsBeRatedLiked[j].CoverPrice > 0)
+                                                    {
+                                                        <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((ProductsBeRatedLiked[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = ProductsBeRatedLiked[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@ProductsBeRatedLiked[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="item">
+                                        <div class="block2" style="border-radius:5px;">
+                                            <div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew">
+                                                <div style="height:150px;border-radius:3px 0px 0px 0px">
+                                                    <img height="100%" style="border-radius:3px 0px 0px 0px" src="@ProductsBeRatedLiked[j].AvatarLink" alt="@ProductsBeRatedLiked[j].ProductName">
+                                                </div>
+                                            </div>
+
+                                            <div class="block2-txt p-t-20" style="background:#e9f96f4f;padding:5px 10px;overflow:auto">
+                                                <div style="height:50px;overflow:hidden">
+                                                    <a href='@Url.Action("DetailProduct","Home",new {id=ProductsBeRatedLiked[j].ProductId })' style="font-size:13px;font-weight:normal;color:#337ab7;font-weight:bold" title="@ProductsBeRatedLiked[j].ProductName">
+                                                        @ProductsBeRatedLiked[j].ProductName
+                                                    </a>
+                                                </div>
+                                                <div style="height:25px;">
+                                                    <span style="display:inline-block;font-size:13px;color:green;font-weight:normal">@ProductsBeRatedLiked[j].Price.ToString("c", new CultureInfo("vi-VN")) </span>
+                                                    @if (ProductsBeRatedLiked[j].CoverPrice > 0)
+                                                    {
+                                                        <span style="float:right;display:inline-block;font-size:13px;color:red;font-weight:normal;text-decoration:line-through">@((ProductsBeRatedLiked[j].CoverPrice ?? 0).ToString("c", new CultureInfo("vi-VN")))</span>
+                                                    }
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div style="margin-top:10px;">
+                                                    <a style="color:black" title="Xem chi tiết" href='@Url.Action("DetailProduct", "Home", new { id = ProductsBeRatedLiked[j].ProductId })' class="btn btn-default"><i style="color:black" class="glyphicon glyphicon-eye-open fa-lg"></i> Xem</a>
+                                                    <button style="float:right" onclick="AddToCart(@ProductsBeRatedLiked[j].ProductId)" class="btn btn-danger" title="Thêm vào giỏ" type="button"><i class="fa fa-cart-plus fa-lg" style="color:greenyellow"></i></button>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <!-- Controls -->
+                        <a class="left carousel-control" href=".carouselProductsBeRatedLiked" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href=".carouselProductsBeRatedLiked" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (AllTag != null && AllTag.Count > 0)
+        {
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Các thẻ sách</h3>
+                </div>
+                <div class="panel-body">
+                    @foreach (var t in AllTag)
+                    {
+                        <a href="@Url.Action("Tag","Home",new { id=t.TagId})" style="margin-right:5px;margin-bottom:10px;color:black" class="btn btn-info btn-sm">@t.TagName</a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>
 
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            LoadRecomendByCartViewDetail();
+        })
+    </script>
+}
